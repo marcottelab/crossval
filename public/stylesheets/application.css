@@ -1,0 +1,59 @@
+div.fixed {
+    font-family: monospace;
+    font-size: 4px;
+    color:#CDCDCD;
+}
+
+#flash_notice, #flash_error {
+  padding: 5px 8px;
+  margin: 10px 0;
+}
+
+#flash_notice {
+  background-color: #CFC;
+  border: solid 1px #6C6;
+}
+
+#flash_error {
+  background-color: #FCC;
+  border: solid 1px #C66;
+}
+
+.o {
+    background-color: black;
+}
+
+.m {
+    background-color: blue;
+    color: cyan;
+}
+
+#experiment_roc_plot { width:600px; height:600px}
+
+#matrix_experiments {
+    font-size:small;
+    border:1px solid black;
+    border-spacing: 0px;
+    padding: 2px;
+}
+#matrix_experiments td, th {
+    border:1px solid black;
+    padding:1px;
+}
+.experiment_id {
+    font-size:large;
+    font-weight:bold;
+}
+.experiment_argument_string {
+    font-size:large;
+    text-align:center;
+}
+
+#experiment_rocs {
+    border-collapse: collapse;
+    font-family: 'Courier New',Courier,monospace;
+}
+#experiment_rocs td, th {
+    border: 1px solid black;
+    padding: 2px;
+}
