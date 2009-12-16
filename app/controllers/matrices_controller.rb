@@ -3,12 +3,12 @@ class MatricesController < ApplicationController
   def run
    
     @matrix = Matrix.find(params[:id])
-    @matrix.experiments.not_run.each do |experiment|
+    @matrix.experiments.not_started.each do |experiment|
       Workers::FrameWorker.async_run(:experiment_id => experiment.id)
     end
 
     # Inform user.
-    flash[:notice] = "Running experiments for matrix id #{params[:id]}"
+    flash[:notice] = "Queueing experiments for matrix id #{params[:id]}"
     redirect_to matrices_url
   end
 

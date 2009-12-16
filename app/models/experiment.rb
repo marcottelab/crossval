@@ -14,6 +14,8 @@ class Experiment < ActiveRecord::Base
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
   named_scope :not_run, :conditions => {:total_auc => nil}
+  named_scope :not_completed, :conditions => {:completed_at => nil}
+  named_scope :not_started, :conditions => {:started_at => nil}
 
   # Print a title for this experiment
   def title
@@ -120,7 +122,7 @@ class Experiment < ActiveRecord::Base
   # To be called by a Worker object, usually.
   def run
     self.started_at = Time.now
-    self.save_without_timestamping!
+    self.save!
 
     Dir.chdir(self.root) do
       STDERR.puts("Command: #{self.command_string}")
@@ -132,7 +134,7 @@ class Experiment < ActiveRecord::Base
     # Expect a great deal of time between the beginning of this function and the
     # end. That's why we're saving again -- because the binary will have returned
     # 0 or aborted or who knows what.
-    self.save_without_timestamping!
+    self.save!
 
     if self.run_result == 0
       self.sort_results
@@ -154,7 +156,7 @@ class Experiment < ActiveRecord::Base
     self.completed_at = nil
     self.run_result   = nil
     self.total_auc    = nil
-    self.save_without_timestamping!
+    self.save!
 
     self.clean_predictions_dirs
     self.clean_temporary_files
@@ -227,17 +229,15 @@ class Experiment < ActiveRecord::Base
     aucs = []
     STDERR.puts("Calling Roc.calculate")
     Roc.calculate(self.id, self.results_path).each do |roc|
-      STDERR.puts("Calling roc.save!")
       roc.save!
-      STDERR.puts("Done calling roc.save!")
       aucs << roc.auc
     end
 
     self.total_auc = mean aucs
     self.completed_at = Time.now
     STDERR.puts("Calling save_without_timestamping!")
-    self.save_without_timestamping!
-    STDERR.puts("Done calling save_without_timestamping!")
+    self.save!
+    self
   end
 
   def calculate_aucs_old

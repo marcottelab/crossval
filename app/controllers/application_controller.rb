@@ -19,7 +19,7 @@ protected
       if matrix_or_experiment.is_a?(Matrix)
         # Show all experiments for this matrix
         matrix_or_experiment.experiments.each do |experiment|
-          f.series experiment.title, experiment.roc_line
+          f.series "#{experiment.id}: #{experiment.title}", experiment.roc_line
         end
       elsif matrix_or_experiment.is_a?(Experiment)
         # Just show the experiment
@@ -27,12 +27,12 @@ protected
       elsif matrix_or_experiment.is_a?(Array)
         # Array of experiments passed in
         matrix_or_experiment.each do |experiment|
-          f.series experiment.title, experiment.roc_line
+          f.series "#{experiment.id}: #{experiment.title}", experiment.roc_line
         end
       elsif matrix_or_experiment.is_a?(RocGroup)
         # RocGroup object passed in
         matrix_or_experiment.roc_group_items.each do |item|
-          f.series item.experiment.title, item.experiment.roc_line
+          f.series "#{item.experiment.id}: #{item.experiment.title}", item.experiment.roc_line
         end
       end
     end
