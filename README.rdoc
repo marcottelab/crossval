@@ -1,0 +1,113 @@
+== Crossval
+
+This is a cross-validation tool for the phenolog project.
+
+It's written in Rails, which has a couple of key advantages:
+
+* All data is stored in a database and most is viewable through a web
+  interface. This makes it harder to lose things.
+
+* It can use existing Rails gems and plugins such as Workling and
+  Starling to queue and run experiments, so they don't have to be
+  executed by hand.
+
+* Rails also handles drawing (via Javascript, using the Flot library)
+  of ROC plots.
+
+Data is stored in matrices consisting of cells and empty rows. Empty
+columns may be added somewhat easily, but I only needed rows.
+
+Currently, Crossval requires phenomatrixpp (same github account),
+which produces a 'phenomatrix' binary. This binary is called by
+Experiment objects via a 'Worker,' which enables it to run in parallel
+with the Rails server. The worker is also responsible for processing
+the data produced by phenomatrixpp and then sorting and reading
+it. The resulting data is stored as a table of ROCs on each experiment
+within the Rails environment.
+
+Crossval could easily be rewritten to utilize other types of analysis
+tools -- with the caveat that comparisons are column-by-column. Indeed,
+it will be necessary in the future to make Experiment generic and give
+it children classes which are responsible for the different types of
+external analysis tools. For example, we might have PhenomatrixPp
+inherit from Experiment. We might also have MartinTool inherit from
+Experiment, though it'll probably be called something 
+
+The generic problem Crossval attempts to solve is that we want to test
+predictive power of a model, a set of models, or of a fusion model of
+several models. This is, roughly, the NetFlix problem.
+
+We attempt to simulate the tool's ability to predict new values by
+removing known values and trying to predict them back. This relies on
+an assumption that there isn't significant ascertainment bias for the
+data set.
+
+There are many ways to remove known values for validation of positive
+predictive ability. In this case, we're using n-fold cross-validation
+in one or two stages. You drop out 1/nth of the values in the matrix
+and try to predict them back; then repeat for each other unique
+1/nth-sized set.
+
+I began with the idea that it could be general-purpose (e.g.,
+applicable to other problems), and have tried not to restrict the
+matrices to a specific type of information. I suspect this could be
+quite useful for determining how politicians might vote given past
+votes. It might also be useful for gene expression if the boolean
+matrix is changed to a numeric type.
+
+== Installation
+
+To use Crossval, you'll need to set up a Rails environment. These
+instructions are rough and assume you're using Ubuntu.
+
+* Install Ruby 1.8, preferably via apt.
+
+* Install RubyGems. I think I used apt.
+
+* Install postgresql. I use 8.3 or 8.4, but anything more recent is
+  likely to work -- as long as Rails can handle it. Don't use MySQL.
+  It's too slow and there's no guarantee the migrations will work.
+
+* Do NOT install Rails via apt. Instead, use RubyGems:
+  <tt>sudo gem install rails</tt>
+  You may need to specify a version somehow. As of the 12/15/09, I'm
+  using 2.3.5. Edge did not work for some reason -- probably a
+  conflict with starling. Note also that all gems should be installed
+  with sudo, if possible. You may get an error message, but if you
+  try to install as a regular user, you'll have gems which will only
+  work on the machine you built them on. That's fine if you're only
+  using one machine.
+
+* Install starling-starling (you'll need to add gems.github.com to
+  your RubyGems sources) and workling.
+
+* Run <tt>rails crossval</tt> to set up your Rails project.
+
+* In the crossval directory, use git to pull the files out of this
+  repository.
+
+* Move the starling-init-script file to /etc/init.d/starling and
+  check that the paths match <tt>`which starling`</tt>. Make sure
+  to set the -h value on it to your machine's IP address (or which-
+  ever machine you intend to use for running the analyses, does not
+  have to be your desktop).
+
+* Set up a database called crossval_development (or crossval_production
+  if you know what you're doing) and update config/database.yml to
+  reflect it.
+
+* Set up workling.yml so it knows where to look for the starling
+  server.
+
+* You'll also need matrices, but generating these is a bit complex.
+  There's a good script for it in the phenologdb rails app on draco,
+  in <tt>~/NetBeansProjects/phenologdb/lib/</tt>. You can start up
+  the rails console with <tt>script/console</tt> in the phenologdb directory,
+  and then access the lib object with WhateverItsCalled.new.make.
+  Look up the arguments to use in the source file or rdoc. Don't
+  put Hs on both sides (source and destination) or it'll skew your
+  tables.
+
+* There's a script called load_tables.rb (I think) in crossval. It
+  can help you add the matrices you want once you've got the files
+  generated.
