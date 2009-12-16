@@ -1,0 +1,76 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          starling
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop starling server
+### END INIT INFO
+#
+# starling		This init.d script is used to start starling.
+#			It basically just calls starling.
+ 
+ENV="env -i LANG=C PATH=/usr/local/bin:/usr/bin:/bin"
+ 
+set -e
+if [ -x /usr/bin/starling ] ; then
+	HAVE_STARLING=1
+else
+	echo "No starling gem installed. Please run 'gem install starling'."
+	exit 0
+fi
+ 
+. /lib/lsb/init-functions
+ 
+STARLING="$ENV /usr/bin/starling -d -p 22122 -h 146.6.213.97"
+ 
+test -f /etc/default/rcS && . /etc/default/rcS
+ 
+starling_stop() {
+	if [ -e "/var/run/starling.pid" ]; then
+		if kill `cat /var/run/starling.pid`; then
+			return 0
+		else
+			return 1
+		fi
+	else
+		log_failure_msg "Unable to find starling's PID. Please make sure that starling is running, and pid file is in /var/run/starling.pid"
+		return 1
+	fi
+}
+ 
+# Stupid hack to keep lintian happy. (Warrk! Stupidhack!).
+case $1 in
+	start)
+		log_daemon_msg "Starting message server" "starling"
+		if $STARLING; then
+    	log_end_msg 0
+    else
+    	log_end_msg 1
+    fi
+	;;
+	stop)
+		log_daemon_msg "Stopping message server" "starling"
+		if starling_stop; then
+      log_end_msg 0
+    else
+      log_end_msg 1
+    fi
+	;;
+	restart)
+		log_daemon_msg "Restarting message server" "starling"
+		if ! starling_stop; then
+      log_end_msg 1 || true
+    fi
+		sleep 2
+		if $STARLING; then
+      log_end_msg 0
+    else
+      log_end_msg 1
+    fi
+	;;
+	*)
+		log_success_msg "Usage: /etc/init.d/starling {start|stop|restart}"
+		exit 1
+	;;
+esac
+ 
