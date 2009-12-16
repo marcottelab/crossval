@@ -2,7 +2,7 @@ class ExperimentsController < ApplicationController
   def run
     Workers::FrameWorker.async_run(:experiment_id => params[:id])
     # Inform user.
-    flash[:notice] = "Running experiment #{params[:id]}"
+    flash[:notice] = "Queueing experiment #{params[:id]}"
 
     @experiment = Experiment.find(params[:id])
     redirect_to url_for(@experiment.predict_matrix)
