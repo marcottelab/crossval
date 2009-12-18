@@ -38,6 +38,7 @@ class Experiment < ActiveRecord::Base
 
       # Generate predict_rows file and put the testsets in the right place.
       self.generate_row_file(cell_files)
+      self.generate_column_file
       self.copy_testsets
 
       # Only copy the predict matrix cells file if it didn't come from one of the
@@ -272,8 +273,29 @@ protected
   def generate_row_file(cell_files)
       Dir.chdir(self.root) do
         `cut -f 1 #{cell_files.join(" ")} |sort|uniq > #{self.row_filename}`
-        `cut -f 2 #{self.predict_matrix.cell_file_path} |sort|uniq > #{self.column_filename}`
+        # `cut -f 2 #{self.predict_matrix.cell_file_path} |sort|uniq > #{self.column_filename}`
       end
+  end
+
+  # Generate the file for columns to be predicted (e.g., predict_phenotypes).
+  # This function takes into account the :min_genes property; does not request
+  # prediction of phenotypes which have fewer than min_genes genes in them.
+  def generate_column_file
+    Dir.chdir(self.root) do
+      if self.min_genes.nil? || self.min_genes == 0
+        # Easy way -- just cut the cell file.
+        `cut -f 2 #{self.predict_matrix.cell_file_path} |sort|uniq > #{self.column_filename}`
+      else
+        f = File.new(self.column_filename, "w")
+        nrows_by_col = self.predict_matrix.number_of_rows_by_column
+        nrows_by_col.each_pair do |col,nrows|
+          f.puts(col) unless nrows < self.min_genes
+        end
+        f.close
+      end
+    end
+
+    self.column_filename
   end
 
   # Copy testsets from the predict_matrix to the experiment directory.
