@@ -12,6 +12,14 @@ class Matrix < ActiveRecord::Base
   delegate :column_title, :to => :entry_info
 
 
+  # A descriptor which uniquely identifies a matrix, useful for drop-down boxes
+  # particularly when title is the same for multiple matrices.
+  # In this case, it's the ID and the title.
+  def unique_descriptor
+    "#{self.id}: #{self.title}"
+  end
+
+
   # Make a copy of the matrix (does not include its children).
   def copy
     matrix_copy = self.clone
