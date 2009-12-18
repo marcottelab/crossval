@@ -2,7 +2,7 @@
 module ApplicationHelper
 
   def select_matrix form, field
-    form.collection_select field, Matrix.all, :unique_descriptor, :title
+    form.collection_select field, Matrix.all, :id, :unique_descriptor
   end
 
   def select_experiment form, field
