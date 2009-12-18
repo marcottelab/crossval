@@ -2,11 +2,11 @@
 module ApplicationHelper
 
   def select_matrix form, field
-    form.collection_select field, Matrix.all, :id, :unique_descriptor
+    form.collection_select field, Matrix.find(:all, :order => :id), :id, :unique_descriptor
   end
 
   def select_experiment form, field
-    form.collection_select field, Experiment.all, :id, :argument_string
+    form.collection_select field, Experiment.find(:all, :order => :id), :id, :unique_descriptor
   end
 
   def remove_nested_link(name, nested_type, form_builder)

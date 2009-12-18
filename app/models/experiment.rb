@@ -19,9 +19,12 @@ class Experiment < ActiveRecord::Base
 
   # Print a title for this experiment
   def title
-    self.argument_string
+    "#{self.argument_string} [predicting #{self.predict_matrix_id}]"
   end
 
+  def unique_descriptor
+    "#{self.id}: #{self.title}"
+  end
 
   # Copy input files from each of the source matrices and the predict matrix.
   # Does nothing if the experiment directory already exists.
