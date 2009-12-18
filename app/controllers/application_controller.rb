@@ -12,7 +12,7 @@ protected
   def rocs matrix_or_experiment
     Flot.new('experiment_roc_plot') do |f|
       #f.yaxis :min => 0, :max => 1
-      f.points
+      f.lines
       f.legend :position => "se"
       f.yaxis 1
 
