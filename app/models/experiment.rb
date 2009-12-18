@@ -216,7 +216,9 @@ class Experiment < ActiveRecord::Base
   end
 
   def argument_string
-    "-m #{self.read_attribute(:method)} -d #{self.distance_measure} -n #{self.predict_matrix.children.count} -S #{self.predict_species} -s #{self.source_species_to_s} -t #{self.validation_type} -k #{self.k} #{self.arguments} "
+    s = "-m #{self.read_attribute(:method)} -d #{self.distance_measure} -n #{self.predict_matrix.children.count} -S #{self.predict_species} -s #{self.source_species_to_s} -t #{self.validation_type} -k #{self.k} #{self.arguments} "
+    s << "-x #{self.min_genes} " unless self.min_genes.nil?
+    s
   end
 
   def sort_results

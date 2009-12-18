@@ -25,6 +25,11 @@
   <%= f.text_field :k %>
 </p>
 
+<p>
+  <%= f.label :min_genes %><br />
+  <%= f.text_field :min_genes %>
+</p>
+
 <div id='experiment_sources'>
   <% f.fields_for :sources do |source_form| %>
     <%= render :partial => 'source', :locals => { :f => source_form } %>

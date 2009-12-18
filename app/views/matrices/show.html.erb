@@ -34,6 +34,7 @@
     <th>Method</th>
     <th>Distance Measure</th>
     <th>Sources</th>
+    <th>Min Genes</th>
     <th>Created</th>
     <th>Updated</th>
     <th>Started</th>
@@ -47,6 +48,7 @@
       <td><tt><%= experiment.method %></tt></td>
       <td><tt><%= experiment.distance_measure %></tt></td>
       <td><%= source_matrices(experiment) %></td>
+      <td><%= experiment.min_genes %></td>
       <td><%= experiment.created_at %></td>
       <td><%= experiment.updated_at %></td>
       <td><%= experiment.started_at || run_link(experiment) %></td>
@@ -56,7 +58,7 @@
       <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->
     </tr>
     <tr>
-      <td colspan="9" class="experiment_argument_string"><tt><%= experiment.argument_string %></tt></td>
+      <td colspan="10" class="experiment_argument_string"><tt><%= experiment.argument_string %></tt></td>
     </tr>
   <% end %>
   </table>
