@@ -19,7 +19,7 @@ Flotomatic.prototype = {
 		function showTooltip(x, y, contents) {
 			jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
 				{top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
-		}
+		}l
 
 		function tooltipFormatter(item) {
 			return item.series.label + ": " + item.datapoint[1] + "</a>";
@@ -94,7 +94,7 @@ Flotomatic.prototype = {
 		}
 
 		function choiceFormatter(key, val) {
-			return '<input type="checkbox" name="' + key + '" checked="checked" > <span class="flot_choice_label">' + val.label + '</span></input> ';
+			return '<input type="checkbox" id="flot_choice_' + key + '" name="' + key + '" checked="checked" > <span class="flot_choice_label"><label for="flot_choice_' + key + '">' + val.label + '</label></span></input> ';
 		}
 
 		graphChoices();
