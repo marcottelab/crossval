@@ -13,8 +13,10 @@ protected
     Flot.new('experiment_roc_plot') do |f|
       #f.yaxis :min => 0, :max => 1
       f.lines
-      f.legend :position => "se"
+      f.grid :hoverable => true
+      f.legend :position => "se", :show => false
       f.yaxis 1
+      f.selection :mode => "xy"
 
       if matrix_or_experiment.is_a?(Matrix)
         # Show all experiments for this matrix

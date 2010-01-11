@@ -61,3 +61,24 @@ div.fixed {
 td.legendLabel {
     font-size: 0.6em;
 }
+
+#flot_tooltip {
+    font-size: 0.6em;
+}
+
+#flot_choices input[type="checkbox"] {
+    clear: both;
+    float: left;
+}
+
+span.flot_choice_label {
+    font-size: 0.7em;
+    float: left;
+}
+
+div.nav {
+    float: right;
+    text-align: right;
+    font-size: 1.2em;
+    font-family: "Helvetica", sans-serif;
+}

@@ -22,10 +22,7 @@ Flotomatic.prototype = {
 		}
 
 		function tooltipFormatter(item) {
-			var date 	 = new Date(item.datapoint[0]),
-				label    = item.series.label;
-
-			return label + ": " + item.datapoint[1] + " on " + (date.getMonth() + 1) + "/" + date.getDate() + "</a>";
+			return item.series.label + ": " + item.datapoint[1] + "</a>";
 		}
 
 		placeholder.bind("plothover", this.tooltip, function(event, pos, item) {

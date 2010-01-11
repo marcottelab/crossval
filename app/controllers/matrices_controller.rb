@@ -11,6 +11,11 @@ class MatricesController < ApplicationController
     flash[:notice] = "Queueing experiments for matrix id #{params[:id]}"
     redirect_to matrices_url
   end
+  
+  # GET /rocs/1/show_rocs  
+  def show_plot
+    @rocs = rocs Matrix.find(params[:id])
+  end
 
   # GET /matrices/1
   # GET /matrices/1.xml

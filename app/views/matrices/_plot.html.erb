@@ -1,0 +1,12 @@
+<%= flot_canvas canvas_id %>
+
+<div class="flot_dataset_picker">
+  <%= flot_selections %>
+</div>
+
+<%#= flot_overview("asdhasdlsdfh") %>
+
+<% flot_graph(canvas_id, rocs) do %>
+  <%= flot_plot(:dynamic => true) %>
+  <%= flot_tooltip %>
+<% end %>
