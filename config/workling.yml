@@ -1,0 +1,21 @@
+# By default, NotRemoteRunner is used when RAILS_ENV == 'test'.
+#
+# You can pass options to memcached client by nesting the key value pairs
+# under 'memcache_options'.
+#
+# You can also use a cluster of Starlings. Simply give a comma separated
+# list of server:port, server:port, server:port values to listens_on. 
+#
+production:
+  listens_on: localhost:15151
+
+development:
+  # listens_on: 146.6.213.26:22122, 146.6.213.26:221223
+  listens_on: 146.6.213.97:22122
+  sleep_time: 5
+  reset_time: 30
+  memcache_options:
+    namespace: crossval_development
+  
+test:
+  listens_on: localhost:12345

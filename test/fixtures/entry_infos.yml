@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  row_title: MyString
+  column_title: MyString
+
+two:
+  row_title: MyString
+  column_title: MyString

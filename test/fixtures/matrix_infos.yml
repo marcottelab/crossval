@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  title: MyString
+  divisions: 1
+  method: MyString
+  total_auc: 9.99
+  row_title: MyString
+  column_title: MyString
+
+two:
+  title: MyString
+  divisions: 1
+  method: MyString
+  total_auc: 9.99
+  row_title: MyString
+  column_title: MyString

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  parent_id: 1
+  matrix_info_id: 1
+  cardinality: 1
+
+two:
+  parent_id: 1
+  matrix_info_id: 1
+  cardinality: 1

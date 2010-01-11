@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  experiment: 
+  column: 1
+  value: 9.99
+
+two:
+  experiment: 
+  column: 1
+  value: 9.99

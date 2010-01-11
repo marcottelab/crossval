@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  experiment: 
+  matrix: 
+  source_species: MyString
+
+two:
+  experiment: 
+  matrix: 
+  source_species: MyString
