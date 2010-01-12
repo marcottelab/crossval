@@ -19,7 +19,7 @@ Flotomatic.prototype = {
 		function showTooltip(x, y, contents) {
 			jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
 				{top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
-		}l
+		}
 
 		function tooltipFormatter(item) {
 			return item.series.label + ": " + item.datapoint[1] + "</a>";
