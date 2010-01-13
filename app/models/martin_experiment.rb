@@ -1,0 +1,3 @@
+class MartinExperiment < Experiment
+
+end
