@@ -2,7 +2,7 @@
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
   adapter: postgresql
-  host: draco.icmb.utexas.edu
+  host: localhost #draco.icmb.utexas.edu
   database: crossval_development
   username: jwoods
   password: youwish1
@@ -17,7 +17,8 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
-  pool: 5
-  timeout: 5000
+  adapter: postgresql
+  host: draco.icmb.utexas.edu
+  database: crossval_development
+  username: jwoods
+  password: youwish1
