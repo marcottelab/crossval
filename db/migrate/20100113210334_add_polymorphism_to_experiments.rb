@@ -1,7 +1,6 @@
 class AddPolymorphismToExperiments < ActiveRecord::Migration
   def self.up
-    add_column :experiments, :type, :string, :default => "JohnExperiment"
-    change_column :experiments, :type, :string, :default => nil
+    add_column :experiments, :type, :string
   end
 
   def self.down
