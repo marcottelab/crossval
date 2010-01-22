@@ -1,0 +1,2 @@
+class JohnPredictor < JohnExperiment
+end
