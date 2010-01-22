@@ -1,0 +1,2 @@
+class JohnDistribution < JohnPredictor
+end
