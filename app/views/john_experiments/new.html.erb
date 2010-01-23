@@ -4,11 +4,11 @@
 
 <h1>New experiment</h1>
 
-<% form_for(@experiment) do |f| %>
+<% form_for([:matrix, @experiment]) do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
-<%= link_to 'Back', experiments_path %>
+<%= link_to 'Back', matrix_path(@matrix) %>

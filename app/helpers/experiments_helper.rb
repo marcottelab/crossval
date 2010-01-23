@@ -11,16 +11,16 @@ module ExperimentsHelper
 
   def new_source_fields(source, form_builder)
     form_builder.fields_for(source.pluralize.to_sym, source.camelize.constantize.new, :child_index => 'NEW_RECORD') do |f|
-      render(:partial => source.underscore, :locals => { :f => f })
+      render(:partial => "experiments/#{source.underscore}", :locals => { :f => f })
     end
   end
 
   def select_method form, field
-    form.select field, Experiment::AVAILABLE_METHODS
+    form.select field, form.object.class::AVAILABLE_METHODS
   end
 
   def select_distance_measure form, field
-    form.select field, Experiment::AVAILABLE_DISTANCE_MEASURES
+    form.select field, form.object.class::AVAILABLE_DISTANCE_MEASURES
   end
 
   def select_validation_type form, field

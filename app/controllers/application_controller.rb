@@ -39,4 +39,15 @@ protected
       end
     end
   end
+
+  # Used by ExperimentsController and JohnExperimentsController
+  def plot_experiment experiment
+    Flot.new('experiment_roc_plot') do |f|
+      #f.yaxis :min => 0, :max => 1
+      f.points
+      f.legend :position => "se"
+      f.yaxis 1
+      f.series experiment.title, experiment.roc_line
+    end
+  end
 end

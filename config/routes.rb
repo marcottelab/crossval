@@ -1,9 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :experiments
-
-  map.resources :experiments
-
-  map.resources :experiments
+  # map.resources :experiments
 
   map.resources :roc_groups
 
@@ -13,9 +9,10 @@ ActionController::Routing::Routes.draw do |map|
 
   # The priority is based upon order of creation: first created -> highest priority.
 
-  map.resources :matrices
-
-  map.resources :experiments
+  map.resources :matrices do |matrices|
+    matrices.resources :experiments
+    matrices.resources :john_experiments
+  end
 
   # Sample of regular route:
   #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'

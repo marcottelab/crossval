@@ -77,8 +77,8 @@ class Experiment < ActiveRecord::Base
     "error_log.#{time_to_file_suffix(self.started_at || Time.now)}"
   end
   
-  def argument_string
-  end
+  #def argument_string
+  #end
 
   def has_been_run?
     !self.total_auc.nil?

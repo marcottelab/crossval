@@ -45,9 +45,9 @@ module MatricesHelper
     end
   end
 
-  def link_to_experiment_if_appropriate(experiment)
+  def link_to_experiment_if_appropriate(matrix, experiment)
     return nil if experiment.total_auc.nil?
 
-    link_to experiment.total_auc, experiment
+    link_to experiment.total_auc, matrix_experiment_path(matrix, experiment)
   end
 end

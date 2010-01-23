@@ -32,7 +32,7 @@
 
 <div id='experiment_sources'>
   <% f.fields_for :sources do |source_form| %>
-    <%= render :partial => 'source', :locals => { :f => source_form } %>
+    <%= render :partial => 'experiments/source', :locals => { :f => source_form } %>
   <% end %>
 </div>
 

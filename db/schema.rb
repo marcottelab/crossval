@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091210220002) do
+ActiveRecord::Schema.define(:version => 20100113210334) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -45,13 +45,15 @@ ActiveRecord::Schema.define(:version => 20091210220002) do
     t.string   "distance_measure",  :limit => 200, :default => "hypergeometric", :null => false
     t.string   "validation_type",                  :default => "row",            :null => false
     t.integer  "k",                                :default => 1
-    t.string   "arguments",         :limit => 200, :default => "-k 1"
+    t.string   "arguments",         :limit => 200
     t.integer  "run_result"
     t.decimal  "total_auc"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "min_genes",                        :default => 0
+    t.string   "type"
   end
 
   add_index "experiments", ["predict_matrix_id"], :name => "index_experiments_on_predict_matrix_id"

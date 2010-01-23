@@ -1,49 +1,21 @@
-class ExperimentsController < ApplicationController
+class ExperimentsController < MatrixGenericController
   def run
     Workers::FrameWorker.async_run(:experiment_id => params[:id])
     # Inform user.
     flash[:notice] = "Queueing experiment #{params[:id]}"
 
-    @experiment = Experiment.find(params[:id])
-    redirect_to url_for(@experiment.predict_matrix)
+    find_experiment params[:id]
+    redirect_to url_for(@matrix)
   end
 
   # GET /experiments/1
   # GET /experiments/1.xml
   def show
-    @experiment  = Experiment.find(params[:id])
-    @flot        = Flot.new('experiment_roc_plot') do |f|
-      #f.yaxis :min => 0, :max => 1
-      f.points
-      f.legend :position => "se"
-      f.yaxis 1
-      f.series @experiment.title, @experiment.roc_line
-    end
+    find_experiment params[:id]
+    @flot        = plot_experiment(@experiment)
 
     respond_to do |format|
-      format.html # show.html.erb
-    end
-  end
-
-  # GET /experiments/new
-  # GET /experiments/new.xml
-  def new
-    @experiment = Experiment.new
-    @experiment.sources.build
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @experiment }
-    end
-  end
-
-  def create
-    @experiment = Experiment.new(params[:experiment])
-    if @experiment.save
-      flash[:notice] = "Successfully set up experiment."
-      redirect_to url_for(@experiment.predict_matrix)
-    else
-      render :action => 'new'
+      format.html { render_polymorphic_template('show')}# show.html.erb
     end
   end
 end
