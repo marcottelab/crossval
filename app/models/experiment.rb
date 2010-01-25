@@ -23,9 +23,9 @@ class Experiment < ActiveRecord::Base
   def unique_descriptor
     "#{self.id}: #{self.title}"
   end
-  
-  def prepare_inputs
-  end
+
+  #def prepare_inputs
+  #end
   
   def dir_exists? dir
     File.exists?(dir)
@@ -38,12 +38,22 @@ class Experiment < ActiveRecord::Base
   def root
     self.predict_matrix.root + "experiment_#{self.id}"
   end
-  
+
+  # Copy input files from each of the source matrices and the predict matrix.
+  # Does nothing if the experiment directory already exists.
+  def prepare_inputs_internal &block
+    unless self.root_exists?
+      logger.info("Preparing new inputs for experiment #{self.id}")
+
+      self.prepare_dir
+
+      yield block
+    end
+  end
   
   # To be called by a Worker object, usually.
   def run
-    self.started_at = Time.now
-    self.save!
+    before_run # sets and saves started_at
 
     Dir.chdir(self.root) do
       STDERR.puts("Command: #{self.command_string}")
@@ -58,12 +68,8 @@ class Experiment < ActiveRecord::Base
     self.save!
 
     if self.run_result == 0
-      self.sort_results
-
-      STDERR.puts("Calling calculate_rocs!")
-      # Calculating the AUCs also marks the task as completed and saves the record.
-      self.calculate_rocs!
-      STDERR.puts("Done calling calculate_rocs!")
+      # Calculate results and save again.
+      after_run
     else
       logger.error("Execution error for binary. Returned: #{self.run_result}")
     end
@@ -96,9 +102,10 @@ class Experiment < ActiveRecord::Base
     self.root + self.results_dir
   end
 
-  def bin_path
-    Rails.root + "bin/#{Socket.gethostname}/phenomatrix"
-  end
+  # Make sure to define bin_path in your child class.
+  #def bin_path
+  #
+  #end
 
   def sort_bin_path
     Rails.root + "bin/sortall.pl"
@@ -160,6 +167,25 @@ class Experiment < ActiveRecord::Base
 
 protected
 
+  # Update the 'started_at' value and save. This needs to be fixed so it doesn't
+  # call ActiveRecord::save! which will change other timestamps as well.
+  def before_run
+    self.started_at = Time.now
+    self.save!
+  end
+
+  # Sort/calculate ROCs for an experiment. You can override this function for things
+  # like JohnDistribution so you calculate other things instead of ROCs.
+  def after_run
+    # Call the script which sorts results into a separate directory.
+    self.sort_results
+
+    # Calculating the AUCs also marks the task as completed and saves the record.
+    STDERR.puts("Calling calculate_rocs!")
+    self.calculate_rocs!
+    STDERR.puts("Done calling calculate_rocs!")
+  end
+
   def calculate_rocs!
     aucs = []
     STDERR.puts("Calling Roc.calculate")
@@ -212,6 +238,23 @@ protected
     self.predict_matrix.children_file_paths(prefix).each do |child_path|
       FileUtils.cp(child_path, self.root)
     end
+  end
+
+  # Generates row and column files, makes sure they're in the right directory.
+  # Only call from within prepare_inputs_internal, as this guarantees we're in
+  # the correct directory and such.
+  def prepare_standard_inputs
+      cell_files = self.copy_source_matrix_inputs
+
+      # Generate predict_rows file
+      self.generate_row_file(cell_files)
+      self.generate_column_file
+
+      # Only copy the predict matrix cells file if it didn't come from one of the
+      # source matrices.
+      unless cell_files.include?(self.predict_matrix.cell_file_path)
+        FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
+      end
   end
 end
 

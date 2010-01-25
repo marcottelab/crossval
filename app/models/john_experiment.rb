@@ -4,29 +4,6 @@ class JohnExperiment < Experiment
       "Manhattan" => "manhattan",
       "Euclidean" => "euclidean"}
 
-  # Copy input files from each of the source matrices and the predict matrix.
-  # Does nothing if the experiment directory already exists.
-  def prepare_inputs
-    unless self.root_exists?
-      logger.info("Preparing new inputs for experiment #{self.id}")
-      
-      self.prepare_dir
-
-      cell_files = self.copy_source_matrix_inputs
-
-      # Generate predict_rows file and put the testsets in the right place.
-      self.generate_row_file(cell_files)
-      self.generate_column_file
-      self.copy_testsets
-
-      # Only copy the predict matrix cells file if it didn't come from one of the
-      # source matrices.
-      unless cell_files.include?(self.predict_matrix.cell_file_path)
-        FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
-      end
-      
-    end
-  end
 
   # Copy the inputs from the source matrices. Returns a list of cell files so we
   # can compute the rows that we're capable of predicting (e.g., predict_genes).
@@ -87,7 +64,17 @@ class JohnExperiment < Experiment
     s
   end
 
+  def bin_path
+    Rails.root + "bin/#{Socket.gethostname}/phenomatrix"
+  end
+
 protected
+
+  # Prepare the input files including cross-validation/test-set information.
+  def prepare_standard_inputs
+    super
+    copy_testsets if type == "JohnExperiment"
+  end
 
   # Generate the file for rows to be predicted (e.g., predict_genes)
   def generate_row_file(cell_files)
@@ -117,5 +104,6 @@ protected
 
     self.column_filename
   end
+
 end
 
