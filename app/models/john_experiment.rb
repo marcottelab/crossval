@@ -1,9 +1,14 @@
 class JohnExperiment < Experiment
+
   AVAILABLE_METHODS = {"Naive Bayes (JOW)" => "naivebayes", "Partial Bayes (JOW)" => "partialbayes"}
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",
       "Euclidean" => "euclidean"}
 
+  validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"
+  validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"
+  validates_inclusion_of :method, :in => AVAILABLE_METHODS.values
+  validates_inclusion_of :distance_measure, :in => AVAILABLE_DISTANCE_MEASURES.values
 
   # Copy the inputs from the source matrices. Returns a list of cell files so we
   # can compute the rows that we're capable of predicting (e.g., predict_genes).

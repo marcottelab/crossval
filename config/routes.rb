@@ -11,7 +11,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :matrices do |matrices|
     matrices.resources :experiments
+
     matrices.resources :john_experiments
+    matrices.resources :john_predictors
+    matrices.resources :john_distributions
+
+    matrices.resources :martin_experiments
   end
 
   # Sample of regular route:

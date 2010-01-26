@@ -1,7 +1,7 @@
 <h1>Editing experiment</h1>
 
 <% form_for([:matrix, @experiment]) do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
+  <%= render :partial => 'john_experiments/form', :locals => { :f => f } %>
   <p>
     <%= f.submit 'Update' %>
   </p>

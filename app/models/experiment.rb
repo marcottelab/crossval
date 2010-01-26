@@ -11,7 +11,10 @@ class Experiment < ActiveRecord::Base
   named_scope :not_run, :conditions => {:total_auc => nil}
   named_scope :not_completed, :conditions => {:completed_at => nil}
   named_scope :not_started, :conditions => {:started_at => nil}
-  
+
+  # Make sure sources are valid
+  validates_associated :sources
+
   AVAILABLE_METHODS = {}
   AVAILABLE_DISTANCE_MEASURES = {}
   
