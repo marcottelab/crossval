@@ -18,4 +18,15 @@ class ExperimentsController < MatrixGenericController
       format.html { render_polymorphic_template('show')}# show.html.erb
     end
   end
+
+  # Set up redirects to the proper controllers
+  def edit
+    find_experiment params[:id]
+    redirect_to correct_child_url(:edit)
+  end
+
+  def new
+    find_experiment params[:id]
+    redirect_to correct_child_url(:new)
+  end
 end

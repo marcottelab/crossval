@@ -2,54 +2,54 @@ class RocsController < ApplicationController
   # GET /Rocs
   # GET /Rocs.xml
   def index
-    @Rocs = Roc.all
+    @rocs = Roc.all
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @Rocs }
+      format.xml  { render :xml => @rocs }
     end
   end
 
   # GET /Rocs/1
   # GET /Rocs/1.xml
   def show
-    @Roc = Roc.find(params[:id])
+    @roc = Roc.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @Roc }
+      format.xml  { render :xml => @roc }
     end
   end
 
   # GET /Rocs/new
   # GET /Rocs/new.xml
   def new
-    @Roc = Roc.new
+    @roc = Roc.new
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @Roc }
+      format.xml  { render :xml => @roc }
     end
   end
 
   # GET /Rocs/1/edit
   def edit
-    @Roc = Roc.find(params[:id])
+    @roc = Roc.find(params[:id])
   end
 
   # POST /Rocs
   # POST /Rocs.xml
   def create
-    @Roc = Roc.new(params[:Roc])
+    @roc = Roc.new(params[:Roc])
 
     respond_to do |format|
-      if @Roc.save
+      if @roc.save
         flash[:notice] = 'Roc was successfully created.'
-        format.html { redirect_to(@Roc) }
-        format.xml  { render :xml => @Roc, :status => :created, :location => @Roc }
+        format.html { redirect_to(@roc) }
+        format.xml  { render :xml => @roc, :status => :created, :location => @roc }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @Roc.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @roc.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -57,16 +57,16 @@ class RocsController < ApplicationController
   # PUT /Rocs/1
   # PUT /Rocs/1.xml
   def update
-    @Roc = Roc.find(params[:id])
+    @roc = Roc.find(params[:id])
 
     respond_to do |format|
-      if @Roc.update_attributes(params[:Roc])
+      if @roc.update_attributes(params[:Roc])
         flash[:notice] = 'Roc was successfully updated.'
-        format.html { redirect_to(@Roc) }
+        format.html { redirect_to(@roc) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @Roc.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @roc.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -74,8 +74,8 @@ class RocsController < ApplicationController
   # DELETE /Rocs/1
   # DELETE /Rocs/1.xml
   def destroy
-    @Roc = Roc.find(params[:id])
-    @Roc.destroy
+    @roc = Roc.find(params[:id])
+    @roc.destroy
 
     respond_to do |format|
       format.html { redirect_to(Rocs_url) }

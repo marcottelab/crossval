@@ -6,5 +6,4 @@ class Source < ActiveRecord::Base
 
   validates_presence_of :source_matrix_id
   validates_uniqueness_of :source_matrix_id, :scope => :experiment_id
-  validates_associated :experiment
 end

@@ -1,5 +1,5 @@
 class JohnExperiment < Experiment
-
+  
   AVAILABLE_METHODS = {"Naive Bayes (JOW)" => "naivebayes", "Partial Bayes (JOW)" => "partialbayes"}
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",

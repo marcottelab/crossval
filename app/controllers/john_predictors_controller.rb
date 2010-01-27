@@ -26,11 +26,12 @@ class JohnPredictorsController < MatrixGenericController
 
   def create
     @experiment = JohnPredictor.new(params[:john_experiment])
+    # ensure_predict_matrix_set(@experiment, @matrix_id)
     if @experiment.save
       flash[:notice] = "Successfully set up experiment."
       redirect_to url_for(@matrix)
     else
-      render :action => 'new'
+      render :template => 'john_experiments/new'
     end
   end
 end

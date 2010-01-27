@@ -23,4 +23,16 @@ protected
   def polymorphic_template action
     "#{@view}/#{action}"
   end
+  
+  def ensure_predict_matrix_set experiment, matrix_id
+    experiment.predict_matrix_id = matrix_id if experiment.predict_matrix_id.nil?
+  end
+
+  def correct_child_url_function action
+    "#{action.to_s}_matrix_#{@view.singularize}_url".to_sym
+  end
+
+  def correct_child_url action
+    send correct_child_url_function(action), @matrix, @experiment
+  end
 end

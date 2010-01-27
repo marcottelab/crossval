@@ -1,6 +1,5 @@
 class JohnDistribution < JohnPredictor
 
-  
 
 protected
   # In the parent this is used to calculate and load ROCs. Here, we don't want

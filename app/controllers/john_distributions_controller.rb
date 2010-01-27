@@ -24,13 +24,34 @@ class JohnDistributionsController < MatrixGenericController
     end
   end
 
+  def update
+    @experiment = JohnDistribution.find(params[:id])
+
+    respond_to do |format|
+      if !@experiment.run_result.nil? || !@experiment.started_at.nil?
+        flash[:notice] = "You can't update an experiment that has been run or is running."
+        format.html { redirect_to(@matrix) }
+        format.xml  { render :xml => @experiment.errors, :status => :unprocessable_entity }
+      elsif @experiment.update_attributes(params[:john_distribution])
+        flash[:notice] = 'Distribution was successfully updated.'
+        format.html { redirect_to(@matrix) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @experiment.errors, :status => :unprocessable_entity }
+      end
+    end
+      
+  end
+
   def create
-    @experiment = JohnDistribution.new(params[:john_experiment])
+    @experiment = JohnDistribution.new(params[:john_distribution])
+    # ensure_predict_matrix_set(@experiment, @matrix_id)
     if @experiment.save
-      flash[:notice] = "Successfully set up experiment."
+      flash[:notice] = "Successfully set up distribution."
       redirect_to url_for(@matrix)
     else
-      render :action => 'new'
+      render :template => 'john_experiments/new'
     end
   end
 end
