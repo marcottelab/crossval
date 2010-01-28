@@ -30,13 +30,13 @@ div.fixed {
 
 #experiment_roc_plot { width:600px; height:600px}
 
-#matrix_experiments {
+.matrix_experiments {
     font-size:small;
     border:1px solid black;
     border-spacing: 0px;
     padding: 2px;
 }
-#matrix_experiments td, th {
+.matrix_experiments td, th {
     border:1px solid black;
     padding:1px;
 }

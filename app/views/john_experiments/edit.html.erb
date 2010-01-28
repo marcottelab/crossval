@@ -5,7 +5,7 @@
 <h1>Editing <%= @experiment.class.to_s.titleize %></h1>
 
 <% form_for([@experiment.predict_matrix, @experiment]) do |f| %>
-  <%= render :partial => 'john_experiments/form', :locals => { :f => f } %>
+  <%= render :partial => "#{@experiment.class.to_s.tableize}/form", :locals => { :f => f } %>
   <p>
     <%= f.submit 'Update' %>
   </p>

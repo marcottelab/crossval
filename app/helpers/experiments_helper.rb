@@ -15,6 +15,16 @@ module ExperimentsHelper
     end
   end
 
+  def link_to_experiment_if_appropriate(matrix, experiment)
+    return nil if experiment.run_result != 0
+    if experiment.is_a?(JohnExperiment) || experiment.is_a?(MartinExperiment)
+      return nil if experiment.total_auc.nil?
+      link_to experiment.total_auc, matrix_experiment_path(matrix, experiment)
+    else
+      link_to "Distribution", matrix_experiment_path(matrix, experiment)
+    end
+  end
+
   def select_method form, field
     form.select field, form.object.class::AVAILABLE_METHODS
   end
@@ -27,4 +37,31 @@ module ExperimentsHelper
     form.select field, ["row", "cell"]
   end
 
+ def collect_by_type(collection, type)
+    collection.reject { |c| c.type != type }
+  end
+
+  def john_experiments(experiments)
+    collect_by_type experiments, "JohnExperiment"
+  end
+
+  def john_predictors(experiments)
+    collect_by_type experiments, "JohnPredictor"
+  end
+
+  def john_distributions(experiments)
+    collect_by_type experiments, "JohnDistribution"
+  end
+
+  def martin_experiments(experiments)
+    collect_by_type experiments, "MartinExperiment"
+  end
+
+  def martin_predictors(experiments)
+    collect_by_type experiments, "MartinPredictor"
+  end
+
+  def martin_distributions(experiments)
+    collect_by_type experiments, "MartinDistribution"
+  end
 end

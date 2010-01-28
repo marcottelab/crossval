@@ -1,0 +1,16 @@
+    <tr>
+      <td rowspan="2" class="experiment_id"><%= experiment.id %></td>
+      <td><tt><%= experiment.distance_measure %></tt></td>
+      <td><%= source_matrices(experiment) %></td>
+      <td><%= experiment.min_genes %></td>
+      <td><%= experiment.created_at %></td>
+      <td><%= experiment.updated_at %></td>
+      <td><%= experiment.started_at || run_link(experiment) %></td>
+      <td><%= link_to experiment.completed_at || "-", matrix_experiment_path(@matrix, experiment) %></td>
+      <td><%= experiment.run_result %></td>
+      <td><%= link_to_experiment_if_appropriate(@matrix, experiment) || "&nbsp;" %></td>
+      <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->
+    </tr>
+    <tr>
+      <td colspan="9" class="experiment_argument_string"><tt><%= experiment.argument_string %></tt></td>
+    </tr>

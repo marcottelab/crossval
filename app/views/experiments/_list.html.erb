@@ -1,0 +1,33 @@
+<%- if experiments.size > 0 -%>
+  <h3>Crossvalidations with John's methods</h3>
+
+  <table class="matrix_experiments">
+  <%= render :partial => 'john_experiments/list_header' %>
+  <% john_experiments(experiments).each do |experiment| %>
+    <%= render :partial => 'john_experiments/item', :locals => {:experiment => experiment} %>
+  <% end %>
+  </table>
+  
+  <h3>Predictors with John's methods</h3>
+  
+  <table class="matrix_experiments">
+  <%= render :partial => 'john_predictors/list_header' %>
+  <% john_predictors(experiments).each do |experiment| %>
+    <%= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
+  <% end %>
+  </table>
+
+  <h3>Distributions with John's methods</h3>
+
+  <table class="matrix_experiments">
+  <%= render :partial => 'john_predictors/list_header' %>
+  <% john_distributions(experiments).each do |experiment| %>
+    <%= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
+  <% end %>
+  </table>
+
+  <br/>
+  <%= render :partial => 'plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => rocs} %>
+<%- else -%>
+<p><em>None found.</em></p>
+<%- end -%>
