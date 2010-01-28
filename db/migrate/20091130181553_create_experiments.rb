@@ -4,7 +4,7 @@ class CreateExperiments < ActiveRecord::Migration
       t.references :predict_matrix, :null => false
       t.string :method, :null => false, :limit => 200, :default => "naivebayes"
       t.string :distance_measure, :null => false, :limit => 200, :default => "hypergeometric"
-      t.string :validation_type, :default => "row", :null => false
+      t.string :validation_type, :default => "row"
       t.integer :k, :default => 1
       t.integer :min_genes
       t.string :arguments, :limit => 200 # Beyond :method and :distance_measure

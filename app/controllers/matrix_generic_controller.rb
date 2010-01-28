@@ -29,7 +29,11 @@ protected
   end
 
   def correct_child_url_function action
-    "#{action.to_s}_matrix_#{@view.singularize}_url".to_sym
+    "#{action.to_s}_matrix_#{view_for_action(action)}_url".to_sym
+  end
+
+  def view_for_action action
+    action.to_sym == :index ? @view : @view.singularize
   end
 
   def correct_child_url action

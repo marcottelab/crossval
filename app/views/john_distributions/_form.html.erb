@@ -1,0 +1,26 @@
+<%= f.error_messages %>
+
+<p>
+  <%= f.label :predict_matrix %><br />
+  <%= select_matrix f, :predict_matrix_id %>
+</p>
+
+<p>
+  <%= f.label :distance_measure %><br />
+  <%= select_distance_measure f, :distance_measure %>
+</p>
+
+<p>
+  <%= f.label :min_genes %><br />
+  <%= f.text_field :min_genes %>
+</p>
+
+<div id='experiment_sources'>
+  <% f.fields_for :sources do |source_form| %>
+    <%= render :partial => 'experiments/source', :locals => { :f => source_form } %>
+  <% end %>
+</div>
+
+<p>
+  <%= add_source_link 'Add a Source', 'source', f %>
+</p>

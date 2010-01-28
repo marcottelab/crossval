@@ -180,6 +180,10 @@ protected
   # Sort/calculate ROCs for an experiment. You can override this function for things
   # like JohnDistribution so you calculate other things instead of ROCs.
   def after_run
+    sort_results_and_calculate_rocs!
+  end
+
+  def sort_results_and_calculate_rocs!
     # Call the script which sorts results into a separate directory.
     self.sort_results
 

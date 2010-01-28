@@ -19,6 +19,7 @@ class ExperimentsController < MatrixGenericController
     end
   end
 
+
   # Set up redirects to the proper controllers
   def edit
     find_experiment params[:id]
@@ -28,5 +29,10 @@ class ExperimentsController < MatrixGenericController
   def new
     find_experiment params[:id]
     redirect_to correct_child_url(:new)
+  end
+
+  def index
+    find_experiment params[:id]
+    redirect_to correct_child_url(:index)
   end
 end
