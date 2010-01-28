@@ -20,14 +20,33 @@ class MatricesController < ApplicationController
   # GET /matrices/1
   # GET /matrices/1.xml
   def show
-    @matrix    = Matrix.find(params[:id])
-
+    @matrix      = Matrix.find(params[:id])
+    @experiments = @matrix.experiments
     @rocs      = rocs(@matrix)
     #@row_distribution = row_distribution(@matrix)
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @matrix }
+    end
+  end
+
+  def expand_experiments
+    @matrix      = Matrix.find(params[:id], :include => {:experiments => :rocs})
+    @experiments = @matrix.experiments
+    @rocs        = rocs(@matrix)
+
+    render :update do |page|
+      page['experiment_list'].show
+      page['experiment_list'].replace_html :partial => 'experiments/list', :locals => { :experiments => @experiments, :rocs => @rocs }, :layout => false
+      page['experiment_list_toggle'].replace_html :partial => 'collapse_experiments', :locals => {:id => @matrix.id}
+    end
+  end
+
+  def collapse_experiments
+    render :update do |page|
+      page['experiment_list'].hide
+      page['experiment_list_toggle'].replace_html :partial => 'expand_experiments', :locals => {:id => params[:id]}
     end
   end
 
