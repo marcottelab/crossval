@@ -21,8 +21,6 @@ class MatricesController < ApplicationController
   # GET /matrices/1.xml
   def show
     @matrix      = Matrix.find(params[:id])
-    @experiments = @matrix.experiments
-    @rocs      = rocs(@matrix)
     #@row_distribution = row_distribution(@matrix)
 
     respond_to do |format|
