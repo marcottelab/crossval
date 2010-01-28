@@ -1,0 +1,14 @@
+*.rb~
+*.erb~
+genes.At
+genes.Ce
+genes.Dm
+genes.Hs
+genes.Mm
+genes.Sc
+genes_phenes.At
+genes_phenes.Ce
+genes_phenes.Dm
+genes_phenes.Hs
+genes_phenes.Mm
+genes_phenes.Sc
