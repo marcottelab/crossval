@@ -1,3 +1,65 @@
+# The Matrix class encapsulates three related but essentially different sparse
+# matrices, and is very purpose-specific.
+#
+# = Goals
+# * Sparse storage
+# * Multi-level tree structure for storing cross-validation training and test sets.
+# 
+# == Tree Structure
+# * Matrices in tree are either root/branch or leaf.
+# * Root/branch matrices are stored in their entirety.
+# * Leaf matrices are stored as masks of their parents (which are root/branch).
+# * The different levels can be divided in different folds (e.g., both ten-fold,
+# both five-fold, or one ten and one five, for example).
+# * Division of matrices is recursive, so you can have as many levels as you want.
+# * If a matrix has no children or parents (i.e., it's a singleton), it is stored
+# as a root/branch.
+#
+# == Database Storage
+# * Two classes of Entry in the database: Cell, EmptyRow (children of Entry).
+# * Empty columns are not stored, as these are not required for cross-validation.
+# * Empty rows mark genes which have no phenotypes in an organism.
+# * An organism that lacks a gene will have no empty row.
+# * When a test set is generated from a root/branch matrix, and removal of cells
+# causes a row to become empty, an EmptyRow is added to the test set matrix.
+#
+# == Working Directory
+# Since matrix calculations occur outside of the Rails environment -- typically
+# as binaries or scripts executed through the shell -- matrices must be output
+# to the filesystem.
+#
+# The function `prepare_inputs` is responsible for initializing the working
+# directory, which is in `crossval/tmp/work`.
+#
+# Each root/branch matrix has its own working directory in `tmp/work`, with the
+# directory name consisting of 'matrix_' followed by the unique ID for the
+# matrix. For example, the Human non-random matrix is `tmp/work/matrix_1/`.
+#
+# The matrix directory includes, at a bare minimum:
+# * `genes.Sp`, a list of the unique rows in the matrix (typically by Entrez
+# human gene ID)
+# * `genes_phenes.Sp`, a list of the cells in the matrix. The format of this
+# matrix is one line per cell, with the row (gene ID) in the first table column
+# and the column (phenotype ID) in the second table column.
+#
+# Note that Sp represents the species abbreviation, e.g., 'Hs'. If the matrix is
+# a randomization, the suffix will be Spr, e.g., 'Hsr'.
+#
+# In addition, if test sets have been generated for the matrix, these will be
+# given by the identifier `testset.`; followed by the number of children
+# (immediate descendents) the matrix has; a dash; and the number of this
+# particular test set (starting at 0). For example, matrix 1 has `testset.10-0`
+# through `testset.10-9`. Each test set is formatted in the same way as
+# `genes_phenes.Sp`.
+#
+# = Subdirectories
+# Each matrix working directory may contain multiple sub-directories which
+# function as working directories for experiments. These are named in the same
+# manner as matrix working directories, e.g., `experiment_1` for the Experiment
+# with database ID 1.
+#
+# The contents of these directories are given in the docs for the Experiment
+# class (and its children as appropriate).
 class Matrix < ActiveRecord::Base
   acts_as_tree :order => "cardinality"
   acts_as_commentable
