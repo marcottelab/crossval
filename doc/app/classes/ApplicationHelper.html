@@ -83,6 +83,17 @@ application.
 
    </div>
 
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000316">add_nested_link</a>&nbsp;&nbsp;
+      <a href="#M000317">new_nested_fields</a>&nbsp;&nbsp;
+      <a href="#M000315">remove_nested_link</a>&nbsp;&nbsp;
+      <a href="#M000314">select_experiment</a>&nbsp;&nbsp;
+      <a href="#M000313">select_matrix</a>&nbsp;&nbsp;
+      </div>
+    </div>
 
   </div>
 
@@ -99,6 +110,129 @@ application.
 
 
     <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000316" class="method-detail">
+        <a name="M000316"></a>
+
+        <div class="method-heading">
+          <a href="#M000316" class="method-signature">
+          <span class="method-name">add_nested_link</span><span class="method-args">(name, nested, nested_type, form_builder)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000316-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000316-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/helpers/application_helper.rb, line 16</span>
+16:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_nested_link</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">nested</span>, <span class="ruby-identifier">nested_type</span>, <span class="ruby-identifier">form_builder</span>)
+17:     <span class="ruby-identifier">fields</span> = <span class="ruby-identifier">escape_javascript</span>(<span class="ruby-identifier">new_nested_fields</span>(<span class="ruby-identifier">nested_type</span>, <span class="ruby-identifier">form_builder</span>))
+18:     <span class="ruby-identifier">link_to_function</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">h</span>(<span class="ruby-node">&quot;add_nested(this, \&quot;#{nested}\&quot;, \&quot;#{fields}\&quot;)&quot;</span>))
+19:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000317" class="method-detail">
+        <a name="M000317"></a>
+
+        <div class="method-heading">
+          <a href="#M000317" class="method-signature">
+          <span class="method-name">new_nested_fields</span><span class="method-args">(source, form_builder)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000317-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000317-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/helpers/application_helper.rb, line 21</span>
+21:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">new_nested_fields</span>(<span class="ruby-identifier">source</span>, <span class="ruby-identifier">form_builder</span>)
+22:     <span class="ruby-identifier">form_builder</span>.<span class="ruby-identifier">fields_for</span>(<span class="ruby-identifier">source</span>.<span class="ruby-identifier">pluralize</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">source</span>.<span class="ruby-identifier">camelize</span>.<span class="ruby-identifier">constantize</span>.<span class="ruby-identifier">new</span>, <span class="ruby-identifier">:child_index</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'NEW_RECORD'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+23:       <span class="ruby-identifier">render</span>(<span class="ruby-identifier">:partial</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">source</span>.<span class="ruby-identifier">underscore</span>, <span class="ruby-identifier">:locals</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-identifier">:f</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">f</span> })
+24:     <span class="ruby-keyword kw">end</span>
+25:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000315" class="method-detail">
+        <a name="M000315"></a>
+
+        <div class="method-heading">
+          <a href="#M000315" class="method-signature">
+          <span class="method-name">remove_nested_link</span><span class="method-args">(name, nested_type, form_builder)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000315-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000315-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/helpers/application_helper.rb, line 12</span>
+12:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">remove_nested_link</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">nested_type</span>, <span class="ruby-identifier">form_builder</span>)
+13:     <span class="ruby-identifier">form_builder</span>.<span class="ruby-identifier">hidden_field</span>(<span class="ruby-identifier">:_delete</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">link_to_function</span>(<span class="ruby-identifier">name</span>, <span class="ruby-node">&quot;remove_#{nested_type}(this)&quot;</span>)
+14:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000314" class="method-detail">
+        <a name="M000314"></a>
+
+        <div class="method-heading">
+          <a href="#M000314" class="method-signature">
+          <span class="method-name">select_experiment</span><span class="method-args">(form, field)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000314-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000314-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/helpers/application_helper.rb, line 8</span>
+ 8:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_experiment</span> <span class="ruby-identifier">form</span>, <span class="ruby-identifier">field</span>
+ 9:     <span class="ruby-identifier">form</span>.<span class="ruby-identifier">collection_select</span> <span class="ruby-identifier">field</span>, <span class="ruby-constant">Experiment</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:all</span>, <span class="ruby-identifier">:order</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:id</span>), <span class="ruby-identifier">:id</span>, <span class="ruby-identifier">:unique_descriptor</span>
+10:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000313" class="method-detail">
+        <a name="M000313"></a>
+
+        <div class="method-heading">
+          <a href="#M000313" class="method-signature">
+          <span class="method-name">select_matrix</span><span class="method-args">(form, field)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000313-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000313-source">
+<pre>
+   <span class="ruby-comment cmt"># File app/helpers/application_helper.rb, line 4</span>
+4:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_matrix</span> <span class="ruby-identifier">form</span>, <span class="ruby-identifier">field</span>
+5:     <span class="ruby-identifier">form</span>.<span class="ruby-identifier">collection_select</span> <span class="ruby-identifier">field</span>, <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:all</span>, <span class="ruby-identifier">:order</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:id</span>), <span class="ruby-identifier">:id</span>, <span class="ruby-identifier">:unique_descriptor</span>
+6:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
 
 
   </div>

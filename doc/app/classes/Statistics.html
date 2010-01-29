@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Statistics</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Statistics</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/statistics/roc_rb.html">
+                lib/statistics/roc.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+require &#8216;array_ext&#8216;
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000281">positives_and_negatives</a>&nbsp;&nbsp;
+      <a href="#M000280">sort_rows_by_distance</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Statistics/ROC.html" class="link">Statistics::ROC</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000281" class="method-detail">
+        <a name="M000281"></a>
+
+        <div class="method-heading">
+          <a href="#M000281" class="method-signature">
+          <span class="method-name">positives_and_negatives</span><span class="method-args">(known_correct, guess_to_priority, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns lists of positives (true, false) and negatives (true, false) as a
+hash. Arguments:
+</p>
+<ul>
+<li>known_correct: a list of keys which are known to be true.
+
+</li>
+<li>guess_to_priority: hash from key to a distance metric of some sort.
+
+</li>
+</ul>
+<p>
+The distance metric should be normalized to between 0 (false) and 1 (true),
+and represents the prediction (whether we think it&#8216;s true or false).
+</p>
+<p>
+You can also set a :threshold in options, which is 0 by default. Anything
+greater than :threshold will be counted as predicted, and anything less
+than or equal to it will be counted as not predicted.
+</p>
+<p>
+Returned hash shall have keys :true_positives, :true_negatives,
+:false_positives, and :false_negatives.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000281-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000281-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/statistics/roc.rb, line 172</span>
+172:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">positives_and_negatives</span>(<span class="ruby-identifier">known_correct</span>, <span class="ruby-identifier">guess_to_priority</span>, <span class="ruby-identifier">options</span> = {})
+173:     <span class="ruby-identifier">opts</span> = {
+174:       <span class="ruby-identifier">:threshold</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+175:     }.<span class="ruby-identifier">merge</span> <span class="ruby-identifier">options</span>
+176: 
+177:     <span class="ruby-identifier">tp</span> = [] <span class="ruby-comment cmt"># true positives</span>
+178:     <span class="ruby-identifier">fp</span> = [] <span class="ruby-comment cmt"># false pos</span>
+179:     <span class="ruby-identifier">tn</span> = [] <span class="ruby-comment cmt"># true neg</span>
+180:     <span class="ruby-identifier">fn</span> = [] <span class="ruby-comment cmt"># false neg</span>
+181: 
+182:     <span class="ruby-identifier">guess_to_priority</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">guess</span>, <span class="ruby-identifier">priority</span><span class="ruby-operator">|</span>
+183:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">priority</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:threshold</span>]
+184:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">known_correct</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">guess</span>)
+185:           <span class="ruby-identifier">tp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">guess</span>
+186:         <span class="ruby-keyword kw">else</span>
+187:           <span class="ruby-identifier">fp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">guess</span>
+188:         <span class="ruby-keyword kw">end</span>
+189:       <span class="ruby-keyword kw">else</span>
+190:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">known_correct</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">guess</span>)
+191:           <span class="ruby-identifier">fn</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">guess</span>
+192:         <span class="ruby-keyword kw">else</span>
+193:           <span class="ruby-identifier">tn</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">guess</span>
+194:         <span class="ruby-keyword kw">end</span>
+195:       <span class="ruby-keyword kw">end</span>
+196:     <span class="ruby-keyword kw">end</span>
+197: 
+198:     { <span class="ruby-identifier">:true_positives</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">tp</span>,
+199:       <span class="ruby-identifier">:true_negatives</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">tn</span>,
+200:       <span class="ruby-identifier">:false_positives</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">fp</span>,
+201:       <span class="ruby-identifier">:false_negatives</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">fn</span> }
+202:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000280" class="method-detail">
+        <a name="M000280"></a>
+
+        <div class="method-heading">
+          <a href="#M000280" class="method-signature">
+          <span class="method-name">sort_rows_by_distance</span><span class="method-args">(row_to_distance)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Given a hash from row to distance, return the rows in sorted order (least
+to most likely)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000280-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000280-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/statistics/roc.rb, line 152</span>
+152:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sort_rows_by_distance</span>(<span class="ruby-identifier">row_to_distance</span>)
+153:     <span class="ruby-identifier">row_to_distance</span>.<span class="ruby-identifier">sort</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">b</span>,<span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>[<span class="ruby-value">1</span>] }.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">first</span> }
+154:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

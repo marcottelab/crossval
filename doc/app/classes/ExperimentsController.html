@@ -65,8 +65,8 @@
         <tr class="top-aligned-row">
             <td><strong>Parent:</strong></td>
             <td>
-                <a href="ApplicationController.html">
-                ApplicationController
+                <a href="MatrixGenericController.html">
+                MatrixGenericController
                </a>
             </td>
         </tr>
@@ -88,7 +88,11 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000110">run</a>&nbsp;&nbsp;
+      <a href="#M000192">edit</a>&nbsp;&nbsp;
+      <a href="#M000194">index</a>&nbsp;&nbsp;
+      <a href="#M000193">new</a>&nbsp;&nbsp;
+      <a href="#M000190">run</a>&nbsp;&nbsp;
+      <a href="#M000191">show</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -110,27 +114,135 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000110" class="method-detail">
-        <a name="M000110"></a>
+      <div id="method-M000192" class="method-detail">
+        <a name="M000192"></a>
 
         <div class="method-heading">
-          <a href="#M000110" class="method-signature">
+          <a href="#M000192" class="method-signature">
+          <span class="method-name">edit</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set up redirects to the proper controllers
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000192-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000192-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/experiments_controller.rb, line 24</span>
+24:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">edit</span>
+25:     <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
+26:     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">correct_child_url</span>(<span class="ruby-identifier">:edit</span>)
+27:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000194" class="method-detail">
+        <a name="M000194"></a>
+
+        <div class="method-heading">
+          <a href="#M000194" class="method-signature">
+          <span class="method-name">index</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000194-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000194-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/experiments_controller.rb, line 34</span>
+34:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">index</span>
+35:     <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
+36:     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">correct_child_url</span>(<span class="ruby-identifier">:index</span>)
+37:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000193" class="method-detail">
+        <a name="M000193"></a>
+
+        <div class="method-heading">
+          <a href="#M000193" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000193-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000193-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/experiments_controller.rb, line 29</span>
+29:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">new</span>
+30:     <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
+31:     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">correct_child_url</span>(<span class="ruby-identifier">:new</span>)
+32:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000190" class="method-detail">
+        <a name="M000190"></a>
+
+        <div class="method-heading">
+          <a href="#M000190" class="method-signature">
           <span class="method-name">run</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000110-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000110-source">
+            onclick="toggleCode('M000190-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000190-source">
 <pre>
    <span class="ruby-comment cmt"># File app/controllers/experiments_controller.rb, line 2</span>
 2:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>
 3:     <span class="ruby-constant">Workers</span><span class="ruby-operator">::</span><span class="ruby-constant">FrameWorker</span>.<span class="ruby-identifier">async_run</span>(<span class="ruby-identifier">:experiment_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>])
 4:     <span class="ruby-comment cmt"># Inform user.</span>
-5:     <span class="ruby-identifier">flash</span>[<span class="ruby-identifier">:notice</span>] = <span class="ruby-node">&quot;Running experiment #{params[:id]}&quot;</span>
-6:     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">matrices_url</span>
-7:   <span class="ruby-keyword kw">end</span>
+5:     <span class="ruby-identifier">flash</span>[<span class="ruby-identifier">:notice</span>] = <span class="ruby-node">&quot;Queueing experiment #{params[:id]}&quot;</span>
+6: 
+7:     <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
+8:     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-ivar">@matrix</span>)
+9:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000191" class="method-detail">
+        <a name="M000191"></a>
+
+        <div class="method-heading">
+          <a href="#M000191" class="method-signature">
+          <span class="method-name">show</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+GET /experiments/1 GET /experiments/1.xml
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000191-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000191-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/experiments_controller.rb, line 13</span>
+13:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show</span>
+14:     <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
+15:     <span class="ruby-ivar">@flot</span>        = <span class="ruby-identifier">plot_experiment</span>(<span class="ruby-ivar">@experiment</span>)
+16: 
+17:     <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
+18:       <span class="ruby-identifier">format</span>.<span class="ruby-identifier">html</span> { <span class="ruby-identifier">render_polymorphic_template</span>(<span class="ruby-value str">'show'</span>)}<span class="ruby-comment cmt"># show.html.erb</span>
+19:     <span class="ruby-keyword kw">end</span>
+20:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

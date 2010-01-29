@@ -86,9 +86,9 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000102">&lt;=&gt;</a>&nbsp;&nbsp;
-      <a href="#M000101">abbrev_to_value</a>&nbsp;&nbsp;
-      <a href="#M000100">new</a>&nbsp;&nbsp;
+      <a href="#M000154">&lt;=&gt;</a>&nbsp;&nbsp;
+      <a href="#M000153">abbrev_to_value</a>&nbsp;&nbsp;
+      <a href="#M000152">new</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -123,19 +123,19 @@
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000100" class="method-detail">
-        <a name="M000100"></a>
+      <div id="method-M000152" class="method-detail">
+        <a name="M000152"></a>
 
         <div class="method-heading">
-          <a href="#M000100" class="method-signature">
+          <a href="#M000152" class="method-signature">
           <span class="method-name">new</span><span class="method-args">(abbrev)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000100-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000100-source">
+            onclick="toggleCode('M000152-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000152-source">
 <pre>
    <span class="ruby-comment cmt"># File lib/species.rb, line 2</span>
 2:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> <span class="ruby-identifier">abbrev</span>
@@ -148,54 +148,60 @@
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000102" class="method-detail">
-        <a name="M000102"></a>
+      <div id="method-M000154" class="method-detail">
+        <a name="M000154"></a>
 
         <div class="method-heading">
-          <a href="#M000102" class="method-signature">
+          <a href="#M000154" class="method-signature">
           <span class="method-name">&lt;=&gt;</span><span class="method-args">(rhs)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000102-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000102-source">
+            onclick="toggleCode('M000154-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000154-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/species.rb, line 19</span>
-19:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">rhs</span>
-20:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">rhs</span>.<span class="ruby-identifier">value</span>
-21:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/species.rb, line 25</span>
+25:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">rhs</span>
+26:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">rhs</span>.<span class="ruby-identifier">value</span>
+27:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000101" class="method-detail">
-        <a name="M000101"></a>
+      <div id="method-M000153" class="method-detail">
+        <a name="M000153"></a>
 
         <div class="method-heading">
-          <a href="#M000101" class="method-signature">
+          <a href="#M000153" class="method-signature">
           <span class="method-name">abbrev_to_value</span><span class="method-args">(a)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000101-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000101-source">
+            onclick="toggleCode('M000153-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000153-source">
 <pre>
     <span class="ruby-comment cmt"># File lib/species.rb, line 8</span>
  8:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">abbrev_to_value</span> <span class="ruby-identifier">a</span>
  9:     <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">a</span>
-10:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Hs&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">1000</span>
-11:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Mm&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">800</span>
-12:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Dm&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">600</span>
-13:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Ce&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">500</span>
-14:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Sc&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">300</span>
-15:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;At&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">100</span>
-16:     <span class="ruby-keyword kw">end</span>
-17:   <span class="ruby-keyword kw">end</span>
+10:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Hs&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">1000</span>
+11:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Hsr&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">999</span>
+12:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Mm&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">800</span>
+13:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Mmr&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">799</span>
+14:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Dm&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">600</span>
+15:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Dmr&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">599</span>
+16:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Ce&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">500</span>
+17:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Cer&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">499</span>
+18:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Sc&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">300</span>
+19:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Scr&quot;</span><span class="ruby-operator">:</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value">299</span>
+20:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;At&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">100</span>
+21:     <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Atr&quot;</span><span class="ruby-operator">:</span>  <span class="ruby-keyword kw">return</span> <span class="ruby-value">99</span>
+22:     <span class="ruby-keyword kw">end</span>
+23:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
