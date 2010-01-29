@@ -1,0 +1,3 @@
+[submodule "vendor/plugins/acts_as_commentable"]
+	path = vendor/plugins/acts_as_commentable
+	url = git://github.com/jackdempsey/acts_as_commentable
