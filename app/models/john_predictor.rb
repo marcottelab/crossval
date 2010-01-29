@@ -1,3 +1,12 @@
+# This class is a slight simplification of JohnExperiment. Generally, most of its
+# behavior duplicates that child, and you may look at its docs for reference.
+#
+# The major differences:
+# * This class does not perform cross-validation. It only runs the phenomatrix
+#   binary on a single matrix, and produces predictions. As a result, it uses
+#   fewer matrix columns and offers fewer arguments to the binary.
+# * This class does not load any ROCs in after_run, since no ROCs can be calculated
+#   without cross-validation.
 class JohnPredictor < Experiment
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",
@@ -25,26 +34,36 @@ class JohnPredictor < Experiment
     s
   end
 
+  # Gives the filename for the set of genes that should be predicted. This file
+  # differs from genes.Sp in that it only contains those rows which are have
+  # associated columns (i.e., the rows which have non-zero entries). genes.Sp
+  # also contains empty rows, giving the complete set of orthologs in a matrix.
   def row_filename
     "predict_" + self.predict_matrix.row_title.pluralize
   end
 
+  # Gives the filename for the set of phenotypes that should be predicted. This
+  # only includes those columns which have non-zero entries.
   def column_filename
     "predict_" + self.predict_matrix.column_title.pluralize
   end
 
+  # Absolute path to column file.
   def column_file_path
     self.root + self.column_filename
   end
 
+  # Absolute path to row file.
   def row_file_path
     self.root + self.row_filename
   end
 
+  # Tests for existence of column_filename at column_file_path
   def column_file_exists?
     File.exists?(self.column_file_path)
   end
 
+  # Tests for existence of row_filename at row_file_path
   def row_file_exists?
     File.exists?(self.row_file_path)
   end
@@ -63,6 +82,8 @@ class JohnPredictor < Experiment
     end
   end
 
+  # Specifies the path to the binary for performing the actual distance
+  # calculations and k-nearest neighbors.
   def bin_path
     Rails.root + "bin/#{Socket.gethostname}/phenomatrix"
   end  

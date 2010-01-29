@@ -1,6 +1,10 @@
 # The Experiment class is the base class for different types of analyses you can
 # run on matrices.
 #
+# This class is 'pure virtual.' That is, no real object should have Experiment
+# as its type. Instead, its functions should be inherited, modified, and utilized
+# by child classes.
+#
 # = Goals
 # * Reproducibility
 # * Parallelization of computational analyses (not necessarily on the same arch)
