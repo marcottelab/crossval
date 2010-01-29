@@ -13,3 +13,6 @@
 [submodule "vendor/plugins/yaml_db"]
 	path = vendor/plugins/yaml_db
 	url = git://github.com/ludicast/yaml_db.git
+[submodule "vendor/rails"]
+	path = vendor/rails
+	url = git://github.com/rails/rails.git
