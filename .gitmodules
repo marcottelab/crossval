@@ -1,3 +1,6 @@
 [submodule "vendor/plugins/acts_as_commentable"]
 	path = vendor/plugins/acts_as_commentable
 	url = git://github.com/jackdempsey/acts_as_commentable
+[submodule "vendor/plugins/acts_as_tree"]
+	path = vendor/plugins/acts_as_tree
+	url = git://github.com/rails/acts_as_tree
