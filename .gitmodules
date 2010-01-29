@@ -10,3 +10,6 @@
 [submodule "vendor/plugins/workling"]
 	path = vendor/plugins/workling
 	url = git://github.com/purzelrakete/workling.git
+[submodule "vendor/plugins/yaml_db"]
+	path = vendor/plugins/yaml_db
+	url = git://github.com/ludicast/yaml_db.git
