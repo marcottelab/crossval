@@ -7,3 +7,6 @@
 [submodule "vendor/plugins/flotomatic"]
 	path = vendor/plugins/flotomatic
 	url = git://github.com/xdotcommer/flotomatic
+[submodule "vendor/plugins/workling"]
+	path = vendor/plugins/workling
+	url = git://github.com/purzelrakete/workling.git
