@@ -4,16 +4,17 @@
 # = Goals
 # * Sparse storage
 # * Multi-level tree structure for storing cross-validation training and test sets.
-# 
+#
+# = Design
 # == Tree Structure
 # * Matrices in tree are either root/branch or leaf.
 # * Root/branch matrices are stored in their entirety.
 # * Leaf matrices are stored as masks of their parents (which are root/branch).
 # * The different levels can be divided in different folds (e.g., both ten-fold,
-# both five-fold, or one ten and one five, for example).
+#   both five-fold, or one ten and one five, for example).
 # * Division of matrices is recursive, so you can have as many levels as you want.
 # * If a matrix has no children or parents (i.e., it's a singleton), it is stored
-# as a root/branch.
+#   as a root/branch.
 #
 # == Database Storage
 # * Two classes of Entry in the database: Cell, EmptyRow (children of Entry).
@@ -21,7 +22,7 @@
 # * Empty rows mark genes which have no phenotypes in an organism.
 # * An organism that lacks a gene will have no empty row.
 # * When a test set is generated from a root/branch matrix, and removal of cells
-# causes a row to become empty, an EmptyRow is added to the test set matrix.
+#   causes a row to become empty, an EmptyRow is added to the test set matrix.
 #
 # == Working Directory
 # Since matrix calculations occur outside of the Rails environment -- typically
@@ -37,10 +38,10 @@
 #
 # The matrix directory includes, at a bare minimum:
 # * `genes.Sp`, a list of the unique rows in the matrix (typically by Entrez
-# human gene ID)
+#   human gene ID)
 # * `genes_phenes.Sp`, a list of the cells in the matrix. The format of this
-# matrix is one line per cell, with the row (gene ID) in the first table column
-# and the column (phenotype ID) in the second table column.
+#   matrix is one line per cell, with the row (gene ID) in the first table column
+#   and the column (phenotype ID) in the second table column.
 #
 # Note that Sp represents the species abbreviation, e.g., 'Hs'. If the matrix is
 # a randomization, the suffix will be Spr, e.g., 'Hsr'.
@@ -52,7 +53,7 @@
 # through `testset.10-9`. Each test set is formatted in the same way as
 # `genes_phenes.Sp`.
 #
-# = Subdirectories
+# == Subdirectories
 # Each matrix working directory may contain multiple sub-directories which
 # function as working directories for experiments. These are named in the same
 # manner as matrix working directories, e.g., `experiment_1` for the Experiment

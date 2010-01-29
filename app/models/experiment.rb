@@ -1,3 +1,102 @@
+# The Experiment class is the base class for different types of analyses you can
+# run on matrices.
+#
+# = Goals
+# * Reproducibility
+# * Parallelization of computational analyses (not necessarily on the same arch)
+# * Encapsulation of external binaries and scripts
+# * Data analysis and visualization
+#
+# = Design
+# == Database Storage
+# * A single prediction Matrix, predict_matrix, which is the matrix of the
+#   species for which we want to make predictions.
+# * Multiple source matrix linkers, of type Source, which point to the matrices
+#   from which the predictions will be generated.
+# * One column for each specification needed to run the binary or script which
+#   performs the actual calculations. For example, JohnExperiment uses method,
+#   k, min_genes, and several others. Not every sub-type need use every column.
+# * The run_result, which is either nil or the exit code given by the script or
+#   binary when it finished.
+# * started_at, which specifies when the user executed Experiment.run.
+# * completed_at, which specifies when the Experiment finished.
+# * updated_at and created_at, which are Rails default columns giving the last
+#   edit as well as creation.
+# * Certain sub-types may have additional database associations. For example,
+#   each JohnExperiment and MartinExperiment will have many Roc instances, which
+#   store the ROC scores for each experiment (by phenotype).
+#
+# == Working Directory
+# Since matrix and experiment calculations occur outside of the Rails
+# environment -- typically as binaries or scripts executed through the shell --
+# each unique instance of the Experiment class makes use of files stored in the
+# instance's working directory in the filesystem.
+#
+# As with Matrix, the function prepare_inputs is responsible for initializing
+# the working directory, which is within the predict_matrix Matrix's working
+# directory (e.g., crossval/tmp/work/matrix_1/experiment_1).
+#
+# prepare_inputs, based on the predict_matrix and sources, copies the necessary
+# input files into the experiment working directory from the matrix working
+# directory. It is best to make sure the Matrix working directories have already
+# been created (using Matrix::prepare_inputs on a specific matrix instance). For example, do:
+#
+#  m = Matrix.find 1
+#  m.prepare_inputs
+#  x = m.experiments.first
+#  x.prepare_inputs
+#
+# Each child class of Experiment should itself specify the inputs to copy (or
+# generate).
+#
+# == Outputs
+# Output files are mostly stored directly in the experiment working directory,
+# and differ between JohnExperiment and MartinExperiment.
+#
+# Files that should appear in both:
+# * log.timestamp, e.g., log.20100128222110. The timestamp is given by started_at.
+#   This file contains the standard output console results of the execution.
+# * error_log.timestamp, e.g., error_log.20100128222110, containing the standard
+#   error console results of the execution.
+# * One or more predictions directories.
+#
+# == Predictions Directories (Outputs of the Binary or Script)
+# These should be named corresponding to the test set, for cross-validation;
+# e.g., when testset.10-0 is withheld, predictions0 should be generated.
+#
+# Each predictions directory should contain one file per phenotype to be
+# predicted (e.g., one for each phenotype/column in the predict_matrix).
+#
+# Each phenotype prediction file should have two header lines. They really don't
+# do anything, so you can use the first one for comments. The second one gives
+# the contents of each column, but again -- isn't really used.
+#
+# There should be two columns in the prediction files -- one for the gene (row
+# in the matrix) and the other for the likelihood score / probability predicted
+# that this gene causes the phenotype.
+#
+# After the binary finishes running, the sort script will be executed by your
+# Experiment object. This takes the results in the predictions directories and
+# sorts each phenotype in to a corresponding file in the results directory. The
+# results directory is named as results.timestamp, e.g., results.20100128222110,
+# and the timestamp should correspond to the log and error_log files.
+#
+# The sort files will be in descending order (using Unix sort) by prediction
+# score.
+#
+# The prediction score should be between 0 and 1, and may or may not represent a
+# probability.
+#
+# Upon completion of sort, the statistical module will read in the results and
+# compute AUCs for each phenotype. These AUCs are stored in Roc objects. Again,
+# each Experiment has_many :rocs, so you can access them as x.rocs (where x is
+# an Experiment). You can also view them by going to the show action for an
+# Experiment in your web browser, e.g.:
+#
+# http://draco.icmb.utexas.edu:3002/matrices/1/experiments/17
+#
+# Note that the Matrix (1) in the above path is the predict_matrix for Experiment 17.
+#
 class Experiment < ActiveRecord::Base
   acts_as_commentable
   belongs_to :predict_matrix, :class_name => "Matrix", :readonly => true
