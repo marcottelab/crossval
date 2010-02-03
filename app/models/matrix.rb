@@ -83,7 +83,10 @@ class Matrix < ActiveRecord::Base
   end
 
 
-  # Make a copy of the matrix (does not include its children).
+  # Make a copy of the matrix (does not include its children) in memory.
+  # This also copies all of the cells and empty rows in the matrix.
+  # Do not attempt to use it on a test set. This behavior is not tested.
+  # Finally note that the matrix returned will not yet be saved.
   def copy
     matrix_copy = self.clone
     matrix_copy.title = self.title + " copy"
@@ -96,15 +99,16 @@ class Matrix < ActiveRecord::Base
     matrix_copy
   end
 
-  def copy_and_save
-    matrix_copy = self.clone
-    matrix_copy.save!
-  end
-
+  # Makes an empty matrix with the same number of rows as the original in memory,
+  # but does not save it.
+  #
+  # Since the matrix is stored in row format, no guarantee is made about the
+  # number of columns.
+  #
+  # This function is called by copy_and_randomize.
   def make_empty_copy uqr = nil
     matrix_copy = self.clone
     matrix_copy.title = self.title + " copy"
-
 
     # Get the rows and columns
     uqr = self.unique_rows if uqr.nil?
