@@ -5,6 +5,39 @@
 # * Sparse storage
 # * Multi-level tree structure for storing cross-validation training and test sets.
 #
+# = Usage
+# == Entering Matrix Data
+# This is something I haven't done in a while. I can't remember off the top of my
+# head what the function is.
+#
+# What I can tell you, though, is you need the tables in standard phenolog format.
+# You also need to keep in mind that not every gene has phenotypes associated, so
+# matrices need to have the empty rows registered. There is no need to register
+# empty columns.
+#
+# == Cross-validation
+# Once you've entered matrix data (for a single matrix), if you want to cross-
+# validate, you need to create n child matrices which each contain 1/n rows.
+# (There is currently no way to do cell-based cross-validation, as that would
+# require a non-sparse matrix format.)
+#
+# Child matrices can be created using the fractalize function, which takes as an
+# argument the number (or numbers) of folds you want. So, to do single-stage
+# cross-validation, you'd do:
+#
+#  matrix.fractalize 10
+#
+# To do two-stage five-fold cross-validation, you use:
+#
+#  matrix.fractalize [5,5]
+#
+# Don't forget to save the parent matrix after the generation of children is
+# complete.
+#
+# WARNING: <i>Do not run fractalize more than once on a single matrix.</i> If
+# you want to do multiple types of cross-validation, you need to copy the matrix
+# and then save the copy -- and after that you can run fractalize on the copy.
+#
 # = Design
 # == Tree Structure
 # * Matrices in tree are either root/branch or leaf.
@@ -85,8 +118,12 @@ class Matrix < ActiveRecord::Base
 
   # Make a copy of the matrix (does not include its children) in memory.
   # This also copies all of the cells and empty rows in the matrix.
+  #
   # Do not attempt to use it on a test set. This behavior is not tested.
-  # Finally note that the matrix returned will not yet be saved.
+  #
+  # Note that the matrix returned will not yet be saved.
+  #
+  # This will not copy sub-ordinates of the matrix (such as experiments).
   def copy
     matrix_copy = self.clone
     matrix_copy.title = self.title + " copy"
@@ -159,8 +196,14 @@ class Matrix < ActiveRecord::Base
   # Gives a metric describing the number of cells in the matrix as a fraction of
   # the size -- in terms of the number of cells per column.
   def density
-    cc = self.column_count
-    cc = self.parent.column_count if cc == 0
+    target = self
+    cc = target.column_count
+    
+    while cc == 0
+      target = target.parent
+      cc = target.column_count
+    end
+
     (self.number_of_unmasked_cells / cc.to_f).round
   end
 
@@ -199,7 +242,7 @@ SQL
 
   # Get all rows or all those with column j
   def rows(j = nil)
-    self.cells_by_row_or_column(:j, :i, j)
+    new_record? ? @built_rows : cells_by_row_or_column(:j, :i, j)
   end
 
   def cells_by_row_or_column(sym, other_sym, val = nil)
@@ -267,11 +310,13 @@ SQL
     end
   end
 
+  # Gives the number of rows in the root of the tree of matrices. That means if
+  # this is a cross-validation submatrix, we return the root's row count.
   def number_of_rows
     if self.parent_id.nil?
       self.row_count
     else
-      self.parent.row_count
+      self.parent.number_of_rows
     end
   end
 
@@ -498,35 +543,49 @@ SQL
     self.children.first.stages + 1 # recursive.
   end
 
-
   # Create n random subsets of this matrix, each of size (s * (n-1 / n)). If
   # supplied with a list, repeats recursively for each of the subsets.
   # If supplied with an integer, creates subsets which are of size (s / n),
   # which serve as masks.
-  def fractalize(folds, methods, shuffle=true)
+  #
+  # n is specified by folds, which can be a Fixnum or an Array (containing Fixnum).
+  #
+  # By setting shuffle to false, you're telling it not to randomize the rows that
+  # end up as test sets. (Having shuffle as true has no effect on the row or
+  # column contents. That is handled by copy_and_randomize.)
+  def fractalize(folds, shuffle=true)
+    # Convert to an array even if there is only one
+    folds = [folds] if folds.is_a?(Fixnum)
 
-    if folds.is_a?(Array)
-      fold    = folds.shift
-      meth    = methods.shift
-
-      STDERR.puts("fold is #{fold}, meth is #{meth}")
-      
-      raise(ArgumentError, "folds and methods must be the same size") unless folds.size == methods.size
-
-      if folds.size >= 1
-        self.fractalize_internal(fold, meth, shuffle)
-        # recurse
-        self.children.each do |child|
-          child.fractalize(folds, methods, shuffle)
-        end
-      else
-        self.mask_fractalize_internal fold, meth, shuffle
-      end
-    else
-      self.mask_fractalize_internal folds, methods, shuffle
-    end
+    # Set up the methods for fractalization -- there should be one for each of
+    # the entries in the folds argument
+    methods = []
+    folds.each { |fold|  methods << :row  }
+    
+    fractalize_by_method(folds, methods, shuffle)
   end
 
+  # Does the work for fractalize, but also allows cross-validation methods (row
+  # or cell) to be specified. This functionality was deprecated when we couldn't
+  # figure out how to do cell-based cross-validation.
+  #
+  # This function used to be called simply fractalize. You should use that
+  # function instead.
+  #
+  # Note that folds and methods must both be arrays, and they must have equal
+  # size.
+  def fractalize_by_method(folds, methods, shuffle=true)
+
+    unless folds.is_a?(Array) && methods.is_a?(Array) && folds.size > 0
+      raise ArgumentError("folds and methods must be arrays of equal non-zero size")
+      raise(ArgumentError, "folds and methods must be the same size") unless folds.size == methods.size
+    end
+
+    fractalize_by_method_internal(folds, methods, shuffle)
+  end
+
+  # This should maybe become a helper function. Simply provides a list of the
+  # child matrix ids joined by commas (as a String).
   def list_children
     self.children.collect { |x| x.id }.join(", ")
   end
@@ -558,6 +617,24 @@ SQL
   end
 
 protected
+  # fractalize_by_method without the error-checking.
+  def fractalize_by_method_internal folds, methods, shuffle
+    # Pop the top value.
+    fold    = folds.shift
+    meth    = methods.shift
+    STDERR.puts("fold is #{fold}, meth is #{meth}")
+
+    if folds.size >= 1
+      self.fractalize_internal(fold, meth, shuffle)
+      # recurse
+      self.children.each do |child|
+        child.fractalize_by_method_internal(folds.dup, methods.dup, shuffle)
+      end
+    else
+      self.mask_fractalize_internal fold, meth, shuffle
+    end
+  end
+
   # Used for returning either row or column of every entry corresponding to this matrix.
   def unique_entry_value_sql(field, count = false)
     sql = "SELECT "
@@ -670,15 +747,26 @@ SQL
   # Get the set of cells or rows to fractalize. Called only by mask_fractalize_internal
   # and fractalize_internal.
   def set_to_fractalize meth, shuffle
+    if self.built_rows.size == 0
+      if new_record?
+        raise StandardError, "Looks like an object was built but not saved and therefore its children are hidden."
+      else
+        raise StandardError, "Looks like you saved an empty object and want to fractalize it, but that seems silly."
+      end
+    end
+
     my_set = nil
     if meth == :cell
       my_set = self.cells.dup
       my_set.shuffle! if shuffle
     elsif meth == :row
-      my_set = self.rows
-      my_set.shuffle!
+      my_set = self.built_rows.dup
+      raise(StandardError, "dup didn't work") if my_set.size == 0
+      my_set.shuffle! if shuffle
+      raise(StandardError, "shuffle broken") if my_set.size == 0
     else
-      raise ArgumentError, "method #{meth} not recognized"
+      STDERR.puts("meth type is #{meth.class.to_s}")
+      raise ArgumentError, "method #{meth.to_s} not recognized"
     end
     my_set
   end
@@ -688,9 +776,14 @@ SQL
   # whole matrices.
   # This function doesn't mess with empty row entries, only cell entries.
   def mask_fractalize_internal fold, meth, shuffle
-    # self.divisions = fold
     
-    divs     = split_set(self.set_to_fractalize(meth, shuffle), fold)
+    if meth.is_a?(String)
+      raise ArgumentError, "meth is a string, but this function requires symbol :row or :cell"
+    elsif meth.is_a?(Array)
+      raise ArgumentError, "this function requires meth be a symbol, not an array"
+    end
+
+    divs     = split_set(set_to_fractalize(meth, shuffle), fold)
     self.build_submatrices! fold
 
     if meth == :cell
@@ -704,16 +797,36 @@ SQL
     elsif meth == :row
       (0...fold).each do |n|
         # Link masking cells to each matrix.
-        puts "row div count is #{divs[n].size}"
+        STDERR.puts "row div count is #{divs[n].size}"
         divs[n].each do |row|
           self.cells_by_row(row).each do |cell|
             self.children[n].cells.build(:i => cell.i, :j => cell.j)
           end
         end
+        # Pass information necessary for recursion to children
+        self.children[n].built_rows = divs[n].dup
       end
+    else
+      raise ArgumentError, "Could not interpret meth (type: #{meth.class.to_s})"
     end
 
     self.children
+  end
+
+  # Set an in-memory property for matrices that have been built but not saved.
+  # This keeps us from having to query the database during recursion on unsaved
+  # objects.
+  def built_rows= r
+    @built_rows = r
+  end
+
+  # Returns saved rows if the property is not set.
+  def built_rows
+    if defined?(@built_rows)
+      @built_rows
+    else
+      rows
+    end
   end
   
 
@@ -738,7 +851,8 @@ SQL
       (0...fold).each do |n|
         # Link masking cells to each matrix.
         puts "row union count is #{divs[n].size}"
-        combine_all_but_one(divs, n).each do |row|
+        children[n].built_rows = combine_all_but_one(divs,n)
+        children[n].built_rows.each do |row|
           self.cells_by_row(row).each { |cell| self.children[n].cells.build(:i => cell.i, :j => cell.j) }
         end
       end
@@ -747,9 +861,14 @@ SQL
     self.children
   end
 
-  
   def cells_by_row i
-    self.cells.find(:all, :conditions => {:i => i})
+    if defined?(@built_rows)
+      target = self.parent
+      target = target.parent while target.new_record?
+      target.cells.find(:all, :conditions => {:i => i}).dup
+    else
+      self.cells.find(:all, :conditions => {:i => i})
+    end
   end
 
 
@@ -854,6 +973,7 @@ def infer_species_from_filename fn
 end
 
 def split_set item_set, num_pieces
+  raise(ArgumentError, "item_set is empty") if item_set.size == 0
   num_per_piece  = Array.new(num_pieces)
   results        = Array.new(num_pieces)
   startpos       = 0

@@ -23,7 +23,11 @@ module MatricesHelper
   end
 
   def fractional_density(matrix)
-    "<sup>#{matrix.density}</sup><i>/</i><sub>#{matrix.number_of_rows}</sub>"
+    if matrix.number_of_rows == 0
+      "&#8734;" # infinity (oops)
+    else
+      "<sup>#{matrix.density}</sup><i>/</i><sub>#{matrix.number_of_rows}</sub>"
+    end
   end
 
   # Display the link to run experiments for a matrix iff it's possible to run for
