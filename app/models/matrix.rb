@@ -116,6 +116,22 @@ class Matrix < ActiveRecord::Base
   end
 
 
+  # This function will return true only if we have two-stage cross-validation
+  # set up for a matrix.
+  #
+  # It will be used when creating Experiments -- so we know when to clone them
+  # and put one on each child matrix instead of just the root.
+  #
+  # A fundamental assumption is that the tree is balanced (that if one child has
+  # 5 children, all children have 5 children). If you created the tree by hand,
+  # don't expect this to work.
+  def has_grandchildren?
+    return false if children.size == 0
+    return false if children.first.children.size == 0
+    true
+  end
+
+
   # Make a copy of the matrix (does not include its children) in memory.
   # This also copies all of the cells and empty rows in the matrix.
   #
