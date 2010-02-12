@@ -134,12 +134,16 @@ class Experiment < ActiveRecord::Base
   AVAILABLE_METHODS = {}
   AVAILABLE_DISTANCE_MEASURES = {}
 
+  # Avoid overriding these functions:
+  
   alias_method :this_sources, :sources
   # Override sources so they change along with those of the parent
   def sources; parent_id.nil? ? this_sources : parent.sources; end
   # Return the ancestor of this experiment or itself if there is no ancestor
   def ancestor_or_self; parent_id.nil? ? parent.ancestor_or_self : self ; end
 
+
+  # Most of these can be overridden, with care. That's not the same as *should*, though.
 
   # Print a title for this experiment
   def title
@@ -159,12 +163,8 @@ class Experiment < ActiveRecord::Base
     if predict_matrix.has_grandchildren?
 
       # Create one child experiment for each child (not grandchild) matrix
-      predict_matrix.children.each do |matrix|
-        child_experiment = dup
-        child_experiment.predict_matrix_id = matrix.id
-        child_experiment.parent_id = self.id
-        child_experiment.save!
-        
+      predict_matrix.children.each do |child_matrix|
+        child_experiment = Experiment.create!(:predict_matrix_id => child_matrix.id, :parent_id => self.id)
         child_experiment.prepare_inputs
       end
     else

@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20100208213742) do
     t.integer  "predict_matrix_id",                                              :null => false
     t.string   "method",            :limit => 200, :default => "naivebayes",     :null => false
     t.string   "distance_measure",  :limit => 200, :default => "hypergeometric", :null => false
-    t.string   "validation_type",                  :default => "row"
+    t.string   "validation_type",   :limit => 4,   :default => "row"
     t.integer  "k",                                :default => 1
     t.string   "arguments",         :limit => 200
     t.integer  "run_result"
