@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100113210334) do
+ActiveRecord::Schema.define(:version => 20100208213742) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20100113210334) do
     t.integer  "predict_matrix_id",                                              :null => false
     t.string   "method",            :limit => 200, :default => "naivebayes",     :null => false
     t.string   "distance_measure",  :limit => 200, :default => "hypergeometric", :null => false
-    t.string   "validation_type",                  :default => "row",            :null => false
+    t.string   "validation_type",                  :default => "row"
     t.integer  "k",                                :default => 1
     t.string   "arguments",         :limit => 200
     t.integer  "run_result"
@@ -52,10 +52,12 @@ ActiveRecord::Schema.define(:version => 20100113210334) do
     t.datetime "completed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "min_genes",                        :default => 0
+    t.integer  "min_genes"
     t.string   "type"
+    t.integer  "parent_id"
   end
 
+  add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
   add_index "experiments", ["predict_matrix_id"], :name => "index_experiments_on_predict_matrix_id"
 
   create_table "matrices", :force => true do |t|

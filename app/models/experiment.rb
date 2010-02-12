@@ -40,6 +40,10 @@
 # the working directory, which is within the predict_matrix Matrix's working
 # directory (e.g., crossval/tmp/work/matrix_1/experiment_1).
 #
+# Note that if we're not in the root of the Experiment tree (which mirrors the
+# Matrix tree but with one less level), we'll use the root's id for experiment
+# directories within the predict_matrix's matrix directory.
+#
 # prepare_inputs, based on the predict_matrix and sources, copies the necessary
 # input files into the experiment working directory from the matrix working
 # directory. It is best to make sure the Matrix working directories have already
@@ -103,6 +107,9 @@
 #
 class Experiment < ActiveRecord::Base
   acts_as_commentable
+
+  acts_as_tree
+
   belongs_to :predict_matrix, :class_name => "Matrix", :readonly => true
   delegate :column_species, :to => :predict_matrix
   alias :predict_species :column_species
@@ -118,20 +125,52 @@ class Experiment < ActiveRecord::Base
   # Make sure sources are valid
   validates_associated :sources
 
+  # Make sure child experiments are updated
+  after_create :prepare_children
+
+  # These things should be fetched from the parent if a parent is set.
+  delegate_to_parent :k, :validation_type, :distance_measure, :arguments, :method, :min_genes
+
   AVAILABLE_METHODS = {}
   AVAILABLE_DISTANCE_MEASURES = {}
-  
+
+  alias_method :this_sources, :sources
+  # Override sources so they change along with those of the parent
+  def sources; parent_id.nil? ? this_sources : parent.sources; end
+  # Return the ancestor of this experiment or itself if there is no ancestor
+  def ancestor_or_self; parent_id.nil? ? parent.ancestor_or_self : self ; end
+
+
   # Print a title for this experiment
   def title
     "#{self.argument_string} [predicting #{self.predict_matrix_id}]"
   end
 
+  # An absolutely unique identifier by which a user may identify an experiment
+  # in a drop-down list
   def unique_descriptor
-    "#{self.id}: #{self.title}"
+    "#{self.id}#{parent_descriptor_component}: #{self.title}"
   end
 
-  #def prepare_inputs
-  #end
+  
+  # Ensure child experiments have been created with the same set of parameters.
+  # Instructs those children to prepare_inputs
+  def prepare_children
+    if predict_matrix.has_grandchildren?
+
+      # Create one child experiment for each child (not grandchild) matrix
+      predict_matrix.children.each do |matrix|
+        child_experiment = dup
+        child_experiment.predict_matrix_id = matrix.id
+        child_experiment.parent_id = self.id
+        child_experiment.save!
+        
+        child_experiment.prepare_inputs
+      end
+    else
+      nil
+    end
+  end
   
   def dir_exists? dir
     File.exists?(dir)
@@ -141,15 +180,22 @@ class Experiment < ActiveRecord::Base
     dir_exists?(self.root)
   end
 
+  # Use this for the experiment's directory (within the matrix dir). If we're a
+  # child experiment, use the parent_id instead.
+  def directory_name
+    parent.nil? ? "experiment_#{self.id}" : parent.directory_name
+  end
+
+  # The root directory for the experiment
   def root
-    self.predict_matrix.root + "experiment_#{self.id}"
+    self.predict_matrix.root + directory_name
   end
 
   # Copy input files from each of the source matrices and the predict matrix.
   # Does nothing if the experiment directory already exists.
   def prepare_inputs_internal &block
     unless self.root_exists?
-      logger.info("Preparing new inputs for experiment #{self.id}")
+      logger.info("Preparing new inputs for matrix #{predict_matrix_id}, experiment #{self.id}")
 
       self.prepare_dir
 
@@ -159,6 +205,9 @@ class Experiment < ActiveRecord::Base
   
   # To be called by a Worker object, usually.
   def run
+    # Ensure that children have been run.
+    check_children_before_run
+
     before_run # sets and saves started_at
 
     Dir.chdir(self.root) do
@@ -192,8 +241,23 @@ class Experiment < ActiveRecord::Base
   #def argument_string
   #end
 
+  # Returns whether this (or its children) have all finished running.
   def has_been_run?
-    !self.total_auc.nil?
+    children.size == 0 ? !self.run_result.nil? : children.inject(true) { |all_run, child| all_run ||= child.has_been_run? }
+  end
+
+  # Returns whether this has finished running and has done so successfully
+  def has_run_successfully?
+    self.run_result == 0 && !self.total_auc.nil?
+  end
+
+  def children_have_been_run_successfully?
+    children.inject(true) { |all_run, child| all_run ||= (child.has_been_run? && child.children_have_been_run_successfully?) }
+  end
+
+  # Returns whether this (or its children) have all finished running.
+  def has_been_started?
+    children.size == 0 ? !self.started_at.nil? : children.inject(true) { |all_started, child| all_started ||= child.has_been_started? }
   end
 
   def aucs_file
@@ -231,21 +295,22 @@ class Experiment < ActiveRecord::Base
   # Be careful doing this -- particularly if this is being run in parallel, e.g.
   # jobs on different machines.
   def reset_for_new_run!
-    self.started_at   = nil
-    self.completed_at = nil
-    self.run_result   = nil
-    self.total_auc    = nil
-    self.save!
+    if children.size > 0
+      children.each do |child|
+        child.reset_for_new_run!
+      end
+    else
+      self.started_at   = nil
+      self.completed_at = nil
+      self.run_result   = nil
+      self.total_auc    = nil
+      self.save!
 
-    self.clean_predictions_dirs
-    self.clean_temporary_files
-
+      self.clean_predictions_dirs
+      self.clean_temporary_files
+    end
+    
     self # allow chaining
-  end
-
-  def reset_inputs
-    `rm -rf #{self.root}`
-    self.prepare_inputs unless self.sources.size == 0
   end
 
   def command_string
@@ -264,7 +329,7 @@ class Experiment < ActiveRecord::Base
   end
   
   def source_species
-    self.sources.collect{ |m| m.source_species }.sort{ |a,b| Species.new(b) <=> Species.new(a) }
+    sources.collect{ |m| m.source_species }.sort{ |a,b| Species.new(b) <=> Species.new(a) }
   end
 
   def source_species_to_s
@@ -280,6 +345,15 @@ protected
     self.save!
   end
 
+
+  def check_children_before_run
+    if children.size > 0
+      children.each do |child|
+        raise(Error, "Children must be run first") unless child.has_run_successfully?
+      end
+    end
+  end
+
   # Sort/calculate ROCs for an experiment. You can override this function for things
   # like JohnDistribution so you calculate other things instead of ROCs.
   def after_run
@@ -287,13 +361,15 @@ protected
   end
 
   def sort_results_and_calculate_rocs!
-    # Call the script which sorts results into a separate directory.
-    self.sort_results
+    if children.size == 0
+      # Call the script which sorts results into a separate directory.
+      self.sort_results
 
-    # Calculating the AUCs also marks the task as completed and saves the record.
-    STDERR.puts("Calling calculate_rocs!")
-    self.calculate_rocs!
-    STDERR.puts("Done calling calculate_rocs!")
+      # Calculating the AUCs also marks the task as completed and saves the record.
+      STDERR.puts("Calling calculate_rocs!")
+      self.calculate_rocs!
+      STDERR.puts("Done calling calculate_rocs!")
+    end
   end
 
   def calculate_rocs!
@@ -354,17 +430,22 @@ protected
   # Only call from within prepare_inputs_internal, as this guarantees we're in
   # the correct directory and such.
   def prepare_standard_inputs
-      cell_files = self.copy_source_matrix_inputs
+    cell_files = self.copy_source_matrix_inputs
 
-      # Generate predict_rows file
-      self.generate_row_file(cell_files)
-      self.generate_column_file
+    # Generate predict_rows file
+    self.generate_row_file(cell_files)
+    self.generate_column_file
 
-      # Only copy the predict matrix cells file if it didn't come from one of the
-      # source matrices.
-      unless cell_files.include?(self.predict_matrix.cell_file_path)
-        FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
-      end
+    # Only copy the predict matrix cells file if it didn't come from one of the
+    # source matrices.
+    unless cell_files.include?(self.predict_matrix.cell_file_path)
+      FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
+    end
+  end
+
+  # Called by unique_descriptor (only)
+  def parent_descriptor_component
+    parent_id.nil? ? nil : "(#{parent_id})"
   end
 end
 

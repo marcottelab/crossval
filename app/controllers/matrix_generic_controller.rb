@@ -37,6 +37,6 @@ protected
   end
 
   def correct_child_url action
-    send correct_child_url_function(action), @matrix, @experiment
+    send correct_child_url_function(action), @matrix, @experiment.ancestor_or_self
   end
 end

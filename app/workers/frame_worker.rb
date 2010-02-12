@@ -12,11 +12,15 @@ module Workers
       raise(ArgumentError, "Experiment ID not found") if experiment.nil?
       raise(ArgumentError, "Experiment #{opts[:experiment_id]} has already been run") if experiment.has_been_run?
 
-      logger.info("Running experiment on id #{opts[:experiment_id]}")
+      if experiment.children_have_been_run_successfully?
+        logger.info("Running experiment on id #{opts[:experiment_id]}")
 
-      experiment.run
+        experiment.run
 
-      logger.info("DONE running experiment on id #{opts[:experiment_id]}")
+        logger.info("DONE running experiment on id #{opts[:experiment_id]}")
+      else
+        logger.error("Unable to run experiment: children not run successfully.")
+      end
     end
   end
 end
