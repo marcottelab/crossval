@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(:version => 20100208213742) do
 
   create_table "experiments", :force => true do |t|
     t.integer  "predict_matrix_id",                :null => false
-    t.string   "method",            :limit => 200, :null => false
-    t.string   "distance_measure",  :limit => 200, :null => false
+    t.string   "method",            :limit => 200
+    t.string   "distance_measure",  :limit => 200
     t.string   "validation_type",   :limit => 4
     t.integer  "k"
     t.string   "arguments",         :limit => 200

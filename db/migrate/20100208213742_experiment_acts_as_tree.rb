@@ -11,10 +11,10 @@ class ExperimentActsAsTree < ActiveRecord::Migration
     #
     # As such, we want to not require them any longer, and remove default values. These can
     # be set within Rails instead.
-    change_column :experiments, :method, :string, :limit => 200, :default => nil
-    change_column :experiments, :distance_measure, :string, :limit => 200, :default => nil
-    change_column :experiments, :validation_type, :string, :limit => 4, :default => nil
-    change_column :experiments, :k, :integer, :default => nil
+    change_column :experiments, :method, :string, :limit => 200, :default => nil, :null => true
+    change_column :experiments, :distance_measure, :string, :limit => 200, :default => nil, :null => true
+    change_column :experiments, :validation_type, :string, :limit => 4, :default => nil, :null => true
+    change_column :experiments, :k, :integer, :default => nil, :null => true
   end
 
   def self.down
