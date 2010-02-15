@@ -78,6 +78,7 @@ class JohnPredictor < Experiment
   # Remove intermediate distance and common items files.
   def clean_temporary_files
     Dir.chdir(self.root) do
+      message "Cleaning experiment temporary files in #{self.root}"
       `rm -f *.distances *.pdistances *.common *.pcommon`
     end
   end
@@ -98,23 +99,53 @@ protected
   # Copy the inputs from the source matrices. Returns a list of cell files so we
   # can compute the rows that we're capable of predicting (e.g., predict_genes).
   def copy_source_matrix_inputs(dir = self.root)
+    message("Copying experiment source input files in #{self.root}")
     cell_files = []
-    self.source_matrices.each do |source_matrix|
+
+    if source_matrices.size == 0      # Debug!
+      STDERR.puts("Error: Experiment #{self.id} has no source matrices. Running additional checks...")
+      if self.parent_id.nil?
+        STDERR.puts("- no parent_id found.")
+      elsif parent.source_matrices.size == 0
+        STDERR.puts("- parent #{parent_id} found, has no source matrices.")
+        STDERR.puts("- parent #{parent_id} has #{parent.sources.size} sources.")
+        if parent.parent_id.nil?
+          STDERR.puts("- no grandparent found.")
+        elsif parent.parent.source_matrices.size == 0
+          STDERR.puts("- grandparent found, has no source matrices.")
+        else
+          STDERR.puts("- grandparent found, has #{parent.parent.source_matrices.size} source matrices.")
+        end
+      else
+        STDERR.puts("- parent found, has #{parent.source_matrices.size} source matrices.")
+      end
+      raise(IOError, "Experiment #{self.id} has no source matrices!")
+    end
+
+    source_matrices.each do |source_matrix|
+      message(" from path: #{source_matrix.row_file_path}")
       FileUtils.cp(source_matrix.row_file_path, self.root)
+      message(" from path: #{source_matrix.cell_file_path}")
       FileUtils.cp(source_matrix.cell_file_path, self.root)
+      
 
       # Also keep track of genes files.
       cell_files << source_matrix.cell_filename
     end
+
+    message("- done copying source input files.")
     cell_files
   end
 
   # Generate the file for rows to be predicted (e.g., predict_genes)
   def generate_row_file(cell_files)
-      Dir.chdir(self.root) do
-        `cut -f 1 #{cell_files.join(" ")} |sort|uniq > #{self.row_filename}`
-        # `cut -f 2 #{self.predict_matrix.cell_file_path} |sort|uniq > #{self.column_filename}`
-      end
+    raise(ArgumentError, "No cell files supplied") if cell_files.size == 0
+    
+    Dir.chdir(self.root) do
+      cmd = "cut -f 1 #{cell_files.join(" ")} |sort|uniq > #{self.row_filename}"
+      message("Generating experiment row file in #{self.root} with command:\n #{cmd}")
+      `#{cmd}`
+    end
   end
 
   # Generate the file for columns to be predicted (e.g., predict_phenotypes).
@@ -122,6 +153,7 @@ protected
   # prediction of phenotypes which have fewer than min_genes genes in them.
   def generate_column_file
     Dir.chdir(self.root) do
+      message("Generating experiment column file in #{self.root}")
       if self.min_genes.nil? || self.min_genes == 0
         # Easy way -- just cut the cell file.
         `cut -f 2 #{self.predict_matrix.cell_file_path} |sort|uniq > #{self.column_filename}`

@@ -108,7 +108,7 @@
 class Experiment < ActiveRecord::Base
   acts_as_commentable
 
-  acts_as_tree
+  acts_as_tree :dependent => :destroy
 
   belongs_to :predict_matrix, :class_name => "Matrix", :readonly => true
   delegate :column_species, :to => :predict_matrix
@@ -137,8 +137,10 @@ class Experiment < ActiveRecord::Base
   # Avoid overriding these functions:
   
   alias_method :this_sources, :sources
+  alias_method :this_source_matrices, :source_matrices
   # Override sources so they change along with those of the parent
   def sources; parent_id.nil? ? this_sources : parent.sources; end
+  def source_matrices; parent_id.nil? ? this_source_matrices : parent.source_matrices; end
   # Return the ancestor of this experiment or itself if there is no ancestor
   def ancestor_or_self; parent_id.nil? ? parent.ancestor_or_self : self ; end
 
@@ -164,7 +166,11 @@ class Experiment < ActiveRecord::Base
 
       # Create one child experiment for each child (not grandchild) matrix
       predict_matrix.children.each do |child_matrix|
-        child_experiment = Experiment.create!(:predict_matrix_id => child_matrix.id, :parent_id => self.id)
+        # Make sure the destination directory exists!
+        child_matrix.prepare_inputs
+
+        # Don't create an Experiment -- create a JohnExperiment or a MartinExperiment.
+        child_experiment = self.class.send :create!, {:predict_matrix_id => child_matrix.id, :parent_id => self.id}
         child_experiment.prepare_inputs
       end
     else
@@ -446,6 +452,13 @@ protected
   # Called by unique_descriptor (only)
   def parent_descriptor_component
     parent_id.nil? ? nil : "(#{parent_id})"
+  end
+
+  # For debugging purposes -- because apparently some things don't get printed to
+  # the logs in certain circumstances? Still confused about this.
+  def message msg
+    Rails.logger.info msg
+    STDERR.puts msg
   end
 end
 
