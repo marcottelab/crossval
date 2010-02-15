@@ -40,11 +40,11 @@ ActiveRecord::Schema.define(:version => 20100208213742) do
   add_index "entry_infos", ["row_title", "column_title"], :name => "index_entry_infos_on_row_title_and_column_title", :unique => true
 
   create_table "experiments", :force => true do |t|
-    t.integer  "predict_matrix_id",                                              :null => false
-    t.string   "method",            :limit => 200, :default => "naivebayes",     :null => false
-    t.string   "distance_measure",  :limit => 200, :default => "hypergeometric", :null => false
-    t.string   "validation_type",   :limit => 4,   :default => "row"
-    t.integer  "k",                                :default => 1
+    t.integer  "predict_matrix_id",                :null => false
+    t.string   "method",            :limit => 200, :null => false
+    t.string   "distance_measure",  :limit => 200, :null => false
+    t.string   "validation_type",   :limit => 4
+    t.integer  "k"
     t.string   "arguments",         :limit => 200
     t.integer  "run_result"
     t.decimal  "total_auc"
