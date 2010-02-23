@@ -15,6 +15,7 @@ ActionController::Routing::Routes.draw do |map|
     matrices.resources :john_experiments
     matrices.resources :john_predictors
     matrices.resources :john_distributions
+    matrices.resources :integrators
 
     matrices.resources :martin_experiments
   end
