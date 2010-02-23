@@ -86,7 +86,7 @@ class JohnPredictor < Experiment
   # Specifies the path to the binary for performing the actual distance
   # calculations and k-nearest neighbors.
   def bin_path
-    Rails.root + "bin/#{Socket.gethostname}/phenomatrix"
+    Pathname.new("/usr/local/bin/phenomatrixpp") # Rails.root + "bin/#{Socket.gethostname}/phenomatrix"
   end  
 
   # In the parent this is used to calculate and load ROCs. Here, we don't want
