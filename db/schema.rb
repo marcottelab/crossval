@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100208213742) do
+ActiveRecord::Schema.define(:version => 20100223194436) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -59,6 +59,15 @@ ActiveRecord::Schema.define(:version => 20100208213742) do
 
   add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
   add_index "experiments", ["predict_matrix_id"], :name => "index_experiments_on_predict_matrix_id"
+
+  create_table "integrands", :force => true do |t|
+    t.integer  "integrator_id",                :null => false
+    t.integer  "experiment_id",                :null => false
+    t.integer  "weightn",       :default => 0, :null => false
+    t.integer  "weightd",       :default => 1, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "matrices", :force => true do |t|
     t.integer  "parent_id"

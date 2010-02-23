@@ -20,15 +20,29 @@ class IntegratorsController < MatrixGenericController
   end
 
 
-  # Set up redirects to the proper controllers
-  def edit
-    find_experiment params[:id]
-    redirect_to correct_child_url(:edit)
+  # GET /experiments/new
+  # GET /experiments/new.xml
+  def new
+    @experiment = Integrator.new(:predict_matrix_id => @matrix_id)
+    @experiment.integrands.build
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @experiment }
+    end
   end
 
-  def new
-    find_experiment params[:id]
-    redirect_to correct_child_url(:new)
+  def edit
+    @experiment = find_experiment params[:id]
+    if @experiment.started_at.nil?
+      respond_to do |format|
+        format.html # new.html.erb
+        format.xml  { render :xml => @experiment }
+      end
+    else
+      flash[:notice] = "Sorry, you can't edit an experiment that has been run or is running."
+      redirect_to url_for(@matrix)
+    end
   end
 
   def index

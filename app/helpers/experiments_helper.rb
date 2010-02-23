@@ -1,5 +1,9 @@
 module ExperimentsHelper
 
+  def select_parent_experiment form, field, matrix_id
+    form.collection_select field, Experiment.find(:all, :conditions => {:parent_id => nil, :predict_matrix_id => matrix_id}, :order => :id), :id, :unique_descriptor
+  end
+
   def remove_source_link(name, form_builder)
     form_builder.hidden_field(:_delete) + link_to_function(name, "remove_source(this)")
   end

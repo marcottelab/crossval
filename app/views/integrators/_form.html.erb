@@ -7,10 +7,10 @@
 
 <div id='integrator_integrands'>
   <% f.fields_for :integrands do |integrand_form| %>
-    <%= render :partial => 'integrators/integrand', :locals => { :f => integrand_form } %>
+    <%= render :partial => 'integrators/integrand', :locals => { :f => integrand_form, :matrix_id => @matrix_id } %>
   <% end %>
 </div>
 
 <p>
-  <%= add_source_link 'Add a Source', 'source', f %>
+  <%= add_nested_link 'Add an Integrand', 'integrator_integrands', 'integrand', f %>
 </p>

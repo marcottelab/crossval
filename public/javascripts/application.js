@@ -13,19 +13,21 @@ function add_nested(element, nested_type, new_nested) {
   });
 }
 
+function remove_nested(nested_type, element) {
+  var hidden_field = $(element).previous("input[type=hidden]");
+  if (hidden_field) hidden_field.value = '1';
+  $(element).up("."+nested_type).hide();
+}
+
 function remove_source(element) {
   var hidden_field = $(element).previous("input[type=hidden]");
-  if (hidden_field) {
-    hidden_field.value = '1';
-  }
+  if (hidden_field) hidden_field.value = '1';
   $(element).up(".source").hide();
 }
 
 function remove_roc_group_item(element) {
   var hidden_field = $(element).previous("input[type=hidden]");
-  if (hidden_field) {
-    hidden_field.value = '1';
-  }
+  if (hidden_field) hidden_field.value = '1';
   $(element).up(".roc_group_item").hide();
 }
 

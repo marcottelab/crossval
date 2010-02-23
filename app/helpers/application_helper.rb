@@ -9,12 +9,8 @@ module ApplicationHelper
     form.collection_select field, Experiment.find(:all, :order => :id), :id, :unique_descriptor
   end
 
-  def select_parent_experiment form, field
-    form.collection_select field, Experiment.find(:all, :conditions => {:parent_id => nil}, :order => :id), :id, :unique_descriptor
-  end
-
   def remove_nested_link(name, nested_type, form_builder)
-    form_builder.hidden_field(:_delete) + link_to_function(name, "remove_#{nested_type}(this)")
+    form_builder.hidden_field(:_delete) + link_to_function(name, "remove_nested('#{nested_type.to_s}', this)")
   end
 
   def add_nested_link(name, nested, nested_type, form_builder)
