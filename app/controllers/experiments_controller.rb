@@ -32,7 +32,11 @@ class ExperimentsController < MatrixGenericController
   end
 
   def index
-    find_experiment params[:id]
-    redirect_to correct_child_url(:index)
+    @experiments = Experiment.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil})
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @experiments }
+    end
   end
 end

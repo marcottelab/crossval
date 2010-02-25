@@ -41,8 +41,16 @@ module ExperimentsHelper
     form.select field, ["row", "cell"]
   end
 
- def collect_by_type(collection, type)
+  def integrands(experiment)
+    experiment.integrands.collect { |i| i.experiment.title }.join("<br/>")
+  end
+
+  def collect_by_type(collection, type)
     collection.reject { |c| c.type != type }
+  end
+
+  def integrators(experiments)
+    collect_by_type experiments, "Integrator"
   end
 
   def john_experiments(experiments)

@@ -1,4 +1,12 @@
 <%- if experiments.size > 0 -%>
+  <h3>Integrators</h3>
+  <table class="matrix_integrators">
+  <%= render :partial => 'integrators/list_header' %>
+  <% integrators(experiments).each do |experiment| %>
+    <%= render :partial => 'integrators/item', :locals => {:experiment => experiment} %>
+  <% end %>
+  </table>
+
   <h3>Crossvalidations with John's methods</h3>
 
   <table class="matrix_experiments">

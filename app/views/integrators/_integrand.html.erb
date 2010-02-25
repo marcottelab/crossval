@@ -4,7 +4,7 @@
     <%= f.label :experiment_id %>
     <%= select_parent_experiment f, :experiment_id, @matrix_id %>
     <%= f.label :weight %>
-    <%= f.text_field :weight %>
+    <%= f.text_field :weight, :size => 8 %>
     <%= remove_nested_link 'remove', :integrand, f %>
   </p>
 </div>

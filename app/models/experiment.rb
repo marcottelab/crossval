@@ -460,6 +460,50 @@ protected
     Rails.logger.info msg
     STDERR.puts msg
   end
+
+  # Copy the inputs from the source matrices. Returns a list of cell files so we
+  # can compute the rows that we're capable of predicting (e.g., predict_genes).
+  def copy_source_matrix_inputs(dir = self.root)
+    message("Copying experiment source input files in #{self.root}")
+    cell_files = []
+
+    source_matrices_error_check
+
+    source_matrices.each do |source_matrix|
+      message(" from path: #{source_matrix.row_file_path}")
+      FileUtils.cp(source_matrix.row_file_path, self.root)
+      message(" from path: #{source_matrix.cell_file_path}")
+      FileUtils.cp(source_matrix.cell_file_path, self.root)
+
+      # Also keep track of genes files.
+      cell_files << source_matrix.cell_filename
+    end
+
+    message("- done copying source input files.")
+    cell_files
+  end
+
+  def source_matrices_error_check
+    if source_matrices.size == 0      # Debug!
+      STDERR.puts("Error: Experiment #{self.id} has no source matrices. Running additional checks...")
+      if self.parent_id.nil?
+        STDERR.puts("- no parent_id found.")
+      elsif parent.source_matrices.size == 0
+        STDERR.puts("- parent #{parent_id} found, has no source matrices.")
+        STDERR.puts("- parent #{parent_id} has #{parent.sources.size} sources.")
+        if parent.parent_id.nil?
+          STDERR.puts("- no grandparent found.")
+        elsif parent.parent.source_matrices.size == 0
+          STDERR.puts("- grandparent found, has no source matrices.")
+        else
+          STDERR.puts("- grandparent found, has #{parent.parent.source_matrices.size} source matrices.")
+        end
+      else
+        STDERR.puts("- parent found, has #{parent.source_matrices.size} source matrices.")
+      end
+      raise(IOError, "#{self.class.to_s} #{self.id} has no source matrices!")
+    end
+  end
 end
 
 

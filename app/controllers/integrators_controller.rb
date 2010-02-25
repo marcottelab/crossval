@@ -45,8 +45,44 @@ class IntegratorsController < MatrixGenericController
     end
   end
 
+  def update
+    @experiment = Integrator.find(params[:id])
+
+    respond_to do |format|
+      if !@experiment.run_result.nil? || !@experiment.started_at.nil?
+        flash[:notice] = "You can't update an experiment that has been run or is running."
+        format.html { redirect_to(@matrix) }
+        format.xml  { render :xml => @experiment.errors, :status => :unprocessable_entity }
+      elsif @experiment.update_attributes(params[:integrator])
+        flash[:notice] = 'Experiment was successfully updated.'
+        format.html { redirect_to(@matrix) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @experiment.errors, :status => :unprocessable_entity }
+      end
+    end
+
+  end
+
+  def create
+    @experiment = Integrator.new(params[:integrator])
+    @experiment.predict_matrix_id = @matrix_id
+
+    if @experiment.save
+      flash[:notice] = "Successfully set up integrator."
+      redirect_to url_for(@matrix)
+    else
+      render :action => 'new'
+    end
+  end
+
   def index
-    find_experiment params[:id]
-    redirect_to correct_child_url(:index)
+    @experiments = Integrator.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil})
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @experiments }
+    end
   end
 end
