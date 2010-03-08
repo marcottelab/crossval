@@ -211,9 +211,9 @@ class Experiment < ActiveRecord::Base
   
   # To be called by a Worker object, usually.
   def run
-    # Ensure that children have been run.
-    check_children_before_run
+    raise(Error, "run should be called on each child experiment, not on the parent.") if children.size > 0
 
+    before_run_internal
     before_run # sets and saves started_at
 
     Dir.chdir(self.root) do
@@ -351,14 +351,7 @@ protected
     self.save!
   end
 
-
-  def check_children_before_run
-    if children.size > 0
-      children.each do |child|
-        raise(Error, "Children must be run first") unless child.has_run_successfully?
-      end
-    end
-  end
+  def before_run_internal;; end
 
   # Sort/calculate ROCs for an experiment. You can override this function for things
   # like JohnDistribution so you calculate other things instead of ROCs.

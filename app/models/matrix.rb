@@ -281,9 +281,10 @@ SQL
     end
   end
 
-  # Prepare working directory for the matrix
-  def prepare_inputs
-    self.make_inputs(self.row_filename, self.cell_filename) unless self.root_exists?
+  # Prepare working directory for the matrix.
+  # If force is set to true, the contents will be overwritten.
+  def prepare_inputs(force = false)
+    self.make_inputs(self.row_filename, self.cell_filename) unless self.root_exists? && !force
   end
 
   def row_filename
@@ -519,6 +520,41 @@ SQL
     self.write_saved(file, opts)
   end
 
+  # Force children to be written as testsets (rather than in the format dictated
+  # by storage, which may be a training or a testset).
+  def write_children_as_testsets file_prefix
+    if children.first.mask?
+      write_children file_prefix, {:force_not_masked => true}
+    else
+      write_children file_prefix, {:force_masked => true}
+    end
+  end
+
+
+  def write_children file_prefix, options = {}
+    unless children.first.nil?
+
+      Dir.chdir(self.root) do
+        # Write masked children one way and unmasked another, unless specified in
+        # arguments to this function. # HERE
+        unless options[:force_not_masked] || options[:force_masked]
+          if children.first.mask?
+            STDERR.puts("force not masked")
+            options[:force_not_masked] = true
+          else
+            STDERR.puts("force masked")
+            options[:force_masked] = true
+          end
+        end
+
+        children.each do |child|
+          child.write( child_filename_internal(file_prefix, child), options)
+        end
+
+      end
+    end
+  end
+
   def write_children_if_masks file_prefix
     if !self.children.first.nil? && self.children.first.mask?
       self.children.each do |child|
@@ -612,7 +648,8 @@ SQL
     Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
     Dir.chdir(dest_dir) do
       self.make_inputs_internal rows_filename, cells_filename
-      self.write_children_if_masks file_prefix
+      
+      self.write_children_as_testsets file_prefix
     end
   end
 
@@ -630,6 +667,11 @@ SQL
 
   def root_exists?
     dir_exists?(self.root)
+  end
+
+  # List files and dirs in the matrix directory
+  def ls
+    Dir.entries(root).reject { |e| e == "." || e == ".." }
   end
 
 protected
@@ -699,7 +741,9 @@ SQL
   def write_options options = {}
     {
       :header => false,
-      :force_not_masked => false
+      :force_not_masked => false,
+      :force_masked => false,
+      :test_set => false
     }.merge options
   end
 
@@ -728,13 +772,24 @@ SQL
   # When writing, treat this matrix as a mask of the parent -- in other words,
   # print the parent's cells less the cells found in this child.
   def write_as_masked(open_file)
+    STDERR.puts("write_as_masked")
     parent_cells = Matrix.find(self.parent_id).cells
     my_cells     = self.cells
 
-    # Subtract the mask from the parent cells and we get the remainder,
-    # which we want to print.
-    (parent_cells - my_cells).each do |entry|
-      entry.write(open_file)
+    if mask?
+      # Subtract the mask from the parent cells and we get the remainder,
+      # which we want to print.
+      (parent_cells - my_cells).each do |entry|
+        entry.write(open_file)
+      end
+    else
+      # Need to do it a different way if matrix is not a mask, because cell IDs
+      # won't be the same.
+      (parent_cells.collect{ |c| [c.i,c.j]} - my_cells.collect{ |c| [c.i,c.j]}).each do |entry|
+        # Construct a new cell temporarily (don't save it), and use its write
+        # function to output.
+        Cell.new(:i => entry[0], :j => entry[1]).write(open_file)
+      end
     end
 
     open_file
@@ -742,6 +797,7 @@ SQL
 
   # Print the stuff in this matrix whether or not it's a mask of a parent.
   def write_as_not_masked(open_file)
+    STDERR.puts("write_as_not_masked")
     self.cells.each do |entry|
       entry.write(open_file)
     end
@@ -751,7 +807,7 @@ SQL
   # Write the contents of the matrix, keeping in mind that it may be a mask or
   # the full matrix. This should really never be called externally.
   def write_contents(open_file, options)
-    if self.mask? && !options[:force_not_masked]
+    if options[:force_masked] || (self.mask? && !options[:force_not_masked])
       write_as_masked(open_file)      # Complex case.
     else
       write_as_not_masked(open_file)  # Simple case.

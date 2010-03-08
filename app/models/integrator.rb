@@ -27,7 +27,25 @@ class Integrator < Experiment
     "-m #{method} -s #{self.source_species_to_s}"
   end
 
+  def title
+    "Need a title! (#{id})"
+  end
+
 protected
+
+  # Just make sure children have been run successfully (test called before allowing
+  # a parent experiment to be run).
+  def check_integrands_before_run
+    if integrands.count > 0
+      integrands(:joins => :experiments).each do |integrand|
+        raise(Error, "Integrands must be run first") unless integrand.experiment.has_run_successfully?
+      end
+    end
+  end
+
+  def before_run_internal
+    check_integrands_before_run
+  end
 
   # Generates row and column files, makes sure they're in the right directory.
   # Only call from within prepare_inputs_internal, as this guarantees we're in
