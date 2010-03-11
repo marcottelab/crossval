@@ -45,7 +45,7 @@ module MatricesHelper
     if matrix.parent_id.nil?
       nil
     else
-      "#{matrix.cardinality+1} / #{matrix.parent.divisions}"
+      "#{matrix.cardinality+1} / #{matrix.parent.children.count}"
     end
   end
 

@@ -200,19 +200,19 @@ class Experiment < ActiveRecord::Base
   # Copy input files from each of the source matrices and the predict matrix.
   # Does nothing if the experiment directory already exists.
   def prepare_inputs_internal &block
+    STDERR.puts("prepare_inputs_internal in #{self.class.to_s} (defined in Experiment)")
     unless self.root_exists?
       logger.info("Preparing new inputs for matrix #{predict_matrix_id}, experiment #{self.id}")
 
       self.prepare_dir
 
+      raise(ArgumentError, "No block") unless block_given?
       yield block
     end
   end
   
   # To be called by a Worker object, usually.
   def run
-    raise(Error, "run should be called on each child experiment, not on the parent.") if children.size > 0
-
     before_run_internal
     before_run # sets and saves started_at
 
@@ -301,20 +301,14 @@ class Experiment < ActiveRecord::Base
   # Be careful doing this -- particularly if this is being run in parallel, e.g.
   # jobs on different machines.
   def reset_for_new_run!
-    if children.size > 0
-      children.each do |child|
-        child.reset_for_new_run!
-      end
-    else
-      self.started_at   = nil
-      self.completed_at = nil
-      self.run_result   = nil
-      self.total_auc    = nil
-      self.save!
+    self.started_at   = nil
+    self.completed_at = nil
+    self.run_result   = nil
+    self.total_auc    = nil
+    self.save!
 
-      self.clean_predictions_dirs
-      self.clean_temporary_files
-    end
+    self.clean_predictions_dirs
+    self.clean_temporary_files
     
     self # allow chaining
   end
@@ -342,6 +336,11 @@ class Experiment < ActiveRecord::Base
     self.source_species.join(",")
   end
 
+# List files and dirs in the experiment directory
+  def ls
+    Dir.entries(root).reject { |e| e == "." || e == ".." }
+  end
+
 protected
 
   # Update the 'started_at' value and save. This needs to be fixed so it doesn't
@@ -360,15 +359,13 @@ protected
   end
 
   def sort_results_and_calculate_rocs!
-    if children.size == 0
-      # Call the script which sorts results into a separate directory.
-      self.sort_results
+    # Call the script which sorts results into a separate directory.
+    self.sort_results
 
-      # Calculating the AUCs also marks the task as completed and saves the record.
-      STDERR.puts("Calling calculate_rocs!")
-      self.calculate_rocs!
-      STDERR.puts("Done calling calculate_rocs!")
-    end
+    # Calculating the AUCs also marks the task as completed and saves the record.
+    STDERR.puts("Calling calculate_rocs!")
+    self.calculate_rocs!
+    STDERR.puts("Done calling calculate_rocs!")
   end
 
   def calculate_rocs!
@@ -418,9 +415,13 @@ protected
   end
   
   # Copy testsets from the predict_matrix to the experiment directory.
-  def copy_testsets(prefix = "testset")
+  def copy_testsets(options = {})
+    raise(ArgumentError,"Requires a hash") if options.is_a?(String)
+    
+    opts = {:prefix => "testset"}.merge options
+    
     # Copy testsets if applicable
-    self.predict_matrix.children_file_paths(prefix).each do |child_path|
+    self.predict_matrix.children_file_paths(opts[:prefix]).each do |child_path|
       FileUtils.cp(child_path, self.root)
     end
   end
@@ -429,6 +430,7 @@ protected
   # Only call from within prepare_inputs_internal, as this guarantees we're in
   # the correct directory and such.
   def prepare_standard_inputs
+    STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
     cell_files = self.copy_source_matrix_inputs
 
     # Generate predict_rows file

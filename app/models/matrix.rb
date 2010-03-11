@@ -572,11 +572,11 @@ SQL
 
   def children_filenames file_prefix
     l = []
-    if self.children.first.mask?
+    #if self.children.first.mask?
       self.children.each do |child|
         l << self.child_filename_internal(file_prefix, child)
       end
-    end
+    #end
     l
   end
 

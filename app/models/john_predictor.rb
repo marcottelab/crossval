@@ -18,6 +18,7 @@ class JohnPredictor < Experiment
   # Differs from JohnExperiment in that it does not copy test sets.
   # Also used by JohnDistribution.
   def prepare_inputs
+    STDERR.puts("in prepare_inputs on #{self.class.to_s} (defined in JohnPredictor)")
     prepare_inputs_internal do
 
       prepare_standard_inputs

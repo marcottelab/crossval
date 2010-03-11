@@ -61,6 +61,7 @@ protected
 
   # Prepare the input files including cross-validation/test-set information.
   def prepare_standard_inputs
+    STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
     super
     copy_testsets
   end
