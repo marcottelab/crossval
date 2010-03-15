@@ -12,7 +12,7 @@ class ExperimentsController < MatrixGenericController
   # GET /experiments/1.xml
   def show
     find_experiment params[:id]
-    @flot        = plot_experiment(@experiment)
+    @flot        = plot_experiment_with_children(@experiment)
 
     respond_to do |format|
       format.html { render_polymorphic_template('show')}# show.html.erb

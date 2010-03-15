@@ -6,11 +6,7 @@
     <th colspan="2">Rows</th>
     <th>Cells</th>
     <th>Density</th>
-    <th colspan="2">Experiments</th>
-    <th/>
-    <th/>
-    <th/>
-    <th/>
+    <th rowspan="2">Experiments</th>
   </tr>
   <tr>
     <th>Species</th>
@@ -19,8 +15,6 @@
     <th>Total</th>
     <th>Total</th>
     <th>cells/column</th>
-    <th>New</th>
-    <th>Total</th>
   </tr>
 
 <% @matrices.each do |matrix| %>
@@ -32,9 +26,8 @@
     <td><%= matrix.number_of_rows %></td>
     <td><%= matrix.number_of_unmasked_cells %></td>
     <td><%= fractional_density(matrix) %></td>
-    <td><%= matrix.experiments.not_run.count %></td>
-    <td><%= matrix.experiments.count %></td>
-    <td><%= run_link_if_appropriate(matrix) %></td>
+    <td><%= experiments_progress_bar(matrix) %></td>
+    <!--td><%#= run_link_if_appropriate(matrix) %></td-->
     <td><%= link_to 'Show', matrix %></td>
     <td><%= link_to 'View', view_matrix_path(matrix) %></td>
     <td><%= link_to 'Delete', matrix_path(matrix), :confirm => 'Are you sure?', :method => :delete %></td>

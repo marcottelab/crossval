@@ -3,10 +3,14 @@
       <td><tt><%= experiment.distance_measure %></tt></td>
       <td><%= source_matrices(experiment) %></td>
       <td><%= experiment.min_genes %></td>
-      <td><%= experiment.created_at %></td>
-      <td><%= experiment.updated_at %></td>
+      <td><%= distance_of_time_in_words_to_now experiment.created_at %> ago</td>
+      <td><%- if experiment.created_at == experiment.updated_at -%>
+        Not updated
+      <%- else -%>
+        <%= distance_of_time_in_words_to_now experiment.updated_at %> ago
+      <%- end -%></td>
       <td><%= experiment.started_at || run_link(experiment) %></td>
-      <td><%= link_to experiment.completed_at || "-", matrix_experiment_path(@matrix, experiment) %></td>
+      <td><%= link_to_experiment_with_when_completed(matrix, experiment) %></td>
       <td><%= experiment.run_result %></td>
       <td><%= link_to_experiment_if_appropriate(@matrix, experiment) || "&nbsp;" %></td>
       <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->

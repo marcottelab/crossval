@@ -76,4 +76,23 @@ module ExperimentsHelper
   def martin_distributions(experiments)
     collect_by_type experiments, "MartinDistribution"
   end
+
+  def link_to_experiment_with_when_completed(matrix, experiment)
+    return link_to("incomplete", matrix_experiment_path(matrix, experiment)) if experiment.completed_at.nil?
+    link_to(distance_of_time_in_words_to_now_ago(experiment.completed_at), matrix_experiment_path(matrix, experiment))
+  end
+
+  def subexperiments_progress_bar(experiment)
+    succ = 0
+    total = 0
+    experiment.children.each do |child|
+      succ +=1 if child.has_run_successfully?
+      total += 1
+    end
+    if total > 0
+      progress_bar(succ / total.to_f, :denominator => total)
+    else
+      "None"
+    end
+  end
 end

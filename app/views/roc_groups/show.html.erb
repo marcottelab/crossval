@@ -1,5 +1,11 @@
 <% content_for :head do %>
-  <%= flot_includes %>
+  <%#= flot_includes %>
+  <%= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag 'jquery.flot.min.js' %>
+  <%= javascript_include_tag 'jquery-ui.js' %>
+  <%= javascript_include_tag 'jrails.js' %>
+  <%= javascript_include_tag 'prototype.js' %>
+  <%= javascript_include_tag 'flotomatic.js' %>
 <% end %>
 
 <div class="nav">

@@ -22,6 +22,11 @@ module MatricesHelper
     end
   end
 
+  # List of matrix children and links to each
+  def links_to_matrix_children matrix
+    matrix.children.collect { |child| link_to(child.id, child) }.to_sentence
+  end
+
   def fractional_density(matrix)
     if matrix.number_of_rows == 0
       "&#8734;" # infinity (oops)
@@ -49,4 +54,17 @@ module MatricesHelper
     end
   end
 
+  def experiments_progress_bar(matrix)
+    succ = 0
+    total = 0
+    matrix.experiments.each do |experiment|
+      succ +=1 if experiment.has_run_successfully?
+      total += 1
+    end
+    if total > 0
+      progress_bar(succ / total.to_f, :denominator => total)
+    else
+      "None"
+    end
+  end
 end

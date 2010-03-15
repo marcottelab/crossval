@@ -8,18 +8,25 @@
 <% end %>
 
 <h1>Information for Matrix "<%= @matrix.title %>" (<%= @matrix.id %>)</h1>
+
 <ul>
 <%- unless @matrix.parent_id.nil? -%>
-  <li>Parent: <%= @matrix.parent_id %></li>
+  <li>Parent: <%= link_to @matrix.parent_id, @matrix.parent %></li>
   <li>Cardinality: <%= cardinality(@matrix) %></li>
 <%- end -%>
 <%- unless @matrix.children.count == 0 -%>
-  <li>Children: <%= @matrix.list_children %></li>
+  <li>Matrix Fractionations (Experiment Progress): <%#= links_to_matrix_children(@matrix) %>
+    <table>
+      <% @matrix.children.each do |child| %>
+        <tr><td><%= link_to child.id, child %></td><td><%= experiments_progress_bar(child) %></td></tr>
+      <% end %>
+    </table>
+  </li>
 <%- end -%>
   <li>Row Species: <%= @matrix.row_species %></li>
   <li>Column Species: <%= @matrix.column_species %></li>
-  <li>Created at: <%= @matrix.created_at %></li>
-  <li>Updated at: <%= @matrix.updated_at %></li>
+  <li>Created <%= distance_of_time_in_words_to_now @matrix.created_at %> ago</li>
+  <%- unless @matrix.created_at == @matrix.updated_at -%><li>Updated <%= distance_of_time_in_words_to_now @matrix.updated_at %> ago</li><%- end -%>
 </ul>
 
 <%#= flot_canvas 'matrix_row_distribution' %>

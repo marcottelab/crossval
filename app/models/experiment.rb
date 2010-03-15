@@ -327,6 +327,29 @@ class Experiment < ActiveRecord::Base
     roc_x_values = Array.new(roc_y_values.size) { |r| r / roc_y_values.size.to_f }
     roc_x_values.zip roc_y_values.sort
   end
+
+  def aucs_by_column
+    self.rocs.collect { |ro| [ro.column, ro.auc] }
+  end
+
+  def aucs_by_column_with_children
+    au = {}
+    rocs.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    n = 1
+
+    children.each do |child|
+      child.rocs.each { |roc| au[roc.column] << roc.auc }
+      n += 1
+      
+      # Add an empty if a certain index doesn't exist in this child:
+      au.each_key { |col| if au[col].size < n; au[col] << nil; end }
+    end
+    yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
+    xvalues = Array.new(yvaluest.size) { |r| r / yvaluest.size.to_f } # add x-values
+
+    # generate several lists of points, themselves in a list:
+    yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
+  end
   
   def source_species
     sources.collect{ |m| m.source_species }.sort{ |a,b| Species.new(b) <=> Species.new(a) }

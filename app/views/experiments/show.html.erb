@@ -1,3 +1,12 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag 'jquery.flot.min.js' %>
+  <%= javascript_include_tag 'jquery-ui.js' %>
+  <%= javascript_include_tag 'jrails.js' %>
+  <%= javascript_include_tag 'prototype.js' %>
+  <%= javascript_include_tag 'flotomatic.js' %>
+<% end %>
+
 <%= link_to 'Edit', edit_matrix_experiment_path(@matrix, @experiment) %> |
 <%= link_to 'Back', experiments_path %>
 
@@ -21,3 +30,5 @@
   </tr>
 <%- end -%>
 </table>
+
+<%= render :partial => 'matrices/plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => @flot} %>

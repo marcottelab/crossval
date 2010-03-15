@@ -40,11 +40,33 @@ protected
     end
   end
 
+  def plot_experiment_with_children experiment
+    exp_aucs = experiment.aucs_by_column
+    experiment.children.each do |child|
+      child.aucs_by_column.each do |column_auc|
+        exp_aucs
+      end
+    end
+
+    Flot.new('experiment_roc_plot') do |f|
+      f.points
+      f.grid :hoverable => true
+      f.legend :position => "se", :show => false
+      f.yaxis 1
+      f.selection :mode => "xy"
+
+
+      experiment.aucs_by_column_with_children.each do |roc_line|
+        f.series "#{experiment.id}: #{experiment.title}", roc_line, :points => {:show => true, :radius => 1.1} #sorted_exp_aucs
+      end
+    end
+  end
+
   # Used by ExperimentsController and JohnExperimentsController
   def plot_experiment experiment
     Flot.new('experiment_roc_plot') do |f|
       #f.yaxis :min => 0, :max => 1
-      f.points
+      f.points :radius => 1
       f.legend :position => "se"
       f.yaxis 1
       f.series experiment.title, experiment.roc_line

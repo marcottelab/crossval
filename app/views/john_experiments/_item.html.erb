@@ -1,13 +1,27 @@
     <tr>
-      <td rowspan="2" class="experiment_id"><%= experiment.id %></td>
+      <td rowspan="2" class="experiment_id"><%= link_to experiment.id, matrix_experiment_path(@matrix, experiment) %></td>
       <td><tt><%= experiment.method %></tt></td>
       <td><tt><%= experiment.distance_measure %></tt></td>
       <td><%= source_matrices(experiment) %></td>
       <td><%= experiment.min_genes %></td>
-      <td><%= experiment.created_at %></td>
-      <td><%= experiment.updated_at %></td>
-      <td><%= experiment.started_at || run_link(experiment) %></td>
-      <td><%= link_to experiment.completed_at || "-", matrix_experiment_path(@matrix, experiment) %></td>
+      <td><%= distance_of_time_in_words_to_now experiment.created_at %> ago</td>
+      <td><%- if experiment.created_at == experiment.updated_at -%>
+        Not updated
+      <%- else -%>
+        <%= distance_of_time_in_words_to_now experiment.updated_at %> ago
+      <%- end -%>
+      </td>
+      <td>
+        <%- if experiment.children.count > 0 -%>
+          <%= subexperiments_progress_bar(experiment) %>
+        <%- elsif experiment.started_at.nil? -%>
+          <%= run_link(experiment) %>
+        <%- elsif experiment.completed_at.nil? -%>
+          Started <%= distance_of_time_in_words_to_now_ago(experiment.started_at) %>
+        <%- else -%>
+          Completed <%= link_to_experiment_with_when_completed(@matrix, experiment) %>
+        <%- end -%>
+      </td>
       <td><%= experiment.run_result %></td>
       <td><%= link_to_experiment_if_appropriate(@matrix, experiment) %></td>
       <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->
