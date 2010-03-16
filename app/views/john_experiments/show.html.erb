@@ -5,13 +5,29 @@
   <%= javascript_include_tag 'jrails.js' %>
   <%= javascript_include_tag 'prototype.js' %>
   <%= javascript_include_tag 'flotomatic.js' %>
+<style>
+  .experiment_data {
+    float: left;
+    width: 450px;
+    margin-right: 1em;
+  }
+  .experiment_plot {
+    float: left;
+    width: auto;
+    position: relative;
+  }
+</style>
 <% end %>
 
+<div>
 <%- if @experiment.run_result.nil? -%>
 <%= link_to('Edit', edit_matrix_experiment_path(@matrix, @experiment)) %> |
 <%- end -%>
 <%= link_to 'Back', matrix_path(@matrix) %>
+</div>
 
+<h1>Results for Cross-validation Experiment <%= @experiment.id %></h1>
+<div class="experiment_data">
 <table id="experiment_rocs">
   <tr>
     <th><%= @experiment.predict_matrix.column_title %></th>
@@ -32,5 +48,8 @@
   </tr>
 <%- end -%>
 </table>
-<br/>
+</div>
+<div class="experiment_plot">
+<h2>AUCs (experiment with average of children)</h2>
 <%= render :partial => 'matrices/plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => @flot} %>
+</div>

@@ -347,8 +347,26 @@ class Experiment < ActiveRecord::Base
     yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
     xvalues = Array.new(yvaluest.size) { |r| r / yvaluest.size.to_f } # add x-values
 
+    #xvalues.zip(yvaluest.collect{ |yt| mean(yt) }.transpose)
     # generate several lists of points, themselves in a list:
     yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
+  end
+
+  def aucs_by_column_with_mean
+    au = {}
+    rocs.each { |roc|  au[roc.column] = [ roc.auc ]  }
+
+    children.each do |child|
+      child.rocs.each { |roc| au[roc.column] << roc.auc }
+    end
+    yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
+    yvalues = yvaluest.collect { |yt| shifted_mean(yt) }
+    xvalues = Array.new(yvaluest.size) { |r| r / yvaluest.size.to_f } # add x-values
+
+    #xvalues.zip(yvaluest.collect{ |yt| mean(yt) }.transpose)
+    # generate several lists of points, themselves in a list:
+    [xvalues.zip(yvaluest.collect { |x| x[0]}), xvalues.zip(yvalues)]
+    #yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
   end
   
   def source_species
@@ -558,6 +576,18 @@ end
 # Calculates the mean of a set
 def mean l
   total = 0
-  l.each { |x| total += x }
+  l.each do |x|
+      total += x
+  end
   total / l.size.to_f
+end
+
+def shifted_mean l
+  total = 0
+  li = l.dup
+  li.shift
+  li.each do |x|
+    total += x
+  end
+  total / li.size.to_f
 end

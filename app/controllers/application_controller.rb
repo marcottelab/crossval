@@ -50,15 +50,18 @@ protected
 
     Flot.new('experiment_roc_plot') do |f|
       f.points
+      f.lines
       f.grid :hoverable => true
       f.legend :position => "se", :show => false
       f.yaxis 1
       f.selection :mode => "xy"
 
 
-      experiment.aucs_by_column_with_children.each do |roc_line|
-        f.series "#{experiment.id}: #{experiment.title}", roc_line, :points => {:show => true, :radius => 1.1} #sorted_exp_aucs
-      end
+      roc_lines = experiment.aucs_by_column_with_mean
+
+      f.series "#{experiment.id}: #{experiment.title}", roc_lines.first, :lines => {:show => true}, :points => {:show => false, :radius => 1.1} #sorted_exp_aucs
+
+      f.series("#{experiment.id}: Average of Children", roc_lines.last, :points => {:show => true, :radius => 1.1}, :lines => {:show => false}) if roc_lines.size > 1
     end
   end
 
