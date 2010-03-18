@@ -12,7 +12,7 @@ class MartinExperimentsController < MatrixGenericController
   end
 
   def edit
-    @experiment = find_experiment params[:id]
+    @experiment = find_experiment
     if @experiment.started_at.nil?
       respond_to do |format|
         format.html # new.html.erb

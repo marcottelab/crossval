@@ -1,22 +1,11 @@
 <% content_for :head do %>
+  <%= stylesheet_link_tag 'flotomatic' %>
   <%= javascript_include_tag 'jquery.js' %>
   <%= javascript_include_tag 'jquery.flot.min.js' %>
   <%= javascript_include_tag 'jquery-ui.js' %>
   <%= javascript_include_tag 'jrails.js' %>
   <%= javascript_include_tag 'prototype.js' %>
   <%= javascript_include_tag 'flotomatic.js' %>
-<style>
-  .experiment_data {
-    float: left;
-    width: 450px;
-    margin-right: 1em;
-  }
-  .experiment_plot {
-    float: left;
-    width: auto;
-    position: relative;
-  }
-</style>
 <% end %>
 
 <div>

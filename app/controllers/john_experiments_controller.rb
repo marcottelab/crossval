@@ -12,7 +12,7 @@ class JohnExperimentsController < MatrixGenericController
   end
 
   def edit
-    @experiment = find_experiment params[:id]
+    @experiment = find_experiment
     if @experiment.started_at.nil?
       respond_to do |format|
         format.html # new.html.erb
@@ -54,6 +54,13 @@ class JohnExperimentsController < MatrixGenericController
     else
       render :action => 'new'
     end
+  end
+
+  def against
+    @experiment = JohnExperiment.find(params[:id])
+    @comparison = Experiment.find(params[:compare_id])
+
+    @flot = plot_against(@experiment, @comparison)
   end
 
 end

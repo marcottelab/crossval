@@ -10,7 +10,7 @@
         <%= distance_of_time_in_words_to_now experiment.updated_at %> ago
       <%- end -%></td>
       <td><%= experiment.started_at || run_link(experiment) %></td>
-      <td><%= link_to_experiment_with_when_completed(matrix, experiment) %></td>
+      <td><%= link_to_experiment_with_when_completed(@matrix, experiment) %></td>
       <td><%= experiment.run_result %></td>
       <td><%= link_to_experiment_if_appropriate(@matrix, experiment) || "&nbsp;" %></td>
       <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->

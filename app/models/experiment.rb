@@ -142,7 +142,7 @@ class Experiment < ActiveRecord::Base
   def sources; parent_id.nil? ? this_sources : parent.sources; end
   def source_matrices; parent_id.nil? ? this_source_matrices : parent.source_matrices; end
   # Return the ancestor of this experiment or itself if there is no ancestor
-  def ancestor_or_self; parent_id.nil? ? parent.ancestor_or_self : self ; end
+  def ancestor_or_self; parent_id.nil? ? self : parent.ancestor_or_self ; end
 
 
   # Most of these can be overridden, with care. That's not the same as *should*, though.
@@ -367,6 +367,24 @@ class Experiment < ActiveRecord::Base
     # generate several lists of points, themselves in a list:
     [xvalues.zip(yvaluest.collect { |x| x[0]}), xvalues.zip(yvalues)]
     #yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
+  end
+
+  def aucs_against experiment
+    au = Hash.new { |h,k| h[k] = [] }
+    rocs.each { |roc|            au[roc.column] << roc.auc  }
+
+    experiment.rocs.each do |roc|
+      if au.has_key?(roc.column)
+        au[roc.column] << roc.auc
+      else
+        au[roc.column] = [0, roc.auc]
+      end
+    end
+    au.each_key do |k|
+      au[k] << 0 if au[k].size < 2
+    end
+    
+    au.values
   end
   
   def source_species

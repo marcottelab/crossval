@@ -18,7 +18,7 @@ Flotomatic.prototype = {
 
 		function showTooltip(x, y, contents) {
 			jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
-				{top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
+                                {top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
 		}
 
 		function tooltipFormatter(item) {

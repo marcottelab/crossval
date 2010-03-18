@@ -61,7 +61,9 @@ protected
 
       f.series "#{experiment.id}: #{experiment.title}", roc_lines.first, :lines => {:show => true}, :points => {:show => false, :radius => 1.1} #sorted_exp_aucs
 
-      f.series("#{experiment.id}: Average of Children", roc_lines.last, :points => {:show => true, :radius => 1.1}, :lines => {:show => false}) if roc_lines.size > 1
+      if experiment.children.count > 0
+        f.series "#{experiment.id}: Average of Children", roc_lines.last, :points => {:show => true, :radius => 1.1}, :lines => {:show => false}
+      end
     end
   end
 
@@ -69,10 +71,21 @@ protected
   def plot_experiment experiment
     Flot.new('experiment_roc_plot') do |f|
       #f.yaxis :min => 0, :max => 1
-      f.points :radius => 1
+      f.points
       f.legend :position => "se"
       f.yaxis 1
-      f.series experiment.title, experiment.roc_line
+      f.series experiment.title, experiment.roc_line, :points => {:show => true, :radius => 1.1}
+    end
+  end
+
+  # Plot one experiment against the other
+  def plot_against e1, e2
+    Flot.new('experiment_roc_plot') do |f|
+      f.points
+      f.grid :hoverable => true
+      f.legend :position => "se"
+      f.yaxis 1
+      f.series "#{e1.title} against #{e2.title}", e1.aucs_against(e2), :points => {:show => true, :radius => 1.5}
     end
   end
 end

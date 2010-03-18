@@ -2,9 +2,9 @@ class MatrixGenericController < ApplicationController
   before_filter :find_matrix
 
 protected
-  def find_experiment id
+  def find_experiment
     @experiment_id = params[:id]
-    @experiment = @matrix.experiments.find(id)
+    @experiment = @matrix.experiments.find(@experiment_id)
     @klass = @experiment.class
     @view = @klass.to_s.tableize
     @experiment
@@ -37,6 +37,7 @@ protected
   end
 
   def correct_child_url action
-    send correct_child_url_function(action), @matrix, @experiment.ancestor_or_self
+    fn = correct_child_url_function(action)
+    send fn, @matrix, @experiment.ancestor_or_self
   end
 end
