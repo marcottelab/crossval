@@ -107,7 +107,6 @@ class Matrix < ActiveRecord::Base
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
 
-
   # A descriptor which uniquely identifies a matrix, useful for drop-down boxes
   # particularly when title is the same for multiple matrices.
   # In this case, it's the ID and the title.
