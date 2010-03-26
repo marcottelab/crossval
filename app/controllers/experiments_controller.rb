@@ -26,8 +26,6 @@ class ExperimentsController < MatrixGenericController
   end
 
   def new
-    find_experiment
-    redirect_to correct_child_url(:new)
   end
 
   def against

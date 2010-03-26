@@ -1,5 +1,12 @@
 <ul id="nav">
-  <%= link_to "Matrices", matrices_path %>
-  <%= link_to "Plots", roc_groups_path %>
-  <%= link_to "New Plot", new_roc_group_path %>
+  <li><%= link_to "List Matrices", matrices_path %></li>
+  <%- if defined?(@matrix) -%>
+    <%- unless @matrix.parent_id.nil? -%>
+      <li><%= link_to("Parent Matrix", matrix_path(@matrix.parent)) %></li>
+    <%- end -%>
+    <li><%= link_to("Current Matrix", matrix_path(@matrix)) %></li>
+    <li><%= link_to("New Experiment", new_matrix_experiment_path(@matrix)) %></li>
+  <%- end -%>
+  <li><%= link_to "Plots", roc_groups_path %></li>
+  <li><%= link_to "New Plot", new_roc_group_path %></li>
 </ul>

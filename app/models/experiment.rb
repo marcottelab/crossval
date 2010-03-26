@@ -115,7 +115,7 @@ class Experiment < ActiveRecord::Base
   alias :predict_species :column_species
   has_many :sources, :dependent => :destroy
   has_many :source_matrices, :through => :sources, :foreign_key => :source_matrix_id, :class_name => "Matrix", :readonly => true
-  has_many :rocs
+  has_many :rocs, :dependent => :destroy
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
   named_scope :not_run, :conditions => {:total_auc => nil}

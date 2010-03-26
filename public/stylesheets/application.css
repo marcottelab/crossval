@@ -94,3 +94,53 @@ div.nav {
     font-size: 1.2em;
     font-family: "Helvetica", sans-serif;
 }
+
+ul#nav {
+    list-style: none;
+    padding-left: 0;
+}
+ul#nav li {
+    display: inline;
+    margin-left: 0;
+    margin-right: 0.6em;
+}
+
+#experiment_list_toggle a {
+    background-color: #A5dbF9;
+    padding: 0.4em 0.7em 0.4em 0.7em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    color: #024769;
+    font-weight: bold;
+    text-decoration: none;
+    font-family: "Helvetica", sans-serif;
+}
+
+#experiment_list_toggle a:hover {
+    color: black;
+}
+
+ul#nav li a {
+    background-color: #95cbe9;
+    font-family: "Helvetica", sans-serif;
+    font-size: 1.2em;
+    padding: 0.4em 0.7em 0.4em 0.7em;
+    text-decoration: none;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    color: #024769;
+    font-weight: bold;
+}
+
+ul#nav li a:hover {
+    color: black;
+    background-color: #A5dbF9;
+}
+
+h1,h2,h3 {
+    font-family: "Helvetica", sans-serif;
+}
+
+table th,td {
+    font-family: "Helvetica", sans-serif;
+}
