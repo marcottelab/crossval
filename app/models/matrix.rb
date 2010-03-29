@@ -107,11 +107,21 @@ class Matrix < ActiveRecord::Base
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
 
+  # These things should be fetched from the parent if a parent is set.
+  union_with_parent :empty_rows
+  mask_leaf_parent :cells
+
   # A descriptor which uniquely identifies a matrix, useful for drop-down boxes
   # particularly when title is the same for multiple matrices.
   # In this case, it's the ID and the title.
   def unique_descriptor
     "#{self.id}: #{self.title}"
+  end
+
+  # Calls destroy, but first deletes the matrix directory on the filesystem.
+  def destroy_borked
+    FileUtils.rm_rf(self.root) if self.root.to_s.include?(Matrix.work_root)
+    destroy
   end
 
 
@@ -831,7 +841,7 @@ SQL
       my_set = self.cells.dup
       my_set.shuffle! if shuffle
     elsif meth == :row
-      my_set = self.built_rows.dup
+      my_set = self.built_rows.dup # THIS IS PROBLEMATIC.
       raise(StandardError, "dup didn't work") if my_set.size == 0
       my_set.shuffle! if shuffle
       raise(StandardError, "shuffle broken") if my_set.size == 0
