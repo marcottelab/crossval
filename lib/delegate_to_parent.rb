@@ -83,7 +83,7 @@ module ParentalDelegation
             if #{to}_id.nil?                                                                  #   if parent_id.nil?
               self.__send__ :this_#{method.to_sym}                                            #     self.__send__ :this_customers
             else                                                                              #   else
-              #{to}.__send__(:this_#{method.to_sym}) | self.__send__(:this_#{method.to_sym})  #     parent.__send__(:this_customers) | self.__send__(:this_customers)
+              #{to}.__send__(:this_#{method.to_sym}).active_record_union(self.__send__(:this_#{method.to_sym}))  #     parent.__send__(:this_customers) | self.__send__(:this_customers)
             end                                                                               #   end
           end                                                                                 # end
         EOS
@@ -124,7 +124,7 @@ module ParentalDelegation
             if #{to}_id.nil? || self.children.size == 0                                       #   if parent_id.nil? || self.children.size == 0
               self.__send__ :this_#{method.to_sym}                                            #     self.__send__ :this_customers
             else                                                                              #   else
-              #{to}.__send__(:this_#{method.to_sym}) - self.__send__(:this_#{method.to_sym})  #     parent.__send__(:this_customers) - self.__send__(:this_customers)
+              #{to}.__send__(:this_#{method.to_sym}).active_record_difference(self.__send__(:this_#{method.to_sym}))  #     parent.__send__(:this_customers) - self.__send__(:this_customers)
             end                                                                               #   end
           end                                                                                 # end
         EOS
