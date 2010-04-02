@@ -31,7 +31,7 @@ module MatricesHelper
     if matrix.number_of_rows == 0
       "&#8734;" # infinity (oops)
     else
-      "<sup>#{matrix.density}</sup><i>/</i><sub>#{matrix.number_of_rows}</sub>"
+      "<sup>#{matrix.density}</sup><i>/</i><sub>#{matrix.row_count}</sub>"
     end
   end
 

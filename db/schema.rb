@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100223194436) do
+ActiveRecord::Schema.define(:version => 20100331212603) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20100223194436) do
     t.integer  "entry_info_id",                                   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "type"
   end
 
   add_index "matrices", ["parent_id", "cardinality"], :name => "index_matrices_on_parent_id_and_cardinality", :unique => true

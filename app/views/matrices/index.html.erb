@@ -23,12 +23,12 @@
     <td><%= h matrix.column_species %></td>
     <td><%= h matrix.column_count %></th>
     <td><%= h matrix.row_species %></td>
-    <td><%= matrix.number_of_rows %></td>
-    <td><%= matrix.number_of_unmasked_cells %></td>
+    <td><%= matrix.row_count %></td>
+    <td><%= matrix.cells.count %></td>
     <td><%= fractional_density(matrix) %></td>
     <td><%= experiments_progress_bar(matrix) %></td>
     <!--td><%#= run_link_if_appropriate(matrix) %></td-->
-    <td><%= link_to 'Show', matrix %></td>
+    <td><%= link_to 'Show', matrix_path(matrix) %></td>
     <td><%= link_to 'View', view_matrix_path(matrix) %></td>
     <td><%= link_to 'Delete', matrix_path(matrix), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
