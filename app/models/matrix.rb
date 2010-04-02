@@ -40,7 +40,7 @@
 #
 # = Design
 # == Tree Structure
-# * Matrices in tree are either root/branch or leaf.
+# * Matrices in tree (TreeMatrix) are either root/branch (NodeMatrix) or leaf (LeafMatrix).
 # * Root/branch matrices are stored in their entirety.
 # * Leaf matrices are stored as masks of their parents (which are root/branch).
 # * The different levels can be divided in different folds (e.g., both ten-fold,
@@ -95,8 +95,7 @@
 # The contents of these directories are given in the docs for the Experiment
 # class (and its children as appropriate).
 class Matrix < ActiveRecord::Base
-  acts_as_tree :order => "cardinality"
-  acts_as_commentable
+  acts_as_commentable # not required, strictly speaking.
 
   belongs_to :entry_info
   has_many :empty_rows, :dependent => :destroy
@@ -106,10 +105,6 @@ class Matrix < ActiveRecord::Base
 
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
-
-  # These things should be fetched from the parent if a parent is set.
-  union_with_parent :empty_rows
-  mask_leaf_parent :cells
 
   # A descriptor which uniquely identifies a matrix, useful for drop-down boxes
   # particularly when title is the same for multiple matrices.
@@ -125,23 +120,8 @@ class Matrix < ActiveRecord::Base
   end
 
 
-  # This function will return true only if we have two-stage cross-validation
-  # set up for a matrix.
-  #
-  # It will be used when creating Experiments -- so we know when to clone them
-  # and put one on each child matrix instead of just the root.
-  #
-  # A fundamental assumption is that the tree is balanced (that if one child has
-  # 5 children, all children have 5 children). If you created the tree by hand,
-  # don't expect this to work.
-  def has_grandchildren?
-    return false if children.size == 0
-    return false if children.first.children.size == 0
-    true
-  end
 
-
-  # Make a copy of the matrix (does not include its children) in memory.
+  # Make a copy of the matrix in memory.
   # This also copies all of the cells and empty rows in the matrix.
   #
   # Do not attempt to use it on a test set. This behavior is not tested.
@@ -221,15 +201,7 @@ class Matrix < ActiveRecord::Base
   # Gives a metric describing the number of cells in the matrix as a fraction of
   # the size -- in terms of the number of cells per column.
   def density
-    target = self
-    cc = target.column_count
-    
-    while cc == 0
-      target = target.parent
-      cc = target.column_count
-    end
-
-    (self.number_of_unmasked_cells / cc.to_f).round
+    (self.cells.count / column_count.to_f).round
   end
 
   # Get a hash of the column identifiers to the number of rows that have non-zero
@@ -261,12 +233,12 @@ SQL
 
 
   # Get all columns or all columns with row i
-  def columns(i = nil)
+  def column_indeces(i = nil)
     self.cells_by_row_or_column(:i, :j, i)
   end
 
   # Get all rows or all those with column j
-  def rows(j = nil)
+  def row_indeces(j = nil)
     new_record? ? @built_rows : cells_by_row_or_column(:j, :i, j)
   end
 
@@ -278,18 +250,20 @@ SQL
     end
   end
 
+  # Phenolog-specific function.
   # Prepare working directory for all matrices and their experiments.
   def self.prepare_inputs
     Matrix.all.each do |m|
-      m.prepare_inputs unless m.mask?
+      m.prepare_inputs unless m.is_a?(LeafMatrix)
     end
 
     # Only create experiments after matrices have been created
     Matrix.all.each do |m|
-      m.experiments.each { |exp| exp.prepare_inputs } unless m.mask?
+      m.experiments.each { |exp| exp.prepare_inputs } unless m.is_a?(LeafMatrix)
     end
   end
 
+  # Phenolog-specific function.
   # Prepare working directory for the matrix.
   # If force is set to true, the contents will be overwritten.
   def prepare_inputs(force = false)
@@ -313,43 +287,20 @@ SQL
     self.root + self.cell_filename
   end
 
-  # Use this when displaying the matrix, e.g. through Rails. Will return all
-  # cells, but
-  def cells_for_display
-    self.mask? ? cells_for_display_as_masked : cells_for_display_as_not_masked
-  end
-
-
-  def number_of_unmasked_cells
-    if self.mask?
-      self.parent.cells.count - self.cells.count
-    else
-      self.cells.count
+  # Use this when displaying the matrix, e.g. through Rails.
+  def cells_for_display(res = {})
+    self.cells.each do |entry|
+      res[entry.to_s(":")] = CellValue.new(false)
     end
+
+    res
   end
 
-  def number_of_empty_rows
-    if self.parent_id.nil?
-      self.empty_rows.count
-    else
-      self.parent.number_of_empty_rows + self.empty_rows.count
-    end
-  end
 
   # Gives the number of rows in the root of the tree of matrices. That means if
   # this is a cross-validation submatrix, we return the root's row count.
   def number_of_rows
-    if self.parent_id.nil?
-      self.row_count
-    else
-      self.parent.number_of_rows
-    end
-  end
-
-  # If this is a submatrix, does it mask another matrix? Only the leaf matrices
-  # are masks.
-  def mask?
-    self.children.count == 0 && !self.parent_id.nil? ? true : false
+    row_count
   end
 
 
@@ -378,15 +329,6 @@ SQL
 
     res
   end
-
-  # Create a randomized matrix from the matrix m passed in as an argument.
-#  def self.create_randomized!(m)
-#    new_matrix = Matrix.create!(
-#      :title => m.title + " (randomized)",
-#      :entry_info_id => m.entry_info_id,
-#      :species => m.species,
-#      :randomized => true)
-#  end
 
 
   # Creates a new matrix from two files, one consisting of a list of rows, and
@@ -509,7 +451,7 @@ SQL
     opts = self.write_options options
     
     if self.changed?
-      raise NotImplementedError, "Sorry, you need to save the matrix before trying to write its contents. Call write! instead if you want to force a save."
+      raise NotImplementedError, "Need to save the matrix before trying to write its contents. Call write! instead if you want to force a save."
     else
       self.write_saved(file, opts)
     end
@@ -529,40 +471,6 @@ SQL
     self.write_saved(file, opts)
   end
 
-  # Force children to be written as testsets (rather than in the format dictated
-  # by storage, which may be a training or a testset).
-  def write_children_as_testsets file_prefix
-    if children.first.mask?
-      write_children file_prefix, {:force_not_masked => true}
-    else
-      write_children file_prefix, {:force_masked => true}
-    end
-  end
-
-
-  def write_children file_prefix, options = {}
-    unless children.first.nil?
-
-      Dir.chdir(self.root) do
-        # Write masked children one way and unmasked another, unless specified in
-        # arguments to this function. # HERE
-        unless options[:force_not_masked] || options[:force_masked]
-          if children.first.mask?
-            STDERR.puts("force not masked")
-            options[:force_not_masked] = true
-          else
-            STDERR.puts("force masked")
-            options[:force_masked] = true
-          end
-        end
-
-        children.each do |child|
-          child.write( child_filename_internal(file_prefix, child), options)
-        end
-
-      end
-    end
-  end
 
   def write_children_if_masks file_prefix
     if !self.children.first.nil? && self.children.first.mask?
@@ -749,10 +657,7 @@ SQL
   # Returns the default options for write() and the functions it calls.
   def write_options options = {}
     {
-      :header => false,
-      :force_not_masked => false,
-      :force_masked => false,
-      :test_set => false
+      :header => false
     }.merge options
   end
 
@@ -772,174 +677,19 @@ SQL
     # write the header
     f.puts(matrix_info.to_s) if options[:header]
 
-    self.write_contents(f, options)
+    write_cells(f, options)
 
     f.close
     f.path
   end
 
-  # When writing, treat this matrix as a mask of the parent -- in other words,
-  # print the parent's cells less the cells found in this child.
-  def write_as_masked(open_file)
-    STDERR.puts("write_as_masked")
-    parent_cells = Matrix.find(self.parent_id).cells
-    my_cells     = self.cells
 
-    if mask?
-      # Subtract the mask from the parent cells and we get the remainder,
-      # which we want to print.
-      (parent_cells - my_cells).each do |entry|
-        entry.write(open_file)
-      end
-    else
-      # Need to do it a different way if matrix is not a mask, because cell IDs
-      # won't be the same.
-      (parent_cells.collect{ |c| [c.i,c.j]} - my_cells.collect{ |c| [c.i,c.j]}).each do |entry|
-        # Construct a new cell temporarily (don't save it), and use its write
-        # function to output.
-        Cell.new(:i => entry[0], :j => entry[1]).write(open_file)
-      end
-    end
-
-    open_file
-  end
-
-  # Print the stuff in this matrix whether or not it's a mask of a parent.
-  def write_as_not_masked(open_file)
-    STDERR.puts("write_as_not_masked")
-    self.cells.each do |entry|
+  # Write the cells of the matrix.
+  def write_cells(open_file, options)
+    cells.each do |entry|
       entry.write(open_file)
     end
     open_file
-  end
-
-  # Write the contents of the matrix, keeping in mind that it may be a mask or
-  # the full matrix. This should really never be called externally.
-  def write_contents(open_file, options)
-    if options[:force_masked] || (self.mask? && !options[:force_not_masked])
-      write_as_masked(open_file)      # Complex case.
-    else
-      write_as_not_masked(open_file)  # Simple case.
-    end
-    
-    open_file
-  end
-
-  # Get the set of cells or rows to fractalize. Called only by mask_fractalize_internal
-  # and fractalize_internal.
-  def set_to_fractalize meth, shuffle
-    if self.built_rows.size == 0
-      if new_record?
-        raise StandardError, "Looks like an object was built but not saved and therefore its children are hidden."
-      else
-        raise StandardError, "Looks like you saved an empty object and want to fractalize it, but that seems silly."
-      end
-    end
-
-    my_set = nil
-    if meth == :cell
-      my_set = self.cells.dup
-      my_set.shuffle! if shuffle
-    elsif meth == :row
-      my_set = self.built_rows.dup # THIS IS PROBLEMATIC.
-      raise(StandardError, "dup didn't work") if my_set.size == 0
-      my_set.shuffle! if shuffle
-      raise(StandardError, "shuffle broken") if my_set.size == 0
-    else
-      STDERR.puts("meth type is #{meth.class.to_s}")
-      raise ArgumentError, "method #{meth.to_s} not recognized"
-    end
-    my_set
-  end
-
-
-  # Fractalize but build masks of this matrix (the parent) instead of building
-  # whole matrices.
-  # This function doesn't mess with empty row entries, only cell entries.
-  def mask_fractalize_internal fold, meth, shuffle
-    
-    if meth.is_a?(String)
-      raise ArgumentError, "meth is a string, but this function requires symbol :row or :cell"
-    elsif meth.is_a?(Array)
-      raise ArgumentError, "this function requires meth be a symbol, not an array"
-    end
-
-    divs     = split_set(set_to_fractalize(meth, shuffle), fold)
-    self.build_submatrices! fold
-
-    if meth == :cell
-      (0...fold).each do |n|
-        # Link masking cells to each matrix.
-        puts "cell div count is #{divs[n].size}"
-        divs[n].each do |cell|
-          self.children[n].cells.build(:i => cell.i, :j => cell.j)
-        end
-      end
-    elsif meth == :row
-      (0...fold).each do |n|
-        # Link masking cells to each matrix.
-        STDERR.puts "row div count is #{divs[n].size}"
-        divs[n].each do |row|
-          self.cells_by_row(row).each do |cell|
-            self.children[n].cells.build(:i => cell.i, :j => cell.j)
-          end
-        end
-        # Pass information necessary for recursion to children
-        self.children[n].built_rows = divs[n].dup
-      end
-    else
-      raise ArgumentError, "Could not interpret meth (type: #{meth.class.to_s})"
-    end
-
-    self.children
-  end
-
-  # Set an in-memory property for matrices that have been built but not saved.
-  # This keeps us from having to query the database during recursion on unsaved
-  # objects.
-  def built_rows= r
-    @built_rows = r
-  end
-
-  # Returns saved rows if the property is not set.
-  def built_rows
-    if defined?(@built_rows)
-      @built_rows
-    else
-      rows
-    end
-  end
-  
-
-  # Returns n new matrices, each with (s * (n - 1) / n) items.
-  # Empty rows are copied into child matrices. If deletion of cells creates new
-  # empty rows, those are created in the child as well.
-  def fractalize_internal fold, meth, shuffle
-    # self.divisions = fold
-
-    divs     = split_set(self.set_to_fractalize(meth, shuffle), fold)
-    self.build_submatrices! fold
-
-    if meth == :cell
-      (0...fold).each do |n|
-        # Get the union of all but one of the divisions.
-        puts "cell union count is #{divs[n].size}"
-        combine_all_but_one(divs, n).each do |cell|
-          self.children[n].cells.build(:i => cell.i, :j => cell.j)
-        end
-      end
-    elsif meth == :row
-      (0...fold).each do |n|
-        # Link masking cells to each matrix.
-        puts "row union count is #{divs[n].size}"
-        children[n].built_rows = combine_all_but_one(divs,n)
-        children[n].built_rows.each do |row|
-          self.cells_by_row(row).each { |cell| self.children[n].cells.build(:i => cell.i, :j => cell.j) }
-        end
-      end
-    end
-
-    self.children
   end
 
   def cells_by_row i
@@ -1011,29 +761,6 @@ SQL
 
     self.update_column_count!
     self.update_row_count!
-  end
-
-  def cells_for_display_as_masked(res = {})
-    parent_cells   = self.parent.cells
-    child_cells    = self.cells
-    unmasked_cells = parent_cells    -    child_cells
-
-    unmasked_cells.each do |entry|
-      res[entry.to_s(":")] = CellValue.new
-    end
-    child_cells.each do |entry|
-      res[entry.to_s(":")] = CellValue.new(true) # masked
-    end
-
-    res
-  end
-
-  def cells_for_display_as_not_masked(res = {})
-    self.cells.each do |entry|
-      res[entry.to_s(":")] = CellValue.new(false)
-    end
-
-    res
   end
 
 end
