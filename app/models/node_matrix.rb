@@ -1,7 +1,7 @@
 # NodeMatrix is an abstraction of TreeMatrix. This type is used for a node that
 # is not a leaf.
 class NodeMatrix < TreeMatrix
-  acts_as_tree_node :tree_class_name => 'TreeMatrix', :node_class_name => 'NodeMatrix', :leaf_class_name => 'LeafMatrix'
+  acts_as_tree_node :node_class_name => 'NodeMatrix', :leaf_class_name => 'LeafMatrix'
   # These things should be fetched from the parent if a parent is set.
   union_with_parent :empty_rows
   
