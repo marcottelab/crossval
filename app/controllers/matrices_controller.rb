@@ -70,7 +70,7 @@ class MatricesController < ApplicationController
   # GET /matrices
   # GET /matrices.xml
   def index
-    @matrices = Matrix.find(:all, :conditions => {:parent_id => nil}, :order => :id)
+    @matrices = NodeMatrix.roots.sort_by{ |m| m.id }
 
     respond_to do |format|
       format.html # index.html.erb
