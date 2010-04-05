@@ -18,7 +18,7 @@
   <li>Matrix Fractionations (Experiment Progress): <%#= links_to_matrix_children(@matrix) %>
     <table>
       <% @matrix.children.each do |child| %>
-        <tr><td><%= link_to child.id, child %></td><td><%= experiments_progress_bar(child) %></td></tr>
+        <tr><td><%= link_to child.id, matrix_path(child) %></td><td><%= experiments_progress_bar(child) %></td></tr>
       <% end %>
     </table>
   </li>

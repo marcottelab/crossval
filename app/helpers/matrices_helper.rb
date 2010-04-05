@@ -14,7 +14,7 @@ module MatricesHelper
   end
 
   def source_matrices(exp)
-    l = exp.source_matrices.collect { |sm| link_to(sm.title, sm) }.join("\n")
+    l = exp.source_matrices.collect { |sm| link_to(sm.title, matrix_path(sm)) }.join("\n")
     if l.nil? || l.size == 0
       "None"
     else
