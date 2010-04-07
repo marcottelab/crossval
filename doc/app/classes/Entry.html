@@ -59,10 +59,6 @@
                 app/models/entry.rb
                 </a>
         <br />
-                <a href="../files/app/models/old_entry_rb.html">
-                app/models/old_entry.rb
-                </a>
-        <br />
             </td>
         </tr>
 
@@ -90,15 +86,8 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000217">find_or_create!</a>&nbsp;&nbsp;
-      <a href="#M000218">find_or_create_empty_row!</a>&nbsp;&nbsp;
-      <a href="#M000223">is_cell?</a>&nbsp;&nbsp;
-      <a href="#M000222">is_row?</a>&nbsp;&nbsp;
-      <a href="#M000220">to_s</a>&nbsp;&nbsp;
-      <a href="#M000215">to_s</a>&nbsp;&nbsp;
-      <a href="#M000219">to_s_without_header</a>&nbsp;&nbsp;
-      <a href="#M000216">write</a>&nbsp;&nbsp;
-      <a href="#M000221">write</a>&nbsp;&nbsp;
+      <a href="#M000253">to_s</a>&nbsp;&nbsp;
+      <a href="#M000254">write</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -118,143 +107,21 @@
 
     <!-- if method_list -->
     <div id="methods">
-      <h3 class="section-bar">Public Class methods</h3>
-
-      <div id="method-M000217" class="method-detail">
-        <a name="M000217"></a>
-
-        <div class="method-heading">
-          <a href="#M000217" class="method-signature">
-          <span class="method-name">find_or_create!</span><span class="method-args">(row, column, entry_info_id)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000217-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000217-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 8</span>
- 8:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">find_or_create!</span>(<span class="ruby-identifier">row</span>, <span class="ruby-identifier">column</span>, <span class="ruby-identifier">entry_info_id</span>)
- 9:     <span class="ruby-identifier">entry</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:first</span>, <span class="ruby-identifier">:conditions</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:row</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">row</span>, <span class="ruby-identifier">:column</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">column</span>, <span class="ruby-identifier">:entry_info_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry_info_id</span>})
-10:     <span class="ruby-identifier">entry</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">create!</span>(<span class="ruby-identifier">:row</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">row</span>, <span class="ruby-identifier">:column</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">column</span>, <span class="ruby-identifier">:entry_info_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry_info_id</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">nil?</span>
-11:     <span class="ruby-identifier">entry</span>
-12:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000218" class="method-detail">
-        <a name="M000218"></a>
-
-        <div class="method-heading">
-          <a href="#M000218" class="method-signature">
-          <span class="method-name">find_or_create_empty_row!</span><span class="method-args">(row, entry_info_id)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000218-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000218-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 14</span>
-14:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">find_or_create_empty_row!</span>(<span class="ruby-identifier">row</span>, <span class="ruby-identifier">entry_info_id</span>)
-15:     <span class="ruby-constant">Entry</span>.<span class="ruby-identifier">find_or_create!</span>(<span class="ruby-identifier">row</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">entry_info_id</span>)
-16:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000223" class="method-detail">
-        <a name="M000223"></a>
+      <div id="method-M000253" class="method-detail">
+        <a name="M000253"></a>
 
         <div class="method-heading">
-          <a href="#M000223" class="method-signature">
-          <span class="method-name">is_cell?</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000223-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000223-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 40</span>
-40:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">is_cell?</span>
-41:     <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">is_empty_row?</span>
-42:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000222" class="method-detail">
-        <a name="M000222"></a>
-
-        <div class="method-heading">
-          <a href="#M000222" class="method-signature">
-          <span class="method-name">is_row?</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000222-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000222-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 36</span>
-36:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">is_row?</span>
-37:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">column</span>.<span class="ruby-identifier">nil?</span>
-38:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000220" class="method-detail">
-        <a name="M000220"></a>
-
-        <div class="method-heading">
-          <a href="#M000220" class="method-signature">
-          <span class="method-name">to_s</span><span class="method-args">(header = false)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000220-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000220-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 24</span>
-24:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>(<span class="ruby-identifier">header</span> = <span class="ruby-keyword kw">false</span>)
-25:     <span class="ruby-identifier">str</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>
-26:     <span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">entry_info</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">header</span>
-27:     <span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_s_without_header</span>
-28:     <span class="ruby-identifier">str</span>
-29:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000215" class="method-detail">
-        <a name="M000215"></a>
-
-        <div class="method-heading">
-          <a href="#M000215" class="method-signature">
+          <a href="#M000253" class="method-signature">
           <span class="method-name">to_s</span><span class="method-args">(sep = &quot;\t&quot;)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000215-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000215-source">
+            onclick="toggleCode('M000253-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000253-source">
 <pre>
     <span class="ruby-comment cmt"># File app/models/entry.rb, line 8</span>
  8:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>(<span class="ruby-identifier">sep</span> = <span class="ruby-value str">&quot;\t&quot;</span>)
@@ -267,74 +134,25 @@
         </div>
       </div>
 
-      <div id="method-M000219" class="method-detail">
-        <a name="M000219"></a>
+      <div id="method-M000254" class="method-detail">
+        <a name="M000254"></a>
 
         <div class="method-heading">
-          <a href="#M000219" class="method-signature">
-          <span class="method-name">to_s_without_header</span><span class="method-args">(sep = &quot;\t&quot;)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000219-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000219-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 18</span>
-18:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s_without_header</span>(<span class="ruby-identifier">sep</span> = <span class="ruby-value str">&quot;\t&quot;</span>)
-19:     <span class="ruby-identifier">str</span>  =  <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">row</span>
-20:     <span class="ruby-identifier">str</span>  <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sep</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">column</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">column?</span>
-21:     <span class="ruby-identifier">str</span>
-22:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000216" class="method-detail">
-        <a name="M000216"></a>
-
-        <div class="method-heading">
-          <a href="#M000216" class="method-signature">
+          <a href="#M000254" class="method-signature">
           <span class="method-name">write</span><span class="method-args">(open_file)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000216-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000216-source">
+            onclick="toggleCode('M000254-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000254-source">
 <pre>
     <span class="ruby-comment cmt"># File app/models/entry.rb, line 14</span>
 14:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write</span>(<span class="ruby-identifier">open_file</span>)
 15:     <span class="ruby-identifier">open_file</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_s</span> )
 16:     <span class="ruby-identifier">open_file</span>
 17:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000221" class="method-detail">
-        <a name="M000221"></a>
-
-        <div class="method-heading">
-          <a href="#M000221" class="method-signature">
-          <span class="method-name">write</span><span class="method-args">(open_file)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000221-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000221-source">
-<pre>
-    <span class="ruby-comment cmt"># File app/models/old_entry.rb, line 31</span>
-31:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write</span>(<span class="ruby-identifier">open_file</span>)
-32:     <span class="ruby-identifier">open_file</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_s_without_header</span> )
-33:     <span class="ruby-identifier">open_file</span>
-34:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

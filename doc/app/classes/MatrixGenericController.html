@@ -88,14 +88,14 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000214">correct_child_url</a>&nbsp;&nbsp;
-      <a href="#M000212">correct_child_url_function</a>&nbsp;&nbsp;
-      <a href="#M000211">ensure_predict_matrix_set</a>&nbsp;&nbsp;
-      <a href="#M000207">find_experiment</a>&nbsp;&nbsp;
-      <a href="#M000208">find_matrix</a>&nbsp;&nbsp;
-      <a href="#M000210">polymorphic_template</a>&nbsp;&nbsp;
-      <a href="#M000209">render_polymorphic_template</a>&nbsp;&nbsp;
-      <a href="#M000213">view_for_action</a>&nbsp;&nbsp;
+      <a href="#M000252">correct_child_url</a>&nbsp;&nbsp;
+      <a href="#M000250">correct_child_url_function</a>&nbsp;&nbsp;
+      <a href="#M000249">ensure_predict_matrix_set</a>&nbsp;&nbsp;
+      <a href="#M000245">find_experiment</a>&nbsp;&nbsp;
+      <a href="#M000246">find_matrix</a>&nbsp;&nbsp;
+      <a href="#M000248">polymorphic_template</a>&nbsp;&nbsp;
+      <a href="#M000247">render_polymorphic_template</a>&nbsp;&nbsp;
+      <a href="#M000251">view_for_action</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -117,42 +117,43 @@
     <div id="methods">
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000214" class="method-detail">
-        <a name="M000214"></a>
+      <div id="method-M000252" class="method-detail">
+        <a name="M000252"></a>
 
         <div class="method-heading">
-          <a href="#M000214" class="method-signature">
+          <a href="#M000252" class="method-signature">
           <span class="method-name">correct_child_url</span><span class="method-args">(action)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000214-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000214-source">
+            onclick="toggleCode('M000252-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000252-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 39</span>
 39:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">correct_child_url</span> <span class="ruby-identifier">action</span>
-40:     <span class="ruby-identifier">send</span> <span class="ruby-identifier">correct_child_url_function</span>(<span class="ruby-identifier">action</span>), <span class="ruby-ivar">@matrix</span>, <span class="ruby-ivar">@experiment</span>
-41:   <span class="ruby-keyword kw">end</span>
+40:     <span class="ruby-identifier">fn</span> = <span class="ruby-identifier">correct_child_url_function</span>(<span class="ruby-identifier">action</span>)
+41:     <span class="ruby-identifier">send</span> <span class="ruby-identifier">fn</span>, <span class="ruby-ivar">@matrix</span>, <span class="ruby-ivar">@experiment</span>.<span class="ruby-identifier">ancestor_or_self</span>
+42:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000212" class="method-detail">
-        <a name="M000212"></a>
+      <div id="method-M000250" class="method-detail">
+        <a name="M000250"></a>
 
         <div class="method-heading">
-          <a href="#M000212" class="method-signature">
+          <a href="#M000250" class="method-signature">
           <span class="method-name">correct_child_url_function</span><span class="method-args">(action)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000212-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000212-source">
+            onclick="toggleCode('M000250-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000250-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 31</span>
 31:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">correct_child_url_function</span> <span class="ruby-identifier">action</span>
@@ -163,19 +164,19 @@
         </div>
       </div>
 
-      <div id="method-M000211" class="method-detail">
-        <a name="M000211"></a>
+      <div id="method-M000249" class="method-detail">
+        <a name="M000249"></a>
 
         <div class="method-heading">
-          <a href="#M000211" class="method-signature">
+          <a href="#M000249" class="method-signature">
           <span class="method-name">ensure_predict_matrix_set</span><span class="method-args">(experiment, matrix_id)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000211-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000211-source">
+            onclick="toggleCode('M000249-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000249-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 27</span>
 27:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ensure_predict_matrix_set</span> <span class="ruby-identifier">experiment</span>, <span class="ruby-identifier">matrix_id</span>
@@ -186,24 +187,24 @@
         </div>
       </div>
 
-      <div id="method-M000207" class="method-detail">
-        <a name="M000207"></a>
+      <div id="method-M000245" class="method-detail">
+        <a name="M000245"></a>
 
         <div class="method-heading">
-          <a href="#M000207" class="method-signature">
-          <span class="method-name">find_experiment</span><span class="method-args">(id)</span>
+          <a href="#M000245" class="method-signature">
+          <span class="method-name">find_experiment</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000207-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000207-source">
+            onclick="toggleCode('M000245-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000245-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 5</span>
- 5:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_experiment</span> <span class="ruby-identifier">id</span>
+ 5:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_experiment</span>
  6:     <span class="ruby-ivar">@experiment_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-identifier">:id</span>]
- 7:     <span class="ruby-ivar">@experiment</span> = <span class="ruby-ivar">@matrix</span>.<span class="ruby-identifier">experiments</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+ 7:     <span class="ruby-ivar">@experiment</span> = <span class="ruby-ivar">@matrix</span>.<span class="ruby-identifier">experiments</span>.<span class="ruby-identifier">find</span>(<span class="ruby-ivar">@experiment_id</span>)
  8:     <span class="ruby-ivar">@klass</span> = <span class="ruby-ivar">@experiment</span>.<span class="ruby-identifier">class</span>
  9:     <span class="ruby-ivar">@view</span> = <span class="ruby-ivar">@klass</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">tableize</span>
 10:     <span class="ruby-ivar">@experiment</span>
@@ -213,19 +214,19 @@
         </div>
       </div>
 
-      <div id="method-M000208" class="method-detail">
-        <a name="M000208"></a>
+      <div id="method-M000246" class="method-detail">
+        <a name="M000246"></a>
 
         <div class="method-heading">
-          <a href="#M000208" class="method-signature">
+          <a href="#M000246" class="method-signature">
           <span class="method-name">find_matrix</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000208-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000208-source">
+            onclick="toggleCode('M000246-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000246-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 13</span>
 13:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_matrix</span>
@@ -238,19 +239,19 @@
         </div>
       </div>
 
-      <div id="method-M000210" class="method-detail">
-        <a name="M000210"></a>
+      <div id="method-M000248" class="method-detail">
+        <a name="M000248"></a>
 
         <div class="method-heading">
-          <a href="#M000210" class="method-signature">
+          <a href="#M000248" class="method-signature">
           <span class="method-name">polymorphic_template</span><span class="method-args">(action)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000210-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000210-source">
+            onclick="toggleCode('M000248-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000248-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 23</span>
 23:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">polymorphic_template</span> <span class="ruby-identifier">action</span>
@@ -261,19 +262,19 @@
         </div>
       </div>
 
-      <div id="method-M000209" class="method-detail">
-        <a name="M000209"></a>
+      <div id="method-M000247" class="method-detail">
+        <a name="M000247"></a>
 
         <div class="method-heading">
-          <a href="#M000209" class="method-signature">
+          <a href="#M000247" class="method-signature">
           <span class="method-name">render_polymorphic_template</span><span class="method-args">(action)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000209-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000209-source">
+            onclick="toggleCode('M000247-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000247-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 19</span>
 19:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render_polymorphic_template</span> <span class="ruby-identifier">action</span>
@@ -284,19 +285,19 @@
         </div>
       </div>
 
-      <div id="method-M000213" class="method-detail">
-        <a name="M000213"></a>
+      <div id="method-M000251" class="method-detail">
+        <a name="M000251"></a>
 
         <div class="method-heading">
-          <a href="#M000213" class="method-signature">
+          <a href="#M000251" class="method-signature">
           <span class="method-name">view_for_action</span><span class="method-args">(action)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000213-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000213-source">
+            onclick="toggleCode('M000251-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000251-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrix_generic_controller.rb, line 35</span>
 35:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view_for_action</span> <span class="ruby-identifier">action</span>

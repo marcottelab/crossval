@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Wed Jan 27 16:38:09 -0600 2010</td>
+      <td>Tue Mar 09 16:07:46 -0600 2010</td>
     </tr>
     </table>
   </div>
@@ -68,6 +68,83 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+This class is for running cross-validation using phenomatrix++.
+</p>
+<h1>Preparing to Run</h1>
+<p>
+To prepare the binary, you&#8216;ll want to go to
+crossval/bin/&lt;machinename&gt;/ and run
+</p>
+<pre>
+ ~/../../../phenomatrixpp/configure
+ make
+ cp src/phenomatrix .
+</pre>
+<p>
+These commands will compile and link phenomatrix, and put it in the correct
+location. Do the same for both lovelace and draco (in place of
+&lt;machinename&gt;).
+</p>
+<p>
+These instructions also apply to <a
+href="../../../classes/JohnPredictor.html">JohnPredictor</a> and <a
+href="../../../classes/JohnDistribution.html">JohnDistribution</a>.
+</p>
+<h1>Preparing inputs</h1>
+<p>
+To prepare inputs for cross-validation (or for <a
+href="../../../classes/JohnPredictor.html">JohnPredictor</a> and <a
+href="../../../classes/JohnDistribution.html">JohnDistribution</a>), use
+the prepare_inputs function on the specific experiment (after preparing the
+matrices).
+</p>
+<p>
+<a href="../../../classes/JohnExperiment.html">JohnExperiment</a> differs
+from <a href="../../../classes/JohnPredictor.html">JohnPredictor</a> in
+that it also copies the test sets for the <a
+href="../../../classes/Matrix.html">Matrix</a> into the <a
+href="../../../classes/Experiment.html">Experiment</a> working directory.
+</p>
+<h1>Outputs</h1>
+<p>
+<a href="../../../classes/JohnExperiment.html">JohnExperiment</a> also
+sorts multiple predictions directories (setup in after_run) into the
+results.timestamp directory. These outputs are described in <a
+href="../../../classes/Experiment.html">Experiment</a>&#8216;s docs.
+</p>
+<p>
+Finally,
+</p>
+<h1>Notes</h1>
+<ul>
+<li>The only setting that currently works for validation_type is row. We never
+figured out cell cross-validation for sparse matrices. You&#8216;d need to
+find a more efficient way to store matrices (not sparse, and likely not in
+the database).
+
+</li>
+<li>method is a reserved function in Rails or maybe Ruby, so we have to be
+specific that we&#8216;re messing with the attribute :method in many
+places. This is why we call read_attribute(:method) to get its value
+instead of simply self.method.
+
+</li>
+<li>In the development and production databases (currently), each column should
+have at least two entries in it. This is equivalent to setting min_genes =
+2, but I recommend setting min_genes to nil if you want that. If you want a
+higher min_genes, go ahead and set it higher than 2. Actually, it
+won&#8216;t accept 2 or lower.
+
+</li>
+<li>The number of cross-validation steps to run is set by the number of
+children the predict_matrix has.
+
+</li>
+</ul>
+
+    </div>
 
 
    </div>

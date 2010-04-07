@@ -88,15 +88,15 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000014">collapse_experiments</a>&nbsp;&nbsp;
-      <a href="#M000017">destroy</a>&nbsp;&nbsp;
-      <a href="#M000013">expand_experiments</a>&nbsp;&nbsp;
-      <a href="#M000016">index</a>&nbsp;&nbsp;
-      <a href="#M000018">row_distribution</a>&nbsp;&nbsp;
-      <a href="#M000010">run</a>&nbsp;&nbsp;
-      <a href="#M000012">show</a>&nbsp;&nbsp;
-      <a href="#M000011">show_plot</a>&nbsp;&nbsp;
-      <a href="#M000015">view</a>&nbsp;&nbsp;
+      <a href="#M000016">collapse_experiments</a>&nbsp;&nbsp;
+      <a href="#M000019">destroy</a>&nbsp;&nbsp;
+      <a href="#M000015">expand_experiments</a>&nbsp;&nbsp;
+      <a href="#M000018">index</a>&nbsp;&nbsp;
+      <a href="#M000020">row_distribution</a>&nbsp;&nbsp;
+      <a href="#M000012">run</a>&nbsp;&nbsp;
+      <a href="#M000014">show</a>&nbsp;&nbsp;
+      <a href="#M000013">show_plot</a>&nbsp;&nbsp;
+      <a href="#M000017">view</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -118,19 +118,19 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000014" class="method-detail">
-        <a name="M000014"></a>
+      <div id="method-M000016" class="method-detail">
+        <a name="M000016"></a>
 
         <div class="method-heading">
-          <a href="#M000014" class="method-signature">
+          <a href="#M000016" class="method-signature">
           <span class="method-name">collapse_experiments</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000014-source">
+            onclick="toggleCode('M000016-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000016-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 44</span>
 44:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">collapse_experiments</span>
@@ -144,11 +144,11 @@
         </div>
       </div>
 
-      <div id="method-M000017" class="method-detail">
-        <a name="M000017"></a>
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
 
         <div class="method-heading">
-          <a href="#M000017" class="method-signature">
+          <a href="#M000019" class="method-signature">
           <span class="method-name">destroy</span><span class="method-args">()</span>
           </a>
         </div>
@@ -158,8 +158,8 @@
 DELETE /matrices/1 DELETE /matrices/1.xml
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000017-source">
+            onclick="toggleCode('M000019-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000019-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 83</span>
 83:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">destroy</span>
@@ -176,19 +176,19 @@ DELETE /matrices/1 DELETE /matrices/1.xml
         </div>
       </div>
 
-      <div id="method-M000013" class="method-detail">
-        <a name="M000013"></a>
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
 
         <div class="method-heading">
-          <a href="#M000013" class="method-signature">
+          <a href="#M000015" class="method-signature">
           <span class="method-name">expand_experiments</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000013-source">
+            onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000015-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 32</span>
 32:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_experiments</span>
@@ -207,11 +207,11 @@ DELETE /matrices/1 DELETE /matrices/1.xml
         </div>
       </div>
 
-      <div id="method-M000016" class="method-detail">
-        <a name="M000016"></a>
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
 
         <div class="method-heading">
-          <a href="#M000016" class="method-signature">
+          <a href="#M000018" class="method-signature">
           <span class="method-name">index</span><span class="method-args">()</span>
           </a>
         </div>
@@ -221,12 +221,12 @@ DELETE /matrices/1 DELETE /matrices/1.xml
 GET /matrices GET /matrices.xml
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000016-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000016-source">
+            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000018-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 72</span>
 72:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">index</span>
-73:     <span class="ruby-ivar">@matrices</span> = <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:all</span>, <span class="ruby-identifier">:order</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:id</span>)
+73:     <span class="ruby-ivar">@matrices</span> = <span class="ruby-constant">NodeMatrix</span>.<span class="ruby-identifier">roots</span>.<span class="ruby-identifier">sort_by</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span> }
 74: 
 75:     <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
 76:       <span class="ruby-identifier">format</span>.<span class="ruby-identifier">html</span> <span class="ruby-comment cmt"># index.html.erb</span>
@@ -238,19 +238,19 @@ GET /matrices GET /matrices.xml
         </div>
       </div>
 
-      <div id="method-M000010" class="method-detail">
-        <a name="M000010"></a>
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
 
         <div class="method-heading">
-          <a href="#M000010" class="method-signature">
+          <a href="#M000012" class="method-signature">
           <span class="method-name">run</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000010-source">
+            onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000012-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 3</span>
  3:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>
@@ -269,11 +269,11 @@ GET /matrices GET /matrices.xml
         </div>
       </div>
 
-      <div id="method-M000012" class="method-detail">
-        <a name="M000012"></a>
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
 
         <div class="method-heading">
-          <a href="#M000012" class="method-signature">
+          <a href="#M000014" class="method-signature">
           <span class="method-name">show</span><span class="method-args">()</span>
           </a>
         </div>
@@ -283,8 +283,8 @@ GET /matrices GET /matrices.xml
 GET /matrices/1 GET /matrices/1.xml
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000012-source">
+            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000014-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 22</span>
 22:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show</span>
@@ -301,11 +301,11 @@ GET /matrices/1 GET /matrices/1.xml
         </div>
       </div>
 
-      <div id="method-M000011" class="method-detail">
-        <a name="M000011"></a>
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
 
         <div class="method-heading">
-          <a href="#M000011" class="method-signature">
+          <a href="#M000013" class="method-signature">
           <span class="method-name">show_plot</span><span class="method-args">()</span>
           </a>
         </div>
@@ -315,8 +315,8 @@ GET /matrices/1 GET /matrices/1.xml
 GET /rocs/1/show_rocs
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000011-source">
+            onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000013-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 16</span>
 16:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show_plot</span>
@@ -327,19 +327,19 @@ GET /rocs/1/show_rocs
         </div>
       </div>
 
-      <div id="method-M000015" class="method-detail">
-        <a name="M000015"></a>
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
 
         <div class="method-heading">
-          <a href="#M000015" class="method-signature">
+          <a href="#M000017" class="method-signature">
           <span class="method-name">view</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000015-source">
+            onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000017-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 51</span>
 51:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view</span>
@@ -367,19 +367,19 @@ GET /rocs/1/show_rocs
 
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000018" class="method-detail">
-        <a name="M000018"></a>
+      <div id="method-M000020" class="method-detail">
+        <a name="M000020"></a>
 
         <div class="method-heading">
-          <a href="#M000018" class="method-signature">
+          <a href="#M000020" class="method-signature">
           <span class="method-name">row_distribution</span><span class="method-args">(matrix)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000018-source">
+            onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000020-source">
 <pre>
      <span class="ruby-comment cmt"># File app/controllers/matrices_controller.rb, line 95</span>
  95:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">row_distribution</span> <span class="ruby-identifier">matrix</span>

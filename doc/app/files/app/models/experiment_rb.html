@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Fri Jan 29 15:11:15 -0600 2010</td>
+      <td>Fri Mar 19 14:59:16 -0500 2010</td>
     </tr>
     </table>
   </div>
@@ -72,6 +72,12 @@
       <p>
 The <a href="../../../classes/Experiment.html">Experiment</a> class is the
 base class for different types of analyses you can run on matrices.
+</p>
+<p>
+This class is &#8216;pure virtual.&#8217; That is, no real object should
+have <a href="../../../classes/Experiment.html">Experiment</a> as its type.
+Instead, its functions should be inherited, modified, and utilized by child
+classes.
 </p>
 <h1>Goals</h1>
 <ul>
@@ -113,7 +119,7 @@ binary when it finished.
 
 </li>
 <li>started_at, which specifies when the user executed <a
-href="../../../classes/Experiment.html#M000230">Experiment.run</a>.
+href="../../../classes/Experiment.html#M000266">Experiment.run</a>.
 
 </li>
 <li>completed_at, which specifies when the <a
@@ -146,6 +152,13 @@ prepare_inputs is responsible for initializing the working directory, which
 is within the predict_matrix <a
 href="../../../classes/Matrix.html">Matrix</a>&#8216;s working directory
 (e.g., crossval/tmp/work/matrix_1/experiment_1).
+</p>
+<p>
+Note that if we&#8216;re not in the root of the <a
+href="../../../classes/Experiment.html">Experiment</a> tree (which mirrors
+the <a href="../../../classes/Matrix.html">Matrix</a> tree but with one
+less level), we&#8216;ll use the root&#8216;s id for experiment directories
+within the predict_matrix&#8216;s matrix directory.
 </p>
 <p>
 prepare_inputs, based on the predict_matrix and sources, copies the
@@ -256,10 +269,11 @@ href="../../../classes/Experiment.html">Experiment</a> 17.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000006">calculate_average_auc</a>&nbsp;&nbsp;
-      <a href="#M000008">mean</a>&nbsp;&nbsp;
-      <a href="#M000007">read_aucs</a>&nbsp;&nbsp;
-      <a href="#M000005">time_to_file_suffix</a>&nbsp;&nbsp;
+      <a href="#M000004">calculate_average_auc</a>&nbsp;&nbsp;
+      <a href="#M000006">mean</a>&nbsp;&nbsp;
+      <a href="#M000005">read_aucs</a>&nbsp;&nbsp;
+      <a href="#M000007">shifted_mean</a>&nbsp;&nbsp;
+      <a href="#M000003">time_to_file_suffix</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -281,11 +295,11 @@ href="../../../classes/Experiment.html">Experiment</a> 17.
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000006" class="method-detail">
-        <a name="M000006"></a>
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
 
         <div class="method-heading">
-          <a href="#M000006" class="method-signature">
+          <a href="#M000004" class="method-signature">
           <span class="method-name">calculate_average_auc</span><span class="method-args">(hash_of_aucs)</span>
           </a>
         </div>
@@ -293,83 +307,48 @@ href="../../../classes/Experiment.html">Experiment</a> 17.
         <div class="method-description">
           <p>
 Calculates a hash/dict and calculates the average (<a
-href="experiment_rb.html#M000008">mean</a>) of the values
+href="experiment_rb.html#M000006">mean</a>) of the values
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000006-source">
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 375</span>
-375: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_average_auc</span> <span class="ruby-identifier">hash_of_aucs</span>
-376:   <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span><span class="ruby-value">.0</span>
-377:   <span class="ruby-identifier">hash_of_aucs</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">value</span> }
-378:   <span class="ruby-identifier">total</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">hash_of_aucs</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span>
-379: <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 571</span>
+571: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_average_auc</span> <span class="ruby-identifier">hash_of_aucs</span>
+572:   <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span><span class="ruby-value">.0</span>
+573:   <span class="ruby-identifier">hash_of_aucs</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">value</span> }
+574:   <span class="ruby-identifier">total</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">hash_of_aucs</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span>
+575: <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000008" class="method-detail">
-        <a name="M000008"></a>
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
 
         <div class="method-heading">
-          <a href="#M000008" class="method-signature">
+          <a href="#M000006" class="method-signature">
           <span class="method-name">mean</span><span class="method-args">(l)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Calculates the <a href="experiment_rb.html#M000008">mean</a> of a set
+Calculates the <a href="experiment_rb.html#M000006">mean</a> of a set
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000008-source">
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 399</span>
-399: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mean</span> <span class="ruby-identifier">l</span>
-400:   <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span>
-401:   <span class="ruby-identifier">l</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">x</span> }
-402:   <span class="ruby-identifier">total</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">l</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span>
-403: <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000007" class="method-detail">
-        <a name="M000007"></a>
-
-        <div class="method-heading">
-          <a href="#M000007" class="method-signature">
-          <span class="method-name">read_aucs</span><span class="method-args">(file)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p>
-Helper for reading a file with the results of a prediction
-</p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000007-source">
-<pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 383</span>
-383: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_aucs</span> <span class="ruby-identifier">file</span>
-384:   <span class="ruby-identifier">f</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">&quot;r&quot;</span>)
-385:   <span class="ruby-identifier">h</span> = {}
-386:   <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">f</span>.<span class="ruby-identifier">gets</span>
-387:     <span class="ruby-identifier">line</span>.<span class="ruby-identifier">chomp!</span>
-388:     <span class="ruby-identifier">fields</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;\t&quot;</span>)
-389: 
-390:     <span class="ruby-comment cmt"># Insert in the hash</span>
-391:     <span class="ruby-identifier">h</span>[ <span class="ruby-identifier">fields</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_i</span> ]   =    <span class="ruby-identifier">fields</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_f</span>
-392:   <span class="ruby-keyword kw">end</span>
-393:   <span class="ruby-identifier">f</span>.<span class="ruby-identifier">close</span>
-394: 
-395:   <span class="ruby-identifier">h</span>
-396: <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 595</span>
+595: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mean</span> <span class="ruby-identifier">l</span>
+596:   <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span>
+597:   <span class="ruby-identifier">l</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+598:       <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">x</span>
+599:   <span class="ruby-keyword kw">end</span>
+600:   <span class="ruby-identifier">total</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">l</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span>
+601: <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -380,6 +359,72 @@ Helper for reading a file with the results of a prediction
 
         <div class="method-heading">
           <a href="#M000005" class="method-signature">
+          <span class="method-name">read_aucs</span><span class="method-args">(file)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Helper for reading a file with the results of a prediction
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 579</span>
+579: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_aucs</span> <span class="ruby-identifier">file</span>
+580:   <span class="ruby-identifier">f</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">&quot;r&quot;</span>)
+581:   <span class="ruby-identifier">h</span> = {}
+582:   <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">f</span>.<span class="ruby-identifier">gets</span>
+583:     <span class="ruby-identifier">line</span>.<span class="ruby-identifier">chomp!</span>
+584:     <span class="ruby-identifier">fields</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;\t&quot;</span>)
+585: 
+586:     <span class="ruby-comment cmt"># Insert in the hash</span>
+587:     <span class="ruby-identifier">h</span>[ <span class="ruby-identifier">fields</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_i</span> ]   =    <span class="ruby-identifier">fields</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_f</span>
+588:   <span class="ruby-keyword kw">end</span>
+589:   <span class="ruby-identifier">f</span>.<span class="ruby-identifier">close</span>
+590: 
+591:   <span class="ruby-identifier">h</span>
+592: <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="#M000007" class="method-signature">
+          <span class="method-name">shifted_mean</span><span class="method-args">(l)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000007-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 603</span>
+603: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">shifted_mean</span> <span class="ruby-identifier">l</span>
+604:   <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span>
+605:   <span class="ruby-identifier">li</span> = <span class="ruby-identifier">l</span>.<span class="ruby-identifier">dup</span>
+606:   <span class="ruby-identifier">li</span>.<span class="ruby-identifier">shift</span>
+607:   <span class="ruby-identifier">li</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+608:     <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">x</span>
+609:   <span class="ruby-keyword kw">end</span>
+610:   <span class="ruby-identifier">total</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">li</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span>
+611: <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="#M000003" class="method-signature">
           <span class="method-name">time_to_file_suffix</span><span class="method-args">(t)</span>
           </a>
         </div>
@@ -389,13 +434,13 @@ Helper for reading a file with the results of a prediction
 Converts a datetime (timestamp) to a numeric string without spaces.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000005-source">
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 369</span>
-369: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">time_to_file_suffix</span> <span class="ruby-identifier">t</span>
-370:   <span class="ruby-identifier">t</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y%m%d%H%M%S&quot;</span>)
-371: <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 565</span>
+565: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">time_to_file_suffix</span> <span class="ruby-identifier">t</span>
+566:   <span class="ruby-identifier">t</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y%m%d%H%M%S&quot;</span>)
+567: <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

@@ -82,7 +82,12 @@
       <p>
 The <a href="Experiment.html">Experiment</a> class is the base class for
 different types of analyses you can <a
-href="Experiment.html#M000230">run</a> on matrices.
+href="Experiment.html#M000266">run</a> on matrices.
+</p>
+<p>
+This class is &#8216;pure virtual.&#8217; That is, no real object should
+have <a href="Experiment.html">Experiment</a> as its type. Instead, its
+functions should be inherited, modified, and utilized by child classes.
 </p>
 <h1>Goals</h1>
 <ul>
@@ -112,7 +117,7 @@ which point to the matrices from which the predictions will be generated.
 
 </li>
 <li>One column for each specification needed to <a
-href="Experiment.html#M000230">run</a> the binary or script which performs
+href="Experiment.html#M000266">run</a> the binary or script which performs
 the actual calculations. For example, <a
 href="JohnExperiment.html">JohnExperiment</a> uses method, k, min_genes,
 and several others. Not every sub-type need use every column.
@@ -123,7 +128,7 @@ binary when it finished.
 
 </li>
 <li>started_at, which specifies when the user executed <a
-href="Experiment.html#M000230">Experiment.run</a>.
+href="Experiment.html#M000266">Experiment.run</a>.
 
 </li>
 <li>completed_at, which specifies when the <a
@@ -157,12 +162,20 @@ predict_matrix <a href="Matrix.html">Matrix</a>&#8216;s working directory
 (e.g., crossval/tmp/work/matrix_1/experiment_1).
 </p>
 <p>
-prepare_inputs, based on the predict_matrix and sources, copies the
-necessary input files into the experiment working directory from the matrix
-working directory. It is best to make sure the <a
-href="Matrix.html">Matrix</a> working directories have already been created
-(using Matrix::prepare_inputs on a specific matrix instance). For example,
-do:
+Note that if we&#8216;re not in the <a
+href="Experiment.html#M000264">root</a> of the <a
+href="Experiment.html">Experiment</a> tree (which mirrors the <a
+href="Matrix.html">Matrix</a> tree but with one less level), we&#8216;ll
+use the <a href="Experiment.html#M000264">root</a>&#8216;s id for
+experiment directories within the predict_matrix&#8216;s matrix directory.
+</p>
+<p>
+prepare_inputs, based on the predict_matrix and <a
+href="Experiment.html#M000255">sources</a>, copies the necessary input
+files into the experiment working directory from the matrix working
+directory. It is best to make sure the <a href="Matrix.html">Matrix</a>
+working directories have already been created (using Matrix::prepare_inputs
+on a specific matrix instance). For example, do:
 </p>
 <pre>
  m = Matrix.find 1
@@ -261,39 +274,56 @@ predict_matrix for <a href="Experiment.html">Experiment</a> 17.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000248">after_run</a>&nbsp;&nbsp;
-      <a href="#M000238">aucs_bin_path</a>&nbsp;&nbsp;
-      <a href="#M000234">aucs_file</a>&nbsp;&nbsp;
-      <a href="#M000247">before_run</a>&nbsp;&nbsp;
-      <a href="#M000251">calculate_aucs_old</a>&nbsp;&nbsp;
-      <a href="#M000250">calculate_rocs!</a>&nbsp;&nbsp;
-      <a href="#M000242">command_string</a>&nbsp;&nbsp;
-      <a href="#M000243">command_string_with_pipes</a>&nbsp;&nbsp;
-      <a href="#M000255">copy_testsets</a>&nbsp;&nbsp;
-      <a href="#M000226">dir_exists?</a>&nbsp;&nbsp;
-      <a href="#M000232">error_log_file</a>&nbsp;&nbsp;
-      <a href="#M000233">has_been_run?</a>&nbsp;&nbsp;
-      <a href="#M000231">log_file</a>&nbsp;&nbsp;
-      <a href="#M000252">prepare_dir</a>&nbsp;&nbsp;
-      <a href="#M000229">prepare_inputs_internal</a>&nbsp;&nbsp;
-      <a href="#M000256">prepare_standard_inputs</a>&nbsp;&nbsp;
-      <a href="#M000254">record_timestamps</a>&nbsp;&nbsp;
-      <a href="#M000240">reset_for_new_run!</a>&nbsp;&nbsp;
-      <a href="#M000241">reset_inputs</a>&nbsp;&nbsp;
-      <a href="#M000235">results_dir</a>&nbsp;&nbsp;
-      <a href="#M000236">results_path</a>&nbsp;&nbsp;
-      <a href="#M000244">roc_line</a>&nbsp;&nbsp;
-      <a href="#M000228">root</a>&nbsp;&nbsp;
-      <a href="#M000227">root_exists?</a>&nbsp;&nbsp;
-      <a href="#M000230">run</a>&nbsp;&nbsp;
-      <a href="#M000253">save_without_timestamping!</a>&nbsp;&nbsp;
-      <a href="#M000237">sort_bin_path</a>&nbsp;&nbsp;
-      <a href="#M000239">sort_results</a>&nbsp;&nbsp;
-      <a href="#M000249">sort_results_and_calculate_rocs!</a>&nbsp;&nbsp;
-      <a href="#M000245">source_species</a>&nbsp;&nbsp;
-      <a href="#M000246">source_species_to_s</a>&nbsp;&nbsp;
-      <a href="#M000224">title</a>&nbsp;&nbsp;
-      <a href="#M000225">unique_descriptor</a>&nbsp;&nbsp;
+      <a href="#M000292">after_run</a>&nbsp;&nbsp;
+      <a href="#M000257">ancestor_or_self</a>&nbsp;&nbsp;
+      <a href="#M000286">aucs_against</a>&nbsp;&nbsp;
+      <a href="#M000277">aucs_bin_path</a>&nbsp;&nbsp;
+      <a href="#M000283">aucs_by_column</a>&nbsp;&nbsp;
+      <a href="#M000284">aucs_by_column_with_children</a>&nbsp;&nbsp;
+      <a href="#M000285">aucs_by_column_with_mean</a>&nbsp;&nbsp;
+      <a href="#M000273">aucs_file</a>&nbsp;&nbsp;
+      <a href="#M000290">before_run</a>&nbsp;&nbsp;
+      <a href="#M000291">before_run_internal</a>&nbsp;&nbsp;
+      <a href="#M000295">calculate_aucs_old</a>&nbsp;&nbsp;
+      <a href="#M000294">calculate_rocs!</a>&nbsp;&nbsp;
+      <a href="#M000271">children_have_been_run_successfully?</a>&nbsp;&nbsp;
+      <a href="#M000280">command_string</a>&nbsp;&nbsp;
+      <a href="#M000281">command_string_with_pipes</a>&nbsp;&nbsp;
+      <a href="#M000303">copy_source_matrix_inputs</a>&nbsp;&nbsp;
+      <a href="#M000299">copy_testsets</a>&nbsp;&nbsp;
+      <a href="#M000261">dir_exists?</a>&nbsp;&nbsp;
+      <a href="#M000263">directory_name</a>&nbsp;&nbsp;
+      <a href="#M000268">error_log_file</a>&nbsp;&nbsp;
+      <a href="#M000269">has_been_run?</a>&nbsp;&nbsp;
+      <a href="#M000272">has_been_started?</a>&nbsp;&nbsp;
+      <a href="#M000270">has_run_successfully?</a>&nbsp;&nbsp;
+      <a href="#M000267">log_file</a>&nbsp;&nbsp;
+      <a href="#M000289">ls</a>&nbsp;&nbsp;
+      <a href="#M000302">message</a>&nbsp;&nbsp;
+      <a href="#M000301">parent_descriptor_component</a>&nbsp;&nbsp;
+      <a href="#M000260">prepare_children</a>&nbsp;&nbsp;
+      <a href="#M000296">prepare_dir</a>&nbsp;&nbsp;
+      <a href="#M000265">prepare_inputs_internal</a>&nbsp;&nbsp;
+      <a href="#M000300">prepare_standard_inputs</a>&nbsp;&nbsp;
+      <a href="#M000298">record_timestamps</a>&nbsp;&nbsp;
+      <a href="#M000279">reset_for_new_run!</a>&nbsp;&nbsp;
+      <a href="#M000274">results_dir</a>&nbsp;&nbsp;
+      <a href="#M000275">results_path</a>&nbsp;&nbsp;
+      <a href="#M000282">roc_line</a>&nbsp;&nbsp;
+      <a href="#M000264">root</a>&nbsp;&nbsp;
+      <a href="#M000262">root_exists?</a>&nbsp;&nbsp;
+      <a href="#M000266">run</a>&nbsp;&nbsp;
+      <a href="#M000297">save_without_timestamping!</a>&nbsp;&nbsp;
+      <a href="#M000276">sort_bin_path</a>&nbsp;&nbsp;
+      <a href="#M000278">sort_results</a>&nbsp;&nbsp;
+      <a href="#M000293">sort_results_and_calculate_rocs!</a>&nbsp;&nbsp;
+      <a href="#M000256">source_matrices</a>&nbsp;&nbsp;
+      <a href="#M000304">source_matrices_error_check</a>&nbsp;&nbsp;
+      <a href="#M000287">source_species</a>&nbsp;&nbsp;
+      <a href="#M000288">source_species_to_s</a>&nbsp;&nbsp;
+      <a href="#M000255">sources</a>&nbsp;&nbsp;
+      <a href="#M000258">title</a>&nbsp;&nbsp;
+      <a href="#M000259">unique_descriptor</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -334,6 +364,23 @@ predict_matrix for <a href="Experiment.html">Experiment</a> 17.
           <td>-&gt;</td>
           <td class="context-item-value">predict_species</td>
         </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">sources</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">this_sources</td>
+        </tr>
+      <tr class="top-aligned-row context-row">
+        <td>&nbsp;</td>
+        <td colspan="2" class="context-item-desc">
+Avoid overriding these functions:
+
+</td>
+      </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">source_matrices</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">this_source_matrices</td>
+        </tr>
                         </table>
       </div>
     </div>
@@ -346,22 +393,22 @@ predict_matrix for <a href="Experiment.html">Experiment</a> 17.
     <div id="methods">
       <h3 class="section-bar">Protected Class methods</h3>
 
-      <div id="method-M000254" class="method-detail">
-        <a name="M000254"></a>
+      <div id="method-M000298" class="method-detail">
+        <a name="M000298"></a>
 
         <div class="method-heading">
-          <a href="#M000254" class="method-signature">
+          <a href="#M000298" class="method-signature">
           <span class="method-name">record_timestamps</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000254-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000254-source">
+            onclick="toggleCode('M000298-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000298-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 333</span>
-333:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">record_timestamps</span>; <span class="ruby-keyword kw">false</span>; <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 468</span>
+468:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">record_timestamps</span>; <span class="ruby-keyword kw">false</span>; <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -369,201 +416,525 @@ predict_matrix for <a href="Experiment.html">Experiment</a> 17.
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000238" class="method-detail">
-        <a name="M000238"></a>
+      <div id="method-M000257" class="method-detail">
+        <a name="M000257"></a>
 
         <div class="method-heading">
-          <a href="#M000238" class="method-signature">
+          <a href="#M000257" class="method-signature">
+          <span class="method-name">ancestor_or_self</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the ancestor of this experiment or itself if there is no ancestor
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000257-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000257-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 145</span>
+145:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ancestor_or_self</span>; <span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">self</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">ancestor_or_self</span> ; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000286" class="method-detail">
+        <a name="M000286"></a>
+
+        <div class="method-heading">
+          <a href="#M000286" class="method-signature">
+          <span class="method-name">aucs_against</span><span class="method-args">(experiment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000286-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000286-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 372</span>
+372:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_against</span> <span class="ruby-identifier">experiment</span>
+373:     <span class="ruby-identifier">au</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">h</span>,<span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span>[<span class="ruby-identifier">k</span>] = [] }
+374:     <span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>            <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span>  }
+375: 
+376:     <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>
+377:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">au</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>)
+378:         <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span>
+379:       <span class="ruby-keyword kw">else</span>
+380:         <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] = [<span class="ruby-value">0</span>, <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span>]
+381:       <span class="ruby-keyword kw">end</span>
+382:     <span class="ruby-keyword kw">end</span>
+383:     <span class="ruby-identifier">au</span>.<span class="ruby-identifier">each_key</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span>
+384:       <span class="ruby-identifier">au</span>[<span class="ruby-identifier">k</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">au</span>[<span class="ruby-identifier">k</span>].<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">2</span>
+385:     <span class="ruby-keyword kw">end</span>
+386:     
+387:     <span class="ruby-identifier">au</span>.<span class="ruby-identifier">values</span>
+388:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000277" class="method-detail">
+        <a name="M000277"></a>
+
+        <div class="method-heading">
+          <a href="#M000277" class="method-signature">
           <span class="method-name">aucs_bin_path</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000238-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000238-source">
+            onclick="toggleCode('M000277-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000277-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 216</span>
-216:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_bin_path</span>
-217:     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;bin/calculate_aucs.py&quot;</span>
-218:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 290</span>
+290:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_bin_path</span>
+291:     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;bin/calculate_aucs.py&quot;</span>
+292:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000234" class="method-detail">
-        <a name="M000234"></a>
+      <div id="method-M000283" class="method-detail">
+        <a name="M000283"></a>
 
         <div class="method-heading">
-          <a href="#M000234" class="method-signature">
+          <a href="#M000283" class="method-signature">
+          <span class="method-name">aucs_by_column</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000283-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000283-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 331</span>
+331:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_by_column</span>
+332:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ro</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">ro</span>.<span class="ruby-identifier">column</span>, <span class="ruby-identifier">ro</span>.<span class="ruby-identifier">auc</span>] }
+333:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000284" class="method-detail">
+        <a name="M000284"></a>
+
+        <div class="method-heading">
+          <a href="#M000284" class="method-signature">
+          <span class="method-name">aucs_by_column_with_children</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000284-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000284-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 335</span>
+335:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_by_column_with_children</span>
+336:     <span class="ruby-identifier">au</span> = {}
+337:     <span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>  <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] = [ <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span> ]  }
+338:     <span class="ruby-identifier">n</span> = <span class="ruby-value">1</span>
+339: 
+340:     <span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+341:       <span class="ruby-identifier">child</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span> <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span> }
+342:       <span class="ruby-identifier">n</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+343:       
+344:       <span class="ruby-comment cmt"># Add an empty if a certain index doesn't exist in this child:</span>
+345:       <span class="ruby-identifier">au</span>.<span class="ruby-identifier">each_key</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">col</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">au</span>[<span class="ruby-identifier">col</span>].<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">n</span>; <span class="ruby-identifier">au</span>[<span class="ruby-identifier">col</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">nil</span>; <span class="ruby-keyword kw">end</span> }
+346:     <span class="ruby-keyword kw">end</span>
+347:     <span class="ruby-identifier">yvaluest</span> = <span class="ruby-identifier">au</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">sort</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span>,<span class="ruby-identifier">y</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">y</span>[<span class="ruby-value">0</span>] } <span class="ruby-comment cmt"># sort by first col</span>
+348:     <span class="ruby-identifier">xvalues</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">size</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span> } <span class="ruby-comment cmt"># add x-values</span>
+349: 
+350:     <span class="ruby-comment cmt">#xvalues.zip(yvaluest.collect{ |yt| mean(yt) }.transpose)</span>
+351:     <span class="ruby-comment cmt"># generate several lists of points, themselves in a list:</span>
+352:     <span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">transpose</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">yvector</span><span class="ruby-operator">|</span> <span class="ruby-identifier">xvalues</span>.<span class="ruby-identifier">zip</span>(<span class="ruby-identifier">yvector</span>) }
+353:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000285" class="method-detail">
+        <a name="M000285"></a>
+
+        <div class="method-heading">
+          <a href="#M000285" class="method-signature">
+          <span class="method-name">aucs_by_column_with_mean</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000285-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000285-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 355</span>
+355:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_by_column_with_mean</span>
+356:     <span class="ruby-identifier">au</span> = {}
+357:     <span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>  <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] = [ <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span> ]  }
+358: 
+359:     <span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+360:       <span class="ruby-identifier">child</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span> <span class="ruby-identifier">au</span>[<span class="ruby-identifier">roc</span>.<span class="ruby-identifier">column</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span> }
+361:     <span class="ruby-keyword kw">end</span>
+362:     <span class="ruby-identifier">yvaluest</span> = <span class="ruby-identifier">au</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">sort</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span>,<span class="ruby-identifier">y</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">y</span>[<span class="ruby-value">0</span>] } <span class="ruby-comment cmt"># sort by first col</span>
+363:     <span class="ruby-identifier">yvalues</span> = <span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">yt</span><span class="ruby-operator">|</span> <span class="ruby-identifier">shifted_mean</span>(<span class="ruby-identifier">yt</span>) }
+364:     <span class="ruby-identifier">xvalues</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">size</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span> } <span class="ruby-comment cmt"># add x-values</span>
+365: 
+366:     <span class="ruby-comment cmt">#xvalues.zip(yvaluest.collect{ |yt| mean(yt) }.transpose)</span>
+367:     <span class="ruby-comment cmt"># generate several lists of points, themselves in a list:</span>
+368:     [<span class="ruby-identifier">xvalues</span>.<span class="ruby-identifier">zip</span>(<span class="ruby-identifier">yvaluest</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>]}), <span class="ruby-identifier">xvalues</span>.<span class="ruby-identifier">zip</span>(<span class="ruby-identifier">yvalues</span>)]
+369:     <span class="ruby-comment cmt">#yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }</span>
+370:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000273" class="method-detail">
+        <a name="M000273"></a>
+
+        <div class="method-heading">
+          <a href="#M000273" class="method-signature">
           <span class="method-name">aucs_file</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000234-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000234-source">
+            onclick="toggleCode('M000273-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000273-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 195</span>
-195:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_file</span>
-196:     <span class="ruby-node">&quot;aucs.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
-197:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 269</span>
+269:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">aucs_file</span>
+270:     <span class="ruby-node">&quot;aucs.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
+271:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000242" class="method-detail">
-        <a name="M000242"></a>
+      <div id="method-M000271" class="method-detail">
+        <a name="M000271"></a>
 
         <div class="method-heading">
-          <a href="#M000242" class="method-signature">
+          <a href="#M000271" class="method-signature">
+          <span class="method-name">children_have_been_run_successfully?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000271-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000271-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 260</span>
+260:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">children_have_been_run_successfully?</span>
+261:     <span class="ruby-identifier">children</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-keyword kw">true</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">all_run</span>, <span class="ruby-identifier">child</span><span class="ruby-operator">|</span> <span class="ruby-identifier">all_run</span> <span class="ruby-operator">||=</span> (<span class="ruby-identifier">child</span>.<span class="ruby-identifier">has_been_run?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">children_have_been_run_successfully?</span>) }
+262:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000280" class="method-detail">
+        <a name="M000280"></a>
+
+        <div class="method-heading">
+          <a href="#M000280" class="method-signature">
           <span class="method-name">command_string</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000242-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000242-source">
+            onclick="toggleCode('M000280-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000280-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 247</span>
-247:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">command_string</span>
-248:     <span class="ruby-node">&quot;#{self.bin_path} #{self.argument_string}&quot;</span>
-249:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 316</span>
+316:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">command_string</span>
+317:     <span class="ruby-node">&quot;#{self.bin_path} #{self.argument_string}&quot;</span>
+318:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000243" class="method-detail">
-        <a name="M000243"></a>
+      <div id="method-M000281" class="method-detail">
+        <a name="M000281"></a>
 
         <div class="method-heading">
-          <a href="#M000243" class="method-signature">
+          <a href="#M000281" class="method-signature">
           <span class="method-name">command_string_with_pipes</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000243-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000243-source">
+            onclick="toggleCode('M000281-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000281-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 251</span>
-251:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">command_string_with_pipes</span>
-252:     <span class="ruby-node">&quot;#{self.command_string} 2&gt;&gt; #{self.error_log_file} 1&gt;&gt; #{self.log_file}&quot;</span>
-253:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 320</span>
+320:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">command_string_with_pipes</span>
+321:     <span class="ruby-node">&quot;#{self.command_string} 2&gt;&gt; #{self.error_log_file} 1&gt;&gt; #{self.log_file}&quot;</span>
+322:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000226" class="method-detail">
-        <a name="M000226"></a>
+      <div id="method-M000261" class="method-detail">
+        <a name="M000261"></a>
 
         <div class="method-heading">
-          <a href="#M000226" class="method-signature">
+          <a href="#M000261" class="method-signature">
           <span class="method-name">dir_exists?</span><span class="method-args">(dir)</span>
           </a>
         </div>
       
         <div class="method-description">
-          <p>
-def prepare_inputs end
-</p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000226-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000226-source">
+            onclick="toggleCode('M000261-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000261-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 132</span>
-132:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dir_exists?</span> <span class="ruby-identifier">dir</span>
-133:     <span class="ruby-constant">File</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">dir</span>)
-134:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 181</span>
+181:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dir_exists?</span> <span class="ruby-identifier">dir</span>
+182:     <span class="ruby-constant">File</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">dir</span>)
+183:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000232" class="method-detail">
-        <a name="M000232"></a>
+      <div id="method-M000263" class="method-detail">
+        <a name="M000263"></a>
 
         <div class="method-heading">
-          <a href="#M000232" class="method-signature">
-          <span class="method-name">error_log_file</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000232-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000232-source">
-<pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 184</span>
-184:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">error_log_file</span>
-185:     <span class="ruby-node">&quot;error_log.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
-186:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000233" class="method-detail">
-        <a name="M000233"></a>
-
-        <div class="method-heading">
-          <a href="#M000233" class="method-signature">
-          <span class="method-name">has_been_run?</span><span class="method-args">()</span>
+          <a href="#M000263" class="method-signature">
+          <span class="method-name">directory_name</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-def argument_string end
+Use this for the experiment&#8216;s directory (within the matrix dir). If
+we&#8216;re a child experiment, use the parent_id instead.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000233-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000233-source">
+            onclick="toggleCode('M000263-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000263-source">
 <pre>
      <span class="ruby-comment cmt"># File app/models/experiment.rb, line 191</span>
-191:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_been_run?</span>
-192:     <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span>.<span class="ruby-identifier">nil?</span>
+191:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">directory_name</span>
+192:     <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-node">&quot;experiment_#{self.id}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">directory_name</span>
 193:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000231" class="method-detail">
-        <a name="M000231"></a>
+      <div id="method-M000268" class="method-detail">
+        <a name="M000268"></a>
 
         <div class="method-heading">
-          <a href="#M000231" class="method-signature">
+          <a href="#M000268" class="method-signature">
+          <span class="method-name">error_log_file</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000268-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000268-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 243</span>
+243:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">error_log_file</span>
+244:     <span class="ruby-node">&quot;error_log.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
+245:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000269" class="method-detail">
+        <a name="M000269"></a>
+
+        <div class="method-heading">
+          <a href="#M000269" class="method-signature">
+          <span class="method-name">has_been_run?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns whether this (or its children) have all finished running.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000269-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000269-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 251</span>
+251:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_been_run?</span>
+252:     <span class="ruby-identifier">children</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-keyword kw">true</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">all_run</span>, <span class="ruby-identifier">child</span><span class="ruby-operator">|</span> <span class="ruby-identifier">all_run</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">has_been_run?</span> }
+253:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000272" class="method-detail">
+        <a name="M000272"></a>
+
+        <div class="method-heading">
+          <a href="#M000272" class="method-signature">
+          <span class="method-name">has_been_started?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns whether this (or its children) have all finished running.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000272-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000272-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 265</span>
+265:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_been_started?</span>
+266:     <span class="ruby-identifier">children</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">started_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-keyword kw">true</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">all_started</span>, <span class="ruby-identifier">child</span><span class="ruby-operator">|</span> <span class="ruby-identifier">all_started</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">has_been_started?</span> }
+267:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000270" class="method-detail">
+        <a name="M000270"></a>
+
+        <div class="method-heading">
+          <a href="#M000270" class="method-signature">
+          <span class="method-name">has_run_successfully?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns whether this has finished running and has done so successfully
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000270-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000270-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 256</span>
+256:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_run_successfully?</span>
+257:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span>.<span class="ruby-identifier">nil?</span>
+258:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000267" class="method-detail">
+        <a name="M000267"></a>
+
+        <div class="method-heading">
+          <a href="#M000267" class="method-signature">
           <span class="method-name">log_file</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000231-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000231-source">
+            onclick="toggleCode('M000267-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000267-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 180</span>
-180:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">log_file</span>
-181:     <span class="ruby-node">&quot;log.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
-182:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 239</span>
+239:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">log_file</span>
+240:     <span class="ruby-node">&quot;log.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
+241:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000229" class="method-detail">
-        <a name="M000229"></a>
+      <div id="method-M000289" class="method-detail">
+        <a name="M000289"></a>
 
         <div class="method-heading">
-          <a href="#M000229" class="method-signature">
+          <a href="#M000289" class="method-signature">
+          <span class="method-name">ls</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+List files and dirs in the experiment directory
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000289-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000289-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 399</span>
+399:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ls</span>
+400:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">entries</span>(<span class="ruby-identifier">root</span>).<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">e</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;..&quot;</span> }
+401:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000260" class="method-detail">
+        <a name="M000260"></a>
+
+        <div class="method-heading">
+          <a href="#M000260" class="method-signature">
+          <span class="method-name">prepare_children</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Ensure child experiments have been created with the same set of parameters.
+Instructs those children to prepare_inputs
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000260-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000260-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 164</span>
+164:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_children</span>
+165:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">has_grandchildren?</span>
+166: 
+167:       <span class="ruby-comment cmt"># Create one child experiment for each child (not grandchild) matrix</span>
+168:       <span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child_matrix</span><span class="ruby-operator">|</span>
+169:         <span class="ruby-comment cmt"># Make sure the destination directory exists!</span>
+170:         <span class="ruby-identifier">child_matrix</span>.<span class="ruby-identifier">prepare_inputs</span>
+171: 
+172:         <span class="ruby-comment cmt"># Don't create an Experiment -- create a JohnExperiment or a MartinExperiment.</span>
+173:         <span class="ruby-identifier">child_experiment</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span> <span class="ruby-identifier">:create!</span>, {<span class="ruby-identifier">:predict_matrix_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">child_matrix</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">:parent_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">id</span>}
+174:         <span class="ruby-identifier">child_experiment</span>.<span class="ruby-identifier">prepare_inputs</span>
+175:       <span class="ruby-keyword kw">end</span>
+176:     <span class="ruby-keyword kw">else</span>
+177:       <span class="ruby-keyword kw">nil</span>
+178:     <span class="ruby-keyword kw">end</span>
+179:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000265" class="method-detail">
+        <a name="M000265"></a>
+
+        <div class="method-heading">
+          <a href="#M000265" class="method-signature">
           <span class="method-name">prepare_inputs_internal</span><span class="method-args">() {|block| ...}</span>
           </a>
         </div>
@@ -574,29 +945,31 @@ Copy input files from each of the source matrices and the predict matrix.
 Does nothing if the experiment directory already exists.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000229-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000229-source">
+            onclick="toggleCode('M000265-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000265-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 146</span>
-146:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_inputs_internal</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
-147:     <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root_exists?</span>
-148:       <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Preparing new inputs for experiment #{self.id}&quot;</span>)
-149: 
-150:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">prepare_dir</span>
-151: 
-152:       <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">block</span>
-153:     <span class="ruby-keyword kw">end</span>
-154:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 202</span>
+202:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_inputs_internal</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+203:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;prepare_inputs_internal in #{self.class.to_s} (defined in Experiment)&quot;</span>)
+204:     <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root_exists?</span>
+205:       <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Preparing new inputs for matrix #{predict_matrix_id}, experiment #{self.id}&quot;</span>)
+206: 
+207:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">prepare_dir</span>
+208: 
+209:       <span class="ruby-identifier">raise</span>(<span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;No block&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">block_given?</span>
+210:       <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">block</span>
+211:     <span class="ruby-keyword kw">end</span>
+212:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000240" class="method-detail">
-        <a name="M000240"></a>
+      <div id="method-M000279" class="method-detail">
+        <a name="M000279"></a>
 
         <div class="method-heading">
-          <a href="#M000240" class="method-signature">
+          <a href="#M000279" class="method-signature">
           <span class="method-name">reset_for_new_run!</span><span class="method-args">()</span>
           </a>
         </div>
@@ -604,107 +977,83 @@ Does nothing if the experiment directory already exists.
         <div class="method-description">
           <p>
 Clean out the temporary variables used for a <a
-href="Experiment.html#M000230">run</a>. Be careful doing this &#8212;
-particularly if this is being <a href="Experiment.html#M000230">run</a> in
+href="Experiment.html#M000266">run</a>. Be careful doing this &#8212;
+particularly if this is being <a href="Experiment.html#M000266">run</a> in
 parallel, e.g. jobs on different machines.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000240-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000240-source">
+            onclick="toggleCode('M000279-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000279-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 229</span>
-229:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_for_new_run!</span>
-230:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">started_at</span>   = <span class="ruby-keyword kw">nil</span>
-231:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-keyword kw">nil</span>
-232:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span>   = <span class="ruby-keyword kw">nil</span>
-233:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span>    = <span class="ruby-keyword kw">nil</span>
-234:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
-235: 
-236:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">clean_predictions_dirs</span>
-237:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">clean_temporary_files</span>
-238: 
-239:     <span class="ruby-keyword kw">self</span> <span class="ruby-comment cmt"># allow chaining</span>
-240:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 303</span>
+303:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_for_new_run!</span>
+304:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">started_at</span>   = <span class="ruby-keyword kw">nil</span>
+305:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-keyword kw">nil</span>
+306:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span>   = <span class="ruby-keyword kw">nil</span>
+307:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span>    = <span class="ruby-keyword kw">nil</span>
+308:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
+309: 
+310:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">clean_predictions_dirs</span>
+311:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">clean_temporary_files</span>
+312:     
+313:     <span class="ruby-keyword kw">self</span> <span class="ruby-comment cmt"># allow chaining</span>
+314:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000241" class="method-detail">
-        <a name="M000241"></a>
+      <div id="method-M000274" class="method-detail">
+        <a name="M000274"></a>
 
         <div class="method-heading">
-          <a href="#M000241" class="method-signature">
-          <span class="method-name">reset_inputs</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000241-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000241-source">
-<pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 242</span>
-242:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_inputs</span>
-243:     <span class="ruby-node">`rm -rf #{self.root}`</span>
-244:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">prepare_inputs</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
-245:   <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000235" class="method-detail">
-        <a name="M000235"></a>
-
-        <div class="method-heading">
-          <a href="#M000235" class="method-signature">
+          <a href="#M000274" class="method-signature">
           <span class="method-name">results_dir</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000235-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000235-source">
+            onclick="toggleCode('M000274-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000274-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 199</span>
-199:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">results_dir</span>
-200:     <span class="ruby-node">&quot;results.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
-201:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 273</span>
+273:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">results_dir</span>
+274:     <span class="ruby-node">&quot;results.#{time_to_file_suffix(self.started_at || Time.now)}&quot;</span>
+275:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000236" class="method-detail">
-        <a name="M000236"></a>
+      <div id="method-M000275" class="method-detail">
+        <a name="M000275"></a>
 
         <div class="method-heading">
-          <a href="#M000236" class="method-signature">
+          <a href="#M000275" class="method-signature">
           <span class="method-name">results_path</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000236-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000236-source">
+            onclick="toggleCode('M000275-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000275-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 203</span>
-203:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">results_path</span>
-204:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">results_dir</span>
-205:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 277</span>
+277:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">results_path</span>
+278:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">results_dir</span>
+279:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000244" class="method-detail">
-        <a name="M000244"></a>
+      <div id="method-M000282" class="method-detail">
+        <a name="M000282"></a>
 
         <div class="method-heading">
-          <a href="#M000244" class="method-signature">
+          <a href="#M000282" class="method-signature">
           <span class="method-name">roc_line</span><span class="method-args">()</span>
           </a>
         </div>
@@ -714,71 +1063,74 @@ parallel, e.g. jobs on different machines.
 Get the points that make up the ROC plot for this experiment
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000244-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000244-source">
+            onclick="toggleCode('M000282-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000282-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 256</span>
-256:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">roc_line</span>
-257:     <span class="ruby-identifier">roc_y_values</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">auc</span> }
-258:     <span class="ruby-identifier">roc_x_values</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">size</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span> }
-259:     <span class="ruby-identifier">roc_x_values</span>.<span class="ruby-identifier">zip</span> <span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">sort</span>
-260:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 325</span>
+325:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">roc_line</span>
+326:     <span class="ruby-identifier">roc_y_values</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rocs</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">auc</span> }
+327:     <span class="ruby-identifier">roc_x_values</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">size</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">size</span>.<span class="ruby-identifier">to_f</span> }
+328:     <span class="ruby-identifier">roc_x_values</span>.<span class="ruby-identifier">zip</span> <span class="ruby-identifier">roc_y_values</span>.<span class="ruby-identifier">sort</span>
+329:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000228" class="method-detail">
-        <a name="M000228"></a>
+      <div id="method-M000264" class="method-detail">
+        <a name="M000264"></a>
 
         <div class="method-heading">
-          <a href="#M000228" class="method-signature">
+          <a href="#M000264" class="method-signature">
           <span class="method-name">root</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+The <a href="Experiment.html#M000264">root</a> directory for the experiment
+</p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000228-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000228-source">
+            onclick="toggleCode('M000264-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000264-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 140</span>
-140:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">root</span>
-141:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot;experiment_#{self.id}&quot;</span>
-142:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 196</span>
+196:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">root</span>
+197:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">directory_name</span>
+198:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000227" class="method-detail">
-        <a name="M000227"></a>
+      <div id="method-M000262" class="method-detail">
+        <a name="M000262"></a>
 
         <div class="method-heading">
-          <a href="#M000227" class="method-signature">
+          <a href="#M000262" class="method-signature">
           <span class="method-name">root_exists?</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000227-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000227-source">
+            onclick="toggleCode('M000262-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000262-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 136</span>
-136:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">root_exists?</span>
-137:     <span class="ruby-identifier">dir_exists?</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
-138:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 185</span>
+185:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">root_exists?</span>
+186:     <span class="ruby-identifier">dir_exists?</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+187:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000230" class="method-detail">
-        <a name="M000230"></a>
+      <div id="method-M000266" class="method-detail">
+        <a name="M000266"></a>
 
         <div class="method-heading">
-          <a href="#M000230" class="method-signature">
+          <a href="#M000266" class="method-signature">
           <span class="method-name">run</span><span class="method-args">()</span>
           </a>
         </div>
@@ -788,42 +1140,43 @@ Get the points that make up the ROC plot for this experiment
 To be called by a Worker object, usually.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000230-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000230-source">
+            onclick="toggleCode('M000266-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000266-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 157</span>
-157:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>
-158:     <span class="ruby-identifier">before_run</span> <span class="ruby-comment cmt"># sets and saves started_at</span>
-159: 
-160:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
-161:       <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;Command: #{self.command_string}&quot;</span>)
-162:       <span class="ruby-node">`#{self.command_string_with_pipes}`</span>
-163: 
-164:       <span class="ruby-comment cmt"># Get the exit status when the bin finishes.</span>
-165:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span> = <span class="ruby-identifier">$?</span>.<span class="ruby-identifier">to_i</span>
-166:     <span class="ruby-keyword kw">end</span>
-167:     <span class="ruby-comment cmt"># Expect a great deal of time between the beginning of this function and the</span>
-168:     <span class="ruby-comment cmt"># end. That's why we're saving again -- because the binary will have returned</span>
-169:     <span class="ruby-comment cmt"># 0 or aborted or who knows what.</span>
-170:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
-171: 
-172:     <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
-173:       <span class="ruby-comment cmt"># Calculate results and save again.</span>
-174:       <span class="ruby-identifier">after_run</span>
-175:     <span class="ruby-keyword kw">else</span>
-176:       <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-node">&quot;Execution error for binary. Returned: #{self.run_result}&quot;</span>)
-177:     <span class="ruby-keyword kw">end</span>
-178:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 215</span>
+215:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>
+216:     <span class="ruby-identifier">before_run_internal</span>
+217:     <span class="ruby-identifier">before_run</span> <span class="ruby-comment cmt"># sets and saves started_at</span>
+218: 
+219:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
+220:       <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;Command: #{self.command_string}&quot;</span>)
+221:       <span class="ruby-node">`#{self.command_string_with_pipes}`</span>
+222: 
+223:       <span class="ruby-comment cmt"># Get the exit status when the bin finishes.</span>
+224:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span> = <span class="ruby-identifier">$?</span>.<span class="ruby-identifier">to_i</span>
+225:     <span class="ruby-keyword kw">end</span>
+226:     <span class="ruby-comment cmt"># Expect a great deal of time between the beginning of this function and the</span>
+227:     <span class="ruby-comment cmt"># end. That's why we're saving again -- because the binary will have returned</span>
+228:     <span class="ruby-comment cmt"># 0 or aborted or who knows what.</span>
+229:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
+230: 
+231:     <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_result</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+232:       <span class="ruby-comment cmt"># Calculate results and save again.</span>
+233:       <span class="ruby-identifier">after_run</span>
+234:     <span class="ruby-keyword kw">else</span>
+235:       <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-node">&quot;Execution error for binary. Returned: #{self.run_result}&quot;</span>)
+236:     <span class="ruby-keyword kw">end</span>
+237:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000237" class="method-detail">
-        <a name="M000237"></a>
+      <div id="method-M000276" class="method-detail">
+        <a name="M000276"></a>
 
         <div class="method-heading">
-          <a href="#M000237" class="method-signature">
+          <a href="#M000276" class="method-signature">
           <span class="method-name">sort_bin_path</span><span class="method-args">()</span>
           </a>
         </div>
@@ -839,133 +1192,183 @@ def bin_path
 end
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000237-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000237-source">
+            onclick="toggleCode('M000276-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000276-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 212</span>
-212:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_bin_path</span>
-213:     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;bin/sortall.pl&quot;</span>
-214:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 286</span>
+286:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_bin_path</span>
+287:     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;bin/sortall.pl&quot;</span>
+288:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000239" class="method-detail">
-        <a name="M000239"></a>
+      <div id="method-M000278" class="method-detail">
+        <a name="M000278"></a>
 
         <div class="method-heading">
-          <a href="#M000239" class="method-signature">
+          <a href="#M000278" class="method-signature">
           <span class="method-name">sort_results</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000239-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000239-source">
+            onclick="toggleCode('M000278-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000278-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 220</span>
-220:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_results</span>
-221:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
-222:       <span class="ruby-node">`#{self.sort_bin_path} #{self.results_dir} predictions* 2&gt;&gt; #{self.error_log_file} 1&gt;&gt; #{self.log_file}`</span>
-223:     <span class="ruby-keyword kw">end</span>
-224:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 294</span>
+294:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_results</span>
+295:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
+296:       <span class="ruby-node">`#{self.sort_bin_path} #{self.results_dir} predictions* 2&gt;&gt; #{self.error_log_file} 1&gt;&gt; #{self.log_file}`</span>
+297:     <span class="ruby-keyword kw">end</span>
+298:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000245" class="method-detail">
-        <a name="M000245"></a>
+      <div id="method-M000256" class="method-detail">
+        <a name="M000256"></a>
 
         <div class="method-heading">
-          <a href="#M000245" class="method-signature">
+          <a href="#M000256" class="method-signature">
+          <span class="method-name">source_matrices</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000256-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000256-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 143</span>
+143:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_matrices</span>; <span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-identifier">this_source_matrices</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">source_matrices</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000287" class="method-detail">
+        <a name="M000287"></a>
+
+        <div class="method-heading">
+          <a href="#M000287" class="method-signature">
           <span class="method-name">source_species</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000245-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000245-source">
+            onclick="toggleCode('M000287-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000287-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 262</span>
-262:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_species</span>
-263:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">source_species</span> }.<span class="ruby-identifier">sort</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-constant">Species</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">b</span>) <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-constant">Species</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">a</span>) }
-264:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 390</span>
+390:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_species</span>
+391:     <span class="ruby-identifier">sources</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">source_species</span> }.<span class="ruby-identifier">sort</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-constant">Species</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">b</span>) <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-constant">Species</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">a</span>) }
+392:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000246" class="method-detail">
-        <a name="M000246"></a>
+      <div id="method-M000288" class="method-detail">
+        <a name="M000288"></a>
 
         <div class="method-heading">
-          <a href="#M000246" class="method-signature">
+          <a href="#M000288" class="method-signature">
           <span class="method-name">source_species_to_s</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000246-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000246-source">
+            onclick="toggleCode('M000288-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000288-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 266</span>
-266:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_species_to_s</span>
-267:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source_species</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;,&quot;</span>)
-268:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 394</span>
+394:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_species_to_s</span>
+395:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source_species</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;,&quot;</span>)
+396:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000224" class="method-detail">
-        <a name="M000224"></a>
+      <div id="method-M000255" class="method-detail">
+        <a name="M000255"></a>
 
         <div class="method-heading">
-          <a href="#M000224" class="method-signature">
+          <a href="#M000255" class="method-signature">
+          <span class="method-name">sources</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Override <a href="Experiment.html#M000255">sources</a> so they change along
+with those of the parent
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000255-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000255-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 142</span>
+142:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sources</span>; <span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-identifier">this_sources</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">sources</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000258" class="method-detail">
+        <a name="M000258"></a>
+
+        <div class="method-heading">
+          <a href="#M000258" class="method-signature">
           <span class="method-name">title</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Print a <a href="Experiment.html#M000224">title</a> for this experiment
+Print a <a href="Experiment.html#M000258">title</a> for this experiment
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000224-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000224-source">
+            onclick="toggleCode('M000258-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000258-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 121</span>
-121:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">title</span>
-122:     <span class="ruby-node">&quot;#{self.argument_string} [predicting #{self.predict_matrix_id}]&quot;</span>
-123:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 151</span>
+151:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">title</span>
+152:     <span class="ruby-node">&quot;#{self.argument_string} [predicting #{self.predict_matrix_id}]&quot;</span>
+153:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000225" class="method-detail">
-        <a name="M000225"></a>
+      <div id="method-M000259" class="method-detail">
+        <a name="M000259"></a>
 
         <div class="method-heading">
-          <a href="#M000225" class="method-signature">
+          <a href="#M000259" class="method-signature">
           <span class="method-name">unique_descriptor</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+An absolutely unique identifier by which a user may identify an experiment
+in a drop-down list
+</p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000225-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000225-source">
+            onclick="toggleCode('M000259-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000259-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 125</span>
-125:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unique_descriptor</span>
-126:     <span class="ruby-node">&quot;#{self.id}: #{self.title}&quot;</span>
-127:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 157</span>
+157:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unique_descriptor</span>
+158:     <span class="ruby-node">&quot;#{self.id}#{parent_descriptor_component}: #{self.title}&quot;</span>
+159:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -973,11 +1376,11 @@ Print a <a href="Experiment.html#M000224">title</a> for this experiment
 
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000248" class="method-detail">
-        <a name="M000248"></a>
+      <div id="method-M000292" class="method-detail">
+        <a name="M000292"></a>
 
         <div class="method-heading">
-          <a href="#M000248" class="method-signature">
+          <a href="#M000292" class="method-signature">
           <span class="method-name">after_run</span><span class="method-args">()</span>
           </a>
         </div>
@@ -989,23 +1392,23 @@ things like <a href="JohnDistribution.html">JohnDistribution</a> so you
 calculate other things instead of ROCs.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000248-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000248-source">
+            onclick="toggleCode('M000292-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000292-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 281</span>
-281:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after_run</span>
-282:     <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
-283:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 416</span>
+416:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after_run</span>
+417:     <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
+418:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000247" class="method-detail">
-        <a name="M000247"></a>
+      <div id="method-M000290" class="method-detail">
+        <a name="M000290"></a>
 
         <div class="method-heading">
-          <a href="#M000247" class="method-signature">
+          <a href="#M000290" class="method-signature">
           <span class="method-name">before_run</span><span class="method-args">()</span>
           </a>
         </div>
@@ -1017,89 +1420,154 @@ so it doesn&#8216;t call ActiveRecord::save! which will change other
 timestamps as well.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000247-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000247-source">
+            onclick="toggleCode('M000290-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000290-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 274</span>
-274:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before_run</span>
-275:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">started_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
-276:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
-277:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 407</span>
+407:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before_run</span>
+408:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">started_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+409:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
+410:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000251" class="method-detail">
-        <a name="M000251"></a>
+      <div id="method-M000291" class="method-detail">
+        <a name="M000291"></a>
 
         <div class="method-heading">
-          <a href="#M000251" class="method-signature">
+          <a href="#M000291" class="method-signature">
+          <span class="method-name">before_run_internal</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000291-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000291-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 412</span>
+412:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before_run_internal</span>;; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000295" class="method-detail">
+        <a name="M000295"></a>
+
+        <div class="method-heading">
+          <a href="#M000295" class="method-signature">
           <span class="method-name">calculate_aucs_old</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000251-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000251-source">
+            onclick="toggleCode('M000295-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000295-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 310</span>
-310:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_aucs_old</span>
-311:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
-312:       <span class="ruby-identifier">aucs_file</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">aucs_file</span>
-313:       <span class="ruby-node">`#{self.aucs_bin_path} #{self.results_dir} 1&gt;&gt; #{aucs_file} 2&gt;&gt; #{self.error_log_file}`</span>
-314:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span> = <span class="ruby-identifier">calculate_average_auc</span>(<span class="ruby-identifier">read_aucs</span>(<span class="ruby-identifier">aucs_file</span>))
-315:     <span class="ruby-keyword kw">end</span>
-316:     
-317:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
-318:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save_without_timestamping!</span>
-319:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 445</span>
+445:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_aucs_old</span>
+446:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
+447:       <span class="ruby-identifier">aucs_file</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">aucs_file</span>
+448:       <span class="ruby-node">`#{self.aucs_bin_path} #{self.results_dir} 1&gt;&gt; #{aucs_file} 2&gt;&gt; #{self.error_log_file}`</span>
+449:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span> = <span class="ruby-identifier">calculate_average_auc</span>(<span class="ruby-identifier">read_aucs</span>(<span class="ruby-identifier">aucs_file</span>))
+450:     <span class="ruby-keyword kw">end</span>
+451:     
+452:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+453:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save_without_timestamping!</span>
+454:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000250" class="method-detail">
-        <a name="M000250"></a>
+      <div id="method-M000294" class="method-detail">
+        <a name="M000294"></a>
 
         <div class="method-heading">
-          <a href="#M000250" class="method-signature">
+          <a href="#M000294" class="method-signature">
           <span class="method-name">calculate_rocs!</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000250-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000250-source">
+            onclick="toggleCode('M000294-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000294-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 295</span>
-295:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_rocs!</span>
-296:     <span class="ruby-identifier">aucs</span> = []
-297:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling Roc.calculate&quot;</span>)
-298:     <span class="ruby-constant">Roc</span>.<span class="ruby-identifier">calculate</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">results_path</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>
-299:       <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">save!</span>
-300:       <span class="ruby-identifier">aucs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span>
-301:     <span class="ruby-keyword kw">end</span>
-302: 
-303:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span> = <span class="ruby-identifier">mean</span> <span class="ruby-identifier">aucs</span>
-304:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
-305:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling save_without_timestamping!&quot;</span>)
-306:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
-307:     <span class="ruby-keyword kw">self</span>
-308:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 430</span>
+430:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">calculate_rocs!</span>
+431:     <span class="ruby-identifier">aucs</span> = []
+432:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling Roc.calculate&quot;</span>)
+433:     <span class="ruby-constant">Roc</span>.<span class="ruby-identifier">calculate</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">results_path</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">roc</span><span class="ruby-operator">|</span>
+434:       <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">save!</span>
+435:       <span class="ruby-identifier">aucs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">roc</span>.<span class="ruby-identifier">auc</span>
+436:     <span class="ruby-keyword kw">end</span>
+437: 
+438:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">total_auc</span> = <span class="ruby-identifier">mean</span> <span class="ruby-identifier">aucs</span>
+439:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">completed_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+440:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling save_without_timestamping!&quot;</span>)
+441:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">save!</span>
+442:     <span class="ruby-keyword kw">self</span>
+443:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000255" class="method-detail">
-        <a name="M000255"></a>
+      <div id="method-M000303" class="method-detail">
+        <a name="M000303"></a>
 
         <div class="method-heading">
-          <a href="#M000255" class="method-signature">
-          <span class="method-name">copy_testsets</span><span class="method-args">(prefix = &quot;testset&quot;)</span>
+          <a href="#M000303" class="method-signature">
+          <span class="method-name">copy_source_matrix_inputs</span><span class="method-args">(dir = self.root)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Copy the inputs from the source matrices. Returns a list of cell files so
+we can compute the rows that we&#8216;re capable of predicting (e.g.,
+predict_genes).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000303-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000303-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 520</span>
+520:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">copy_source_matrix_inputs</span>(<span class="ruby-identifier">dir</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+521:     <span class="ruby-identifier">message</span>(<span class="ruby-node">&quot;Copying experiment source input files in #{self.root}&quot;</span>)
+522:     <span class="ruby-identifier">cell_files</span> = []
+523: 
+524:     <span class="ruby-identifier">source_matrices_error_check</span>
+525: 
+526:     <span class="ruby-identifier">source_matrices</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">source_matrix</span><span class="ruby-operator">|</span>
+527:       <span class="ruby-identifier">message</span>(<span class="ruby-node">&quot; from path: #{source_matrix.row_file_path}&quot;</span>)
+528:       <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-identifier">source_matrix</span>.<span class="ruby-identifier">row_file_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+529:       <span class="ruby-identifier">message</span>(<span class="ruby-node">&quot; from path: #{source_matrix.cell_file_path}&quot;</span>)
+530:       <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-identifier">source_matrix</span>.<span class="ruby-identifier">cell_file_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+531: 
+532:       <span class="ruby-comment cmt"># Also keep track of genes files.</span>
+533:       <span class="ruby-identifier">cell_files</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">source_matrix</span>.<span class="ruby-identifier">cell_filename</span>
+534:     <span class="ruby-keyword kw">end</span>
+535: 
+536:     <span class="ruby-identifier">message</span>(<span class="ruby-value str">&quot;- done copying source input files.&quot;</span>)
+537:     <span class="ruby-identifier">cell_files</span>
+538:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000299" class="method-detail">
+        <a name="M000299"></a>
+
+        <div class="method-heading">
+          <a href="#M000299" class="method-signature">
+          <span class="method-name">copy_testsets</span><span class="method-args">(options = {})</span>
           </a>
         </div>
       
@@ -1108,26 +1576,85 @@ timestamps as well.
 Copy testsets from the predict_matrix to the experiment directory.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000255-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000255-source">
+            onclick="toggleCode('M000299-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000299-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 342</span>
-342:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">copy_testsets</span>(<span class="ruby-identifier">prefix</span> = <span class="ruby-value str">&quot;testset&quot;</span>)
-343:     <span class="ruby-comment cmt"># Copy testsets if applicable</span>
-344:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">children_file_paths</span>(<span class="ruby-identifier">prefix</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child_path</span><span class="ruby-operator">|</span>
-345:       <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-identifier">child_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
-346:     <span class="ruby-keyword kw">end</span>
-347:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 477</span>
+477:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">copy_testsets</span>(<span class="ruby-identifier">options</span> = {})
+478:     <span class="ruby-identifier">raise</span>(<span class="ruby-constant">ArgumentError</span>,<span class="ruby-value str">&quot;Requires a hash&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>)
+479:     
+480:     <span class="ruby-identifier">opts</span> = {<span class="ruby-identifier">:prefix</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;testset&quot;</span>}.<span class="ruby-identifier">merge</span> <span class="ruby-identifier">options</span>
+481:     
+482:     <span class="ruby-comment cmt"># Copy testsets if applicable</span>
+483:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">children_file_paths</span>(<span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:prefix</span>]).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child_path</span><span class="ruby-operator">|</span>
+484:       <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-identifier">child_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+485:     <span class="ruby-keyword kw">end</span>
+486:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000252" class="method-detail">
-        <a name="M000252"></a>
+      <div id="method-M000302" class="method-detail">
+        <a name="M000302"></a>
 
         <div class="method-heading">
-          <a href="#M000252" class="method-signature">
+          <a href="#M000302" class="method-signature">
+          <span class="method-name">message</span><span class="method-args">(msg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+For debugging purposes &#8212; because apparently some things don&#8216;t
+get printed to the logs in certain circumstances? Still confused about
+this.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000302-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000302-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 513</span>
+513:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">message</span> <span class="ruby-identifier">msg</span>
+514:     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-identifier">msg</span>
+515:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">msg</span>
+516:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000301" class="method-detail">
+        <a name="M000301"></a>
+
+        <div class="method-heading">
+          <a href="#M000301" class="method-signature">
+          <span class="method-name">parent_descriptor_component</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Called by <a href="Experiment.html#M000259">unique_descriptor</a> (only)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000301-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000301-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 507</span>
+507:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parent_descriptor_component</span>
+508:     <span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;(#{parent_id})&quot;</span>
+509:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000296" class="method-detail">
+        <a name="M000296"></a>
+
+        <div class="method-heading">
+          <a href="#M000296" class="method-signature">
           <span class="method-name">prepare_dir</span><span class="method-args">(dir = self.root)</span>
           </a>
         </div>
@@ -1138,23 +1665,23 @@ Takes an absolute path, mind you. Creates a directory. By default, creates
 the directory for this experiment.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000252-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000252-source">
+            onclick="toggleCode('M000296-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000296-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 323</span>
-323:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_dir</span>(<span class="ruby-identifier">dir</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
-324:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">dir_exists?</span>(<span class="ruby-identifier">dir</span>)
-325:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 458</span>
+458:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_dir</span>(<span class="ruby-identifier">dir</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+459:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">dir_exists?</span>(<span class="ruby-identifier">dir</span>)
+460:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000256" class="method-detail">
-        <a name="M000256"></a>
+      <div id="method-M000300" class="method-detail">
+        <a name="M000300"></a>
 
         <div class="method-heading">
-          <a href="#M000256" class="method-signature">
+          <a href="#M000300" class="method-signature">
           <span class="method-name">prepare_standard_inputs</span><span class="method-args">()</span>
           </a>
         </div>
@@ -1163,37 +1690,38 @@ the directory for this experiment.
           <p>
 Generates row and column files, makes sure they&#8216;re in the right
 directory. Only call from within <a
-href="Experiment.html#M000229">prepare_inputs_internal</a>, as this
+href="Experiment.html#M000265">prepare_inputs_internal</a>, as this
 guarantees we&#8216;re in the correct directory and such.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000256-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000256-source">
+            onclick="toggleCode('M000300-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000300-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 352</span>
-352:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_standard_inputs</span>
-353:       <span class="ruby-identifier">cell_files</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">copy_source_matrix_inputs</span>
-354: 
-355:       <span class="ruby-comment cmt"># Generate predict_rows file</span>
-356:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">generate_row_file</span>(<span class="ruby-identifier">cell_files</span>)
-357:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">generate_column_file</span>
-358: 
-359:       <span class="ruby-comment cmt"># Only copy the predict matrix cells file if it didn't come from one of the</span>
-360:       <span class="ruby-comment cmt"># source matrices.</span>
-361:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cell_files</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">cell_file_path</span>)
-362:         <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">cell_file_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
-363:       <span class="ruby-keyword kw">end</span>
-364:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 491</span>
+491:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_standard_inputs</span>
+492:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;prepare_standard_inputs called on #{self.class.to_s}&quot;</span>)
+493:     <span class="ruby-identifier">cell_files</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">copy_source_matrix_inputs</span>
+494: 
+495:     <span class="ruby-comment cmt"># Generate predict_rows file</span>
+496:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">generate_row_file</span>(<span class="ruby-identifier">cell_files</span>)
+497:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">generate_column_file</span>
+498: 
+499:     <span class="ruby-comment cmt"># Only copy the predict matrix cells file if it didn't come from one of the</span>
+500:     <span class="ruby-comment cmt"># source matrices.</span>
+501:     <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cell_files</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">cell_file_path</span>)
+502:       <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">cp</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">predict_matrix</span>.<span class="ruby-identifier">cell_file_path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>)
+503:     <span class="ruby-keyword kw">end</span>
+504:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000253" class="method-detail">
-        <a name="M000253"></a>
+      <div id="method-M000297" class="method-detail">
+        <a name="M000297"></a>
 
         <div class="method-heading">
-          <a href="#M000253" class="method-signature">
+          <a href="#M000297" class="method-signature">
           <span class="method-name">save_without_timestamping!</span><span class="method-args">()</span>
           </a>
         </div>
@@ -1205,48 +1733,89 @@ total_auc, which is not technically part of the model. Also &#8212; for
 completed_at and started_at
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000253-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000253-source">
+            onclick="toggleCode('M000297-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000297-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 331</span>
-331:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">save_without_timestamping!</span>
-332:     <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>
-333:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">record_timestamps</span>; <span class="ruby-keyword kw">false</span>; <span class="ruby-keyword kw">end</span>
-334:     <span class="ruby-keyword kw">end</span>
-335:     <span class="ruby-identifier">save!</span>
-336:     <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>
-337:       <span class="ruby-identifier">remove_method</span> <span class="ruby-identifier">:record_timestamps</span>
-338:     <span class="ruby-keyword kw">end</span>
-339:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 466</span>
+466:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">save_without_timestamping!</span>
+467:     <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>
+468:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">record_timestamps</span>; <span class="ruby-keyword kw">false</span>; <span class="ruby-keyword kw">end</span>
+469:     <span class="ruby-keyword kw">end</span>
+470:     <span class="ruby-identifier">save!</span>
+471:     <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">self</span>
+472:       <span class="ruby-identifier">remove_method</span> <span class="ruby-identifier">:record_timestamps</span>
+473:     <span class="ruby-keyword kw">end</span>
+474:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000249" class="method-detail">
-        <a name="M000249"></a>
+      <div id="method-M000293" class="method-detail">
+        <a name="M000293"></a>
 
         <div class="method-heading">
-          <a href="#M000249" class="method-signature">
+          <a href="#M000293" class="method-signature">
           <span class="method-name">sort_results_and_calculate_rocs!</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000249-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000249-source">
+            onclick="toggleCode('M000293-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000293-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 285</span>
-285:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
-286:     <span class="ruby-comment cmt"># Call the script which sorts results into a separate directory.</span>
-287:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sort_results</span>
-288: 
-289:     <span class="ruby-comment cmt"># Calculating the AUCs also marks the task as completed and saves the record.</span>
-290:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling calculate_rocs!&quot;</span>)
-291:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">calculate_rocs!</span>
-292:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Done calling calculate_rocs!&quot;</span>)
-293:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 420</span>
+420:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
+421:     <span class="ruby-comment cmt"># Call the script which sorts results into a separate directory.</span>
+422:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sort_results</span>
+423: 
+424:     <span class="ruby-comment cmt"># Calculating the AUCs also marks the task as completed and saves the record.</span>
+425:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Calling calculate_rocs!&quot;</span>)
+426:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">calculate_rocs!</span>
+427:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;Done calling calculate_rocs!&quot;</span>)
+428:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000304" class="method-detail">
+        <a name="M000304"></a>
+
+        <div class="method-heading">
+          <a href="#M000304" class="method-signature">
+          <span class="method-name">source_matrices_error_check</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000304-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000304-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/experiment.rb, line 540</span>
+540:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_matrices_error_check</span>
+541:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">source_matrices</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>      <span class="ruby-comment cmt"># Debug!</span>
+542:       <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;Error: Experiment #{self.id} has no source matrices. Running additional checks...&quot;</span>)
+543:       <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span>
+544:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;- no parent_id found.&quot;</span>)
+545:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">source_matrices</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+546:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;- parent #{parent_id} found, has no source matrices.&quot;</span>)
+547:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;- parent #{parent_id} has #{parent.sources.size} sources.&quot;</span>)
+548:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">parent_id</span>.<span class="ruby-identifier">nil?</span>
+549:           <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;- no grandparent found.&quot;</span>)
+550:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">source_matrices</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+551:           <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot;- grandparent found, has no source matrices.&quot;</span>)
+552:         <span class="ruby-keyword kw">else</span>
+553:           <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;- grandparent found, has #{parent.parent.source_matrices.size} source matrices.&quot;</span>)
+554:         <span class="ruby-keyword kw">end</span>
+555:       <span class="ruby-keyword kw">else</span>
+556:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;- parent found, has #{parent.source_matrices.size} source matrices.&quot;</span>)
+557:       <span class="ruby-keyword kw">end</span>
+558:       <span class="ruby-identifier">raise</span>(<span class="ruby-constant">IOError</span>, <span class="ruby-node">&quot;#{self.class.to_s} #{self.id} has no source matrices!&quot;</span>)
+559:     <span class="ruby-keyword kw">end</span>
+560:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

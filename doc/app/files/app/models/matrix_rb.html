@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Fri Jan 29 14:42:53 -0600 2010</td>
+      <td>Wed Apr 07 17:05:33 -0500 2010</td>
     </tr>
     </table>
   </div>
@@ -84,10 +84,56 @@ sets.
 
 </li>
 </ul>
+<h1>Usage</h1>
+<h2>Entering <a href="../../../classes/Matrix.html">Matrix</a> Data</h2>
+<p>
+This is something I haven&#8216;t done in a while. I can&#8216;t remember
+off the top of my head what the function is.
+</p>
+<p>
+What I can tell you, though, is you need the tables in standard phenolog
+format. You also need to keep in mind that not every gene has phenotypes
+associated, so matrices need to have the empty rows registered. There is no
+need to register empty columns.
+</p>
+<h2>Cross-validation</h2>
+<p>
+Once you&#8216;ve entered matrix data (for a single matrix), if you want to
+cross- validate, you need to create n child matrices which each contain 1/n
+rows. (There is currently no way to do cell-based cross-validation, as that
+would require a non-sparse matrix format.)
+</p>
+<p>
+Child matrices can be created using the fractalize function, which takes as
+an argument the number (or numbers) of folds you want. So, to do
+single-stage cross-validation, you&#8216;d do:
+</p>
+<pre>
+ matrix.fractalize 10
+</pre>
+<p>
+To do two-stage five-fold cross-validation, you use:
+</p>
+<pre>
+ matrix.fractalize [5,5]
+</pre>
+<p>
+Don&#8216;t forget to save the parent matrix after the generation of
+children is complete.
+</p>
+<p>
+WARNING: <em>Do not run fractalize more than once on a single matrix.</em>
+If you want to do multiple types of cross-validation, you need to copy the
+matrix and then save the copy &#8212; and after that you can run fractalize
+on the copy.
+</p>
 <h1>Design</h1>
 <h2>Tree Structure</h2>
 <ul>
-<li>Matrices in tree are either root/branch or leaf.
+<li>Matrices in tree (<a
+href="../../../classes/TreeMatrix.html">TreeMatrix</a>) are either
+root/branch (<a href="../../../classes/NodeMatrix.html">NodeMatrix</a>) or
+leaf (<a href="../../../classes/LeafMatrix.html">LeafMatrix</a>).
 
 </li>
 <li>Root/branch matrices are stored in their entirety.
@@ -199,9 +245,7 @@ children as appropriate).
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000004">combine_all_but_one</a>&nbsp;&nbsp;
       <a href="#M000002">infer_species_from_filename</a>&nbsp;&nbsp;
-      <a href="#M000003">split_set</a>&nbsp;&nbsp;
       <a href="#M000001">writelines</a>&nbsp;&nbsp;
       </div>
     </div>
@@ -224,35 +268,6 @@ children as appropriate).
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000004" class="method-detail">
-        <a name="M000004"></a>
-
-        <div class="method-heading">
-          <a href="#M000004" class="method-signature">
-          <span class="method-name">combine_all_but_one</span><span class="method-args">(item_sets, leave_out)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000004-source">
-<pre>
-     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 872</span>
-872: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">combine_all_but_one</span> <span class="ruby-identifier">item_sets</span>, <span class="ruby-identifier">leave_out</span>
-873:   <span class="ruby-identifier">item_set</span> = []
-874:   (<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">item_sets</span>.<span class="ruby-identifier">size</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span>
-875:     <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">leave_out</span>
-876:     <span class="ruby-identifier">item_set</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">item_sets</span>[<span class="ruby-identifier">n</span>]
-877:   <span class="ruby-keyword kw">end</span>
-878: 
-879:   <span class="ruby-identifier">item_set</span>
-880: <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
       <div id="method-M000002" class="method-detail">
         <a name="M000002"></a>
 
@@ -270,48 +285,11 @@ See if we can infer species information from the filename.
             onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000002-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 849</span>
-849: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">infer_species_from_filename</span> <span class="ruby-identifier">fn</span>
-850:   <span class="ruby-identifier">fields</span> = <span class="ruby-identifier">fn</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;.&quot;</span>)
-851:   <span class="ruby-identifier">fields</span>.<span class="ruby-identifier">last</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z][a-z]{1,2}$/</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">fields</span>.<span class="ruby-identifier">last</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
-852: <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000003" class="method-detail">
-        <a name="M000003"></a>
-
-        <div class="method-heading">
-          <a href="#M000003" class="method-signature">
-          <span class="method-name">split_set</span><span class="method-args">(item_set, num_pieces)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000003-source">
-<pre>
-     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 854</span>
-854: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">split_set</span> <span class="ruby-identifier">item_set</span>, <span class="ruby-identifier">num_pieces</span>
-855:   <span class="ruby-identifier">num_per_piece</span>  = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">num_pieces</span>)
-856:   <span class="ruby-identifier">results</span>        = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">num_pieces</span>)
-857:   <span class="ruby-identifier">startpos</span>       = <span class="ruby-value">0</span>
-858: 
-859:   <span class="ruby-comment cmt"># Figure out the sizes of the splits</span>
-860:   (<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">num_pieces</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">piece</span><span class="ruby-operator">|</span>
-861:     <span class="ruby-identifier">num_per_piece</span>[<span class="ruby-identifier">piece</span>]  =  <span class="ruby-identifier">item_set</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">num_pieces</span>
-862:     <span class="ruby-comment cmt"># Uneven division: need to increase the first set's size.</span>
-863:     <span class="ruby-identifier">num_per_piece</span>[<span class="ruby-identifier">piece</span>] <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">piece</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">item_set</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">num_pieces</span>
-864: 
-865:     <span class="ruby-identifier">results</span>[<span class="ruby-identifier">piece</span>]        = <span class="ruby-identifier">item_set</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-identifier">startpos</span>, <span class="ruby-identifier">num_per_piece</span>[<span class="ruby-identifier">piece</span>])
-866:     <span class="ruby-identifier">startpos</span>             <span class="ruby-operator">+=</span> <span class="ruby-identifier">num_per_piece</span>[<span class="ruby-identifier">piece</span>]
-867:   <span class="ruby-keyword kw">end</span>
-868: 
-869:   <span class="ruby-identifier">results</span>
-870: <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 747</span>
+747: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">infer_species_from_filename</span> <span class="ruby-identifier">fn</span>
+748:   <span class="ruby-identifier">fields</span> = <span class="ruby-identifier">fn</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;.&quot;</span>)
+749:   <span class="ruby-identifier">fields</span>.<span class="ruby-identifier">last</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z][a-z]{1,2}$/</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">fields</span>.<span class="ruby-identifier">last</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+750: <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -335,12 +313,12 @@ be built in.
             onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000001-source">
 <pre>
-     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 842</span>
-842: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">writelines</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">data</span>)
-843:   <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;wb&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
-844:     <span class="ruby-identifier">file</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">data</span>)
-845:   <span class="ruby-keyword kw">end</span>
-846: <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File app/models/matrix.rb, line 740</span>
+740: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">writelines</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">data</span>)
+741:   <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;wb&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+742:     <span class="ruby-identifier">file</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">data</span>)
+743:   <span class="ruby-keyword kw">end</span>
+744: <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

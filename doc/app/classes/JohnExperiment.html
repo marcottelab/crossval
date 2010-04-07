@@ -80,6 +80,82 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+This class is for running cross-validation using phenomatrix++.
+</p>
+<h1>Preparing to Run</h1>
+<p>
+To prepare the binary, you&#8216;ll want to go to
+crossval/bin/&lt;machinename&gt;/ and run
+</p>
+<pre>
+ ~/../../../phenomatrixpp/configure
+ make
+ cp src/phenomatrix .
+</pre>
+<p>
+These commands will compile and link phenomatrix, and put it in the correct
+location. Do the same for both lovelace and draco (in place of
+&lt;machinename&gt;).
+</p>
+<p>
+These instructions also apply to <a
+href="JohnPredictor.html">JohnPredictor</a> and <a
+href="JohnDistribution.html">JohnDistribution</a>.
+</p>
+<h1>Preparing inputs</h1>
+<p>
+To prepare inputs for cross-validation (or for <a
+href="JohnPredictor.html">JohnPredictor</a> and <a
+href="JohnDistribution.html">JohnDistribution</a>), use the prepare_inputs
+function on the specific experiment (after preparing the matrices).
+</p>
+<p>
+<a href="JohnExperiment.html">JohnExperiment</a> differs from <a
+href="JohnPredictor.html">JohnPredictor</a> in that it also copies the test
+sets for the <a href="Matrix.html">Matrix</a> into the <a
+href="Experiment.html">Experiment</a> working directory.
+</p>
+<h1>Outputs</h1>
+<p>
+<a href="JohnExperiment.html">JohnExperiment</a> also sorts multiple
+predictions directories (setup in <a
+href="JohnExperiment.html#M000311">after_run</a>) into the
+results.timestamp directory. These outputs are described in <a
+href="Experiment.html">Experiment</a>&#8216;s docs.
+</p>
+<p>
+Finally,
+</p>
+<h1>Notes</h1>
+<ul>
+<li>The only setting that currently works for validation_type is row. We never
+figured out cell cross-validation for sparse matrices. You&#8216;d need to
+find a more efficient way to store matrices (not sparse, and likely not in
+the database).
+
+</li>
+<li>method is a reserved function in Rails or maybe Ruby, so we have to be
+specific that we&#8216;re messing with the attribute :method in many
+places. This is why we call read_attribute(:method) to get its value
+instead of simply self.method.
+
+</li>
+<li>In the development and production databases (currently), each column should
+have at least two entries in it. This is equivalent to setting min_genes =
+2, but I recommend setting min_genes to nil if you want that. If you want a
+higher min_genes, go ahead and set it higher than 2. Actually, it
+won&#8216;t accept 2 or lower.
+
+</li>
+<li>The number of cross-validation steps to run is set by the number of
+children the predict_matrix has.
+
+</li>
+</ul>
+
+    </div>
 
 
    </div>
@@ -88,9 +164,9 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000258">after_run</a>&nbsp;&nbsp;
-      <a href="#M000257">argument_string</a>&nbsp;&nbsp;
-      <a href="#M000259">prepare_standard_inputs</a>&nbsp;&nbsp;
+      <a href="#M000311">after_run</a>&nbsp;&nbsp;
+      <a href="#M000310">argument_string</a>&nbsp;&nbsp;
+      <a href="#M000312">prepare_standard_inputs</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -125,34 +201,34 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000258" class="method-detail">
-        <a name="M000258"></a>
+      <div id="method-M000311" class="method-detail">
+        <a name="M000311"></a>
 
         <div class="method-heading">
-          <a href="#M000258" class="method-signature">
+          <a href="#M000311" class="method-signature">
           <span class="method-name">after_run</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000258-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000258-source">
+            onclick="toggleCode('M000311-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000311-source">
 <pre>
-    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 16</span>
-16:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after_run</span>
-17:     <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
-18:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 56</span>
+56:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after_run</span>
+57:     <span class="ruby-identifier">sort_results_and_calculate_rocs!</span>
+58:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000257" class="method-detail">
-        <a name="M000257"></a>
+      <div id="method-M000310" class="method-detail">
+        <a name="M000310"></a>
 
         <div class="method-heading">
-          <a href="#M000257" class="method-signature">
+          <a href="#M000310" class="method-signature">
           <span class="method-name">argument_string</span><span class="method-args">()</span>
           </a>
         </div>
@@ -162,15 +238,15 @@
 Command line arguments for running something in the shell.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000257-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000257-source">
+            onclick="toggleCode('M000310-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000310-source">
 <pre>
-    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 10</span>
-10:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">argument_string</span>
-11:     <span class="ruby-identifier">s</span> = <span class="ruby-node">&quot;-m #{self.read_attribute(:method)} -d #{self.distance_measure} -n #{self.predict_matrix.children.count} -S #{self.predict_species} -s #{self.source_species_to_s} -t #{self.validation_type} -k #{self.k} #{self.arguments} &quot;</span>
-12:     <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;-x #{self.min_genes} &quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">min_genes</span>.<span class="ruby-identifier">nil?</span>
-13:     <span class="ruby-identifier">s</span>
-14:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 50</span>
+50:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">argument_string</span>
+51:     <span class="ruby-identifier">s</span> = <span class="ruby-node">&quot;-m #{method} -d #{self.distance_measure} -n #{self.predict_matrix.children.count} -S #{self.predict_species} -s #{self.source_species_to_s} -t #{self.validation_type} -k #{self.k} #{self.arguments} &quot;</span>
+52:     <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;-x #{self.min_genes} &quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">min_genes</span>.<span class="ruby-identifier">nil?</span>
+53:     <span class="ruby-identifier">s</span>
+54:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -178,11 +254,11 @@ Command line arguments for running something in the shell.
 
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000259" class="method-detail">
-        <a name="M000259"></a>
+      <div id="method-M000312" class="method-detail">
+        <a name="M000312"></a>
 
         <div class="method-heading">
-          <a href="#M000259" class="method-signature">
+          <a href="#M000312" class="method-signature">
           <span class="method-name">prepare_standard_inputs</span><span class="method-args">()</span>
           </a>
         </div>
@@ -192,14 +268,15 @@ Command line arguments for running something in the shell.
 Prepare the input files including cross-validation/test-set information.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000259-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000259-source">
+            onclick="toggleCode('M000312-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000312-source">
 <pre>
-    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 23</span>
-23:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_standard_inputs</span>
-24:     <span class="ruby-keyword kw">super</span>
-25:     <span class="ruby-identifier">copy_testsets</span>
-26:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File app/models/john_experiment.rb, line 63</span>
+63:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_standard_inputs</span>
+64:     <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;prepare_standard_inputs called on #{self.class.to_s}&quot;</span>)
+65:     <span class="ruby-keyword kw">super</span>
+66:     <span class="ruby-identifier">copy_testsets</span>
+67:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

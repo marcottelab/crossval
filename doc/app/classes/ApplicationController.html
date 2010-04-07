@@ -94,8 +94,10 @@ controllers.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000196">plot_experiment</a>&nbsp;&nbsp;
-      <a href="#M000195">rocs</a>&nbsp;&nbsp;
+      <a href="#M000233">plot_against</a>&nbsp;&nbsp;
+      <a href="#M000232">plot_experiment</a>&nbsp;&nbsp;
+      <a href="#M000231">plot_experiment_with_children</a>&nbsp;&nbsp;
+      <a href="#M000230">rocs</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -117,11 +119,43 @@ controllers.
     <div id="methods">
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000196" class="method-detail">
-        <a name="M000196"></a>
+      <div id="method-M000233" class="method-detail">
+        <a name="M000233"></a>
 
         <div class="method-heading">
-          <a href="#M000196" class="method-signature">
+          <a href="#M000233" class="method-signature">
+          <span class="method-name">plot_against</span><span class="method-args">(e1, e2)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Plot one experiment against the other
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000233-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000233-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/application_controller.rb, line 82</span>
+82:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">plot_against</span> <span class="ruby-identifier">e1</span>, <span class="ruby-identifier">e2</span>
+83:     <span class="ruby-constant">Flot</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'experiment_roc_plot'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+84:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">points</span>
+85:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">grid</span> <span class="ruby-identifier">:hoverable</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>
+86:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">legend</span> <span class="ruby-identifier">:position</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;se&quot;</span>
+87:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">yaxis</span> <span class="ruby-value">1</span>
+88:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">series</span> <span class="ruby-node">&quot;#{e1.title} against #{e2.title}&quot;</span>, <span class="ruby-identifier">e1</span>.<span class="ruby-identifier">aucs_against</span>(<span class="ruby-identifier">e2</span>), <span class="ruby-identifier">:points</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:radius</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1.5</span>}
+89:     <span class="ruby-keyword kw">end</span>
+90:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000232" class="method-detail">
+        <a name="M000232"></a>
+
+        <div class="method-heading">
+          <a href="#M000232" class="method-signature">
           <span class="method-name">plot_experiment</span><span class="method-args">(experiment)</span>
           </a>
         </div>
@@ -132,29 +166,75 @@ Used by <a href="ExperimentsController.html">ExperimentsController</a> and
 <a href="JohnExperimentsController.html">JohnExperimentsController</a>
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000196-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000196-source">
+            onclick="toggleCode('M000232-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000232-source">
 <pre>
-    <span class="ruby-comment cmt"># File app/controllers/application_controller.rb, line 44</span>
-44:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">plot_experiment</span> <span class="ruby-identifier">experiment</span>
-45:     <span class="ruby-constant">Flot</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'experiment_roc_plot'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
-46:       <span class="ruby-comment cmt">#f.yaxis :min =&gt; 0, :max =&gt; 1</span>
-47:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">points</span>
-48:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">legend</span> <span class="ruby-identifier">:position</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;se&quot;</span>
-49:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">yaxis</span> <span class="ruby-value">1</span>
-50:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">series</span> <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">title</span>, <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">roc_line</span>
-51:     <span class="ruby-keyword kw">end</span>
-52:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File app/controllers/application_controller.rb, line 71</span>
+71:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">plot_experiment</span> <span class="ruby-identifier">experiment</span>
+72:     <span class="ruby-constant">Flot</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'experiment_roc_plot'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+73:       <span class="ruby-comment cmt">#f.yaxis :min =&gt; 0, :max =&gt; 1</span>
+74:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">points</span>
+75:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">legend</span> <span class="ruby-identifier">:position</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;se&quot;</span>
+76:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">yaxis</span> <span class="ruby-value">1</span>
+77:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">series</span> <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">title</span>, <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">roc_line</span>, <span class="ruby-identifier">:points</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:radius</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1.1</span>}
+78:     <span class="ruby-keyword kw">end</span>
+79:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-M000195" class="method-detail">
-        <a name="M000195"></a>
+      <div id="method-M000231" class="method-detail">
+        <a name="M000231"></a>
 
         <div class="method-heading">
-          <a href="#M000195" class="method-signature">
+          <a href="#M000231" class="method-signature">
+          <span class="method-name">plot_experiment_with_children</span><span class="method-args">(experiment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000231-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000231-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/controllers/application_controller.rb, line 43</span>
+43:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">plot_experiment_with_children</span> <span class="ruby-identifier">experiment</span>
+44:     <span class="ruby-identifier">exp_aucs</span> = <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">aucs_by_column</span>
+45:     <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+46:       <span class="ruby-identifier">child</span>.<span class="ruby-identifier">aucs_by_column</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">column_auc</span><span class="ruby-operator">|</span>
+47:         <span class="ruby-identifier">exp_aucs</span>
+48:       <span class="ruby-keyword kw">end</span>
+49:     <span class="ruby-keyword kw">end</span>
+50: 
+51:     <span class="ruby-constant">Flot</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'experiment_roc_plot'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+52:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">points</span>
+53:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">lines</span>
+54:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">grid</span> <span class="ruby-identifier">:hoverable</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>
+55:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">legend</span> <span class="ruby-identifier">:position</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;se&quot;</span>, <span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>
+56:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">yaxis</span> <span class="ruby-value">1</span>
+57:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">selection</span> <span class="ruby-identifier">:mode</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;xy&quot;</span>
+58: 
+59: 
+60:       <span class="ruby-identifier">roc_lines</span> = <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">aucs_by_column_with_mean</span>
+61: 
+62:       <span class="ruby-identifier">f</span>.<span class="ruby-identifier">series</span> <span class="ruby-node">&quot;#{experiment.id}: #{experiment.title}&quot;</span>, <span class="ruby-identifier">roc_lines</span>.<span class="ruby-identifier">first</span>, <span class="ruby-identifier">:lines</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>}, <span class="ruby-identifier">:points</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">:radius</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1.1</span>} <span class="ruby-comment cmt">#sorted_exp_aucs</span>
+63: 
+64:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">experiment</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+65:         <span class="ruby-identifier">f</span>.<span class="ruby-identifier">series</span> <span class="ruby-node">&quot;#{experiment.id}: Average of Children&quot;</span>, <span class="ruby-identifier">roc_lines</span>.<span class="ruby-identifier">last</span>, <span class="ruby-identifier">:points</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:radius</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1.1</span>}, <span class="ruby-identifier">:lines</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:show</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>}
+66:       <span class="ruby-keyword kw">end</span>
+67:     <span class="ruby-keyword kw">end</span>
+68:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000230" class="method-detail">
+        <a name="M000230"></a>
+
+        <div class="method-heading">
+          <a href="#M000230" class="method-signature">
           <span class="method-name">rocs</span><span class="method-args">(matrix_or_experiment)</span>
           </a>
         </div>
@@ -164,8 +244,8 @@ Used by <a href="ExperimentsController.html">ExperimentsController</a> and
 Scrub sensitive parameters from your log filter_parameter_logging :password
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000195-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000195-source">
+            onclick="toggleCode('M000230-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000230-source">
 <pre>
     <span class="ruby-comment cmt"># File app/controllers/application_controller.rb, line 12</span>
 12:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rocs</span> <span class="ruby-identifier">matrix_or_experiment</span>

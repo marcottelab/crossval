@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: NodeMatrix</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">NodeMatrix</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/app/models/node_matrix_rb.html">
+                app/models/node_matrix.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="TreeMatrix.html">
+                TreeMatrix
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="NodeMatrix.html">NodeMatrix</a> is an abstraction of <a
+href="TreeMatrix.html">TreeMatrix</a>. This type is used for a node that is
+not a leaf.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000184">children_file_paths</a>&nbsp;&nbsp;
+      <a href="#M000177">density</a>&nbsp;&nbsp;
+      <a href="#M000179">generate_leaves</a>&nbsp;&nbsp;
+      <a href="#M000178">generate_nodes</a>&nbsp;&nbsp;
+      <a href="#M000175">has_grandchildren?</a>&nbsp;&nbsp;
+      <a href="#M000176">list_children</a>&nbsp;&nbsp;
+      <a href="#M000185">make_child_title</a>&nbsp;&nbsp;
+      <a href="#M000181">make_inputs</a>&nbsp;&nbsp;
+      <a href="#M000180">validate_tree</a>&nbsp;&nbsp;
+      <a href="#M000182">write_cells_inverted</a>&nbsp;&nbsp;
+      <a href="#M000183">write_children_using</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000177" class="method-detail">
+        <a name="M000177"></a>
+
+        <div class="method-heading">
+          <a href="#M000177" class="method-signature">
+          <span class="method-name">density</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gives a metric describing the number of cells in the matrix as a fraction
+of the size &#8212; in terms of the number of cells per column.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000177-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000177-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 29</span>
+29:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">density</span>
+30:     <span class="ruby-identifier">target</span> = <span class="ruby-keyword kw">self</span>
+31:     <span class="ruby-identifier">cc</span> = <span class="ruby-identifier">target</span>.<span class="ruby-identifier">column_count</span>
+32: 
+33:     <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">cc</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+34:       <span class="ruby-identifier">target</span> = <span class="ruby-identifier">target</span>.<span class="ruby-identifier">parent</span>
+35:       <span class="ruby-identifier">cc</span> = <span class="ruby-identifier">target</span>.<span class="ruby-identifier">column_count</span>
+36:     <span class="ruby-keyword kw">end</span>
+37: 
+38:     (<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">cells</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">cc</span>.<span class="ruby-identifier">to_f</span>).<span class="ruby-identifier">round</span>
+39:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000179" class="method-detail">
+        <a name="M000179"></a>
+
+        <div class="method-heading">
+          <a href="#M000179" class="method-signature">
+          <span class="method-name">generate_leaves</span><span class="method-args">(num)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generate num leaves (test sets) by row.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000179-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000179-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 73</span>
+73:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_leaves</span> <span class="ruby-identifier">num</span>
+74:     <span class="ruby-identifier">row_set</span> = <span class="ruby-identifier">rows</span>.<span class="ruby-identifier">dup</span>
+75:     <span class="ruby-identifier">row_set</span>.<span class="ruby-identifier">shuffle!</span>
+76:     <span class="ruby-identifier">masks</span> = <span class="ruby-identifier">split_set</span>(<span class="ruby-identifier">row_set</span>, <span class="ruby-identifier">num</span>)
+77: 
+78:     <span class="ruby-identifier">res</span> = []
+79: 
+80:     <span class="ruby-identifier">num</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span>
+81:       <span class="ruby-identifier">child_leaf</span> = <span class="ruby-identifier">child_leaves</span>.<span class="ruby-identifier">create!</span>(
+82:         <span class="ruby-identifier">:cardinality</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">n</span>,
+83:         <span class="ruby-identifier">:title</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">make_child_title</span>(<span class="ruby-identifier">n</span>, <span class="ruby-identifier">num</span>),
+84:         <span class="ruby-identifier">:entry_info_id</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry_info_id</span>             )
+85: 
+86:       <span class="ruby-identifier">row_set</span> = <span class="ruby-identifier">masks</span>[<span class="ruby-identifier">n</span>]
+87:       <span class="ruby-identifier">row_set</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+88:         <span class="ruby-identifier">entries</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:all</span>, <span class="ruby-identifier">:conditions</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:i</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">i</span>}).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">entry</span><span class="ruby-operator">|</span>
+89:           <span class="ruby-identifier">child_leaf</span>.<span class="ruby-identifier">clone_entry</span>(<span class="ruby-identifier">entry</span>)
+90:         <span class="ruby-keyword kw">end</span>
+91:       <span class="ruby-keyword kw">end</span>
+92:       
+93:       <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Generated #{row_set.size} rows in a new leaf of node #{id}, id #{child_leaf.id}&quot;</span>)
+94: 
+95:       <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">child_leaf</span>
+96:     <span class="ruby-keyword kw">end</span>
+97: 
+98:     <span class="ruby-identifier">res</span>
+99:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000178" class="method-detail">
+        <a name="M000178"></a>
+
+        <div class="method-heading">
+          <a href="#M000178" class="method-signature">
+          <span class="method-name">generate_nodes</span><span class="method-args">(num)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generate num nodes (training sets that may also act as test sets) by row.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000178-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000178-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 42</span>
+42:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_nodes</span> <span class="ruby-identifier">num</span>
+43:     <span class="ruby-identifier">row_set</span> = <span class="ruby-identifier">rows</span>.<span class="ruby-identifier">dup</span>
+44:     <span class="ruby-identifier">row_set</span>.<span class="ruby-identifier">shuffle!</span>
+45:     <span class="ruby-identifier">node_masks</span> = <span class="ruby-identifier">split_set</span>(<span class="ruby-identifier">row_set</span>, <span class="ruby-identifier">num</span>)
+46: 
+47:     <span class="ruby-identifier">res</span> = []
+48: 
+49:     <span class="ruby-identifier">num</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span>
+50: 
+51:       <span class="ruby-identifier">child_node</span> = <span class="ruby-identifier">child_nodes</span>.<span class="ruby-identifier">create!</span>(
+52:         <span class="ruby-identifier">:cardinality</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">n</span>,
+53:         <span class="ruby-identifier">:title</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">make_child_title</span>(<span class="ruby-identifier">n</span>, <span class="ruby-identifier">num</span>),
+54:         <span class="ruby-identifier">:entry_info_id</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry_info_id</span>             )
+55: 
+56:       <span class="ruby-identifier">row_set</span> = <span class="ruby-identifier">combine_all_but_one</span>(<span class="ruby-identifier">node_masks</span>, <span class="ruby-identifier">n</span>)
+57:       
+58:       <span class="ruby-identifier">row_set</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+59:         <span class="ruby-identifier">entries</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">:all</span>, <span class="ruby-identifier">:conditions</span> =<span class="ruby-operator">&gt;</span> {<span class="ruby-identifier">:i</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">i</span>}).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">entry</span><span class="ruby-operator">|</span>
+60:           <span class="ruby-identifier">child_node</span>.<span class="ruby-identifier">clone_entry</span>(<span class="ruby-identifier">entry</span>)
+61:         <span class="ruby-keyword kw">end</span>
+62:       <span class="ruby-keyword kw">end</span>
+63: 
+64:       <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Generated #{row_set.size} rows in a new sub-node of node #{id}, id #{child_node.id}&quot;</span>)
+65: 
+66:       <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">child_node</span>
+67:     <span class="ruby-keyword kw">end</span>
+68: 
+69:     <span class="ruby-identifier">res</span>
+70:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000175" class="method-detail">
+        <a name="M000175"></a>
+
+        <div class="method-heading">
+          <a href="#M000175" class="method-signature">
+          <span class="method-name">has_grandchildren?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This function will return true only if we have two-stage cross-validation
+set up for a matrix.
+</p>
+<p>
+It will be used when creating Experiments &#8212; so we know when to clone
+them and put one on each child matrix instead of just the root.
+</p>
+<p>
+A fundamental assumption is that the tree is balanced (that if one child
+has 5 children, all children have 5 children) and polymorphic (<a
+href="NodeMatrix.html">NodeMatrix</a> for nodes, <a
+href="LeafMatrix.html">LeafMatrix</a> for leaves).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000175-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000175-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 15</span>
+15:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_grandchildren?</span>
+16:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+17:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">LeafMatrix</span>)
+18:     <span class="ruby-keyword kw">true</span>
+19:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000176" class="method-detail">
+        <a name="M000176"></a>
+
+        <div class="method-heading">
+          <a href="#M000176" class="method-signature">
+          <span class="method-name">list_children</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This should maybe become a helper function. Simply provides a list of the
+child matrix ids joined by commas (as a <a href="String.html">String</a>).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000176-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000176-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 23</span>
+23:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">list_children</span>
+24:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)
+25:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000180" class="method-detail">
+        <a name="M000180"></a>
+
+        <div class="method-heading">
+          <a href="#M000180" class="method-signature">
+          <span class="method-name">validate_tree</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Use this function to run a check and print out all matrix statistics. The
+check will confirm that all the test sets and training sets add up.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000180-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000180-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 103</span>
+103:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_tree</span>
+104:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child_leaves</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+105:     <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">child_nodes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+106:       <span class="ruby-comment cmt"># Simply print statistics for this matrix.</span>
+107:       <span class="ruby-identifier">statistics</span>
+108:     <span class="ruby-keyword kw">end</span>
+109:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000184" class="method-detail">
+        <a name="M000184"></a>
+
+        <div class="method-heading">
+          <a href="#M000184" class="method-signature">
+          <span class="method-name">children_file_paths</span><span class="method-args">(file_prefix)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000184-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000184-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 167</span>
+167:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">children_file_paths</span> <span class="ruby-identifier">file_prefix</span>
+168:     <span class="ruby-identifier">children_filenames</span>(<span class="ruby-identifier">file_prefix</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span> }
+169:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000185" class="method-detail">
+        <a name="M000185"></a>
+
+        <div class="method-heading">
+          <a href="#M000185" class="method-signature">
+          <span class="method-name">make_child_title</span><span class="method-args">(n, total)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000185-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000185-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 172</span>
+172:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">make_child_title</span> <span class="ruby-identifier">n</span>, <span class="ruby-identifier">total</span>
+173:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">title</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; (&quot;</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">n</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>).<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">total</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;)&quot;</span>
+174:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000181" class="method-detail">
+        <a name="M000181"></a>
+
+        <div class="method-heading">
+          <a href="#M000181" class="method-signature">
+          <span class="method-name">make_inputs</span><span class="method-args">(rows_filename, cells_filename, file_prefix = &quot;testset&quot;, dest_dir = self.root)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generate two files in the current directory, one containing the row
+indeces, the other containing the cells in the matrix.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000181-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000181-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 116</span>
+116:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">make_inputs</span> <span class="ruby-identifier">rows_filename</span>, <span class="ruby-identifier">cells_filename</span>, <span class="ruby-identifier">file_prefix</span> = <span class="ruby-value str">&quot;testset&quot;</span>, <span class="ruby-identifier">dest_dir</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>
+117:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span>(<span class="ruby-identifier">dest_dir</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">dest_dir</span>)
+118:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-identifier">dest_dir</span>) <span class="ruby-keyword kw">do</span>
+119:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">make_inputs_internal</span> <span class="ruby-identifier">rows_filename</span>, <span class="ruby-identifier">cells_filename</span>
+120: 
+121:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write_children_as_testsets</span> <span class="ruby-identifier">file_prefix</span>
+122:     <span class="ruby-keyword kw">end</span>
+123:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000182" class="method-detail">
+        <a name="M000182"></a>
+
+        <div class="method-heading">
+          <a href="#M000182" class="method-signature">
+          <span class="method-name">write_cells_inverted</span><span class="method-args">(open_file)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+write_contents writes the whole matrix, not a mask of it.
+</p>
+<p>
+This function writes a mask.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000182-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000182-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 131</span>
+131:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_cells_inverted</span>(<span class="ruby-identifier">open_file</span>)
+132:     <span class="ruby-identifier">parent_cells</span> = <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">find</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parent_id</span>).<span class="ruby-identifier">cells</span>
+133: 
+134:     (<span class="ruby-identifier">parent_cells</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">c</span>.<span class="ruby-identifier">i</span>,<span class="ruby-identifier">c</span>.<span class="ruby-identifier">j</span>]} <span class="ruby-operator">-</span> <span class="ruby-identifier">cells</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">c</span>.<span class="ruby-identifier">i</span>,<span class="ruby-identifier">c</span>.<span class="ruby-identifier">j</span>]}).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">entry</span><span class="ruby-operator">|</span>
+135:       <span class="ruby-comment cmt"># Construct a new cell temporarily (don't save it), and use its write</span>
+136:       <span class="ruby-comment cmt"># function to do the output.</span>
+137:       <span class="ruby-constant">Cell</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">:i</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry</span>[<span class="ruby-value">0</span>], <span class="ruby-identifier">:j</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">entry</span>[<span class="ruby-value">1</span>]).<span class="ruby-identifier">write</span>(<span class="ruby-identifier">open_file</span>)
+138:     <span class="ruby-keyword kw">end</span>
+139: 
+140:     <span class="ruby-identifier">open_file</span>
+141:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000183" class="method-detail">
+        <a name="M000183"></a>
+
+        <div class="method-heading">
+          <a href="#M000183" class="method-signature">
+          <span class="method-name">write_children_using</span><span class="method-args">(write_method_sym, file_prefix=&quot;testset&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Write children to files using a specific method. That method shall be
+responsible for determining the output format; this function handles naming
+the file and opening and closing it.
+</p>
+<p>
+Returns the names of the files written.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ write_children_using :write_cells_inverted, &quot;testset&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000183-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000183-source">
+<pre>
+     <span class="ruby-comment cmt"># File app/models/node_matrix.rb, line 151</span>
+151:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_children_using</span> <span class="ruby-identifier">write_method_sym</span>, <span class="ruby-identifier">file_prefix</span>=<span class="ruby-value str">&quot;testset&quot;</span>
+152:     <span class="ruby-identifier">files_written</span> = []
+153:     
+154:     <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">root</span>) <span class="ruby-keyword kw">do</span>
+155:       <span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+156:         <span class="ruby-identifier">filename</span> = <span class="ruby-identifier">child_filename_internal</span>(<span class="ruby-identifier">file_prefix</span>, <span class="ruby-identifier">child</span>)
+157:         <span class="ruby-identifier">file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">filename</span>, <span class="ruby-value str">&quot;w&quot;</span>)
+158:         <span class="ruby-identifier">child</span>.<span class="ruby-identifier">send</span> <span class="ruby-identifier">write_method_sym</span>, <span class="ruby-identifier">file</span>
+159:         <span class="ruby-identifier">file</span>.<span class="ruby-identifier">close</span>
+160:         <span class="ruby-identifier">files_written</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">filename</span>
+161:       <span class="ruby-keyword kw">end</span>
+162:     <span class="ruby-keyword kw">end</span>
+163:     <span class="ruby-identifier">files_written</span>
+164:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

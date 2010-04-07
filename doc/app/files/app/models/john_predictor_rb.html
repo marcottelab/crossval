@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Wed Jan 27 16:35:15 -0600 2010</td>
+      <td>Tue Mar 09 16:13:06 -0600 2010</td>
     </tr>
     </table>
   </div>
@@ -68,6 +68,29 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+This class is a slight simplification of <a
+href="../../../classes/JohnExperiment.html">JohnExperiment</a>. Generally,
+most of its behavior duplicates that child, and you may look at its docs
+for reference.
+</p>
+<p>
+The major differences:
+</p>
+<ul>
+<li>This class does not perform cross-validation. It only runs the phenomatrix
+binary on a single matrix, and produces predictions. As a result, it uses
+fewer matrix columns and offers fewer arguments to the binary.
+
+</li>
+<li>This class does not load any ROCs in after_run, since no ROCs can be
+calculated without cross-validation.
+
+</li>
+</ul>
+
+    </div>
 
 
    </div>

@@ -86,7 +86,11 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000053">mean</a>&nbsp;&nbsp;
+      <a href="#M000073">active_record_difference</a>&nbsp;&nbsp;
+      <a href="#M000074">active_record_hash</a>&nbsp;&nbsp;
+      <a href="#M000072">active_record_union</a>&nbsp;&nbsp;
+      <a href="#M000071">active_record_uniq</a>&nbsp;&nbsp;
+      <a href="#M000070">mean</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -108,11 +112,99 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000053" class="method-detail">
-        <a name="M000053"></a>
+      <div id="method-M000073" class="method-detail">
+        <a name="M000073"></a>
 
         <div class="method-heading">
-          <a href="#M000053" class="method-signature">
+          <a href="#M000073" class="method-signature">
+          <span class="method-name">active_record_difference</span><span class="method-args">(subtract, exclude = [:id, :created_at, :updated_at])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set difference for ActiveRecord &#8212; considers all objects without their
+IDs, timestamps, etc.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000073-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000073-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/array_ext.rb, line 24</span>
+24:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active_record_difference</span>(<span class="ruby-identifier">subtract</span>, <span class="ruby-identifier">exclude</span> = [<span class="ruby-identifier">:id</span>, <span class="ruby-identifier">:created_at</span>, <span class="ruby-identifier">:updated_at</span>])
+25:     <span class="ruby-identifier">h1</span> = <span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>)
+26:     <span class="ruby-identifier">h2</span> = <span class="ruby-identifier">subtract</span>.<span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>)
+27:     <span class="ruby-identifier">d</span> = []
+28:     (<span class="ruby-identifier">h1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">h2</span>.<span class="ruby-identifier">keys</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+29:       <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">h1</span>[<span class="ruby-identifier">key</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">h1</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">key</span>)
+30:     <span class="ruby-keyword kw">end</span>
+31:     <span class="ruby-identifier">d</span>
+32:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000072" class="method-detail">
+        <a name="M000072"></a>
+
+        <div class="method-heading">
+          <a href="#M000072" class="method-signature">
+          <span class="method-name">active_record_union</span><span class="method-args">(other_array, exclude = [:id,:created_at,:updated_at])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set union for ActiveRecord &#8212; considers all objects without their IDs,
+timestamps, etc.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000072-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000072-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/array_ext.rb, line 17</span>
+17:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active_record_union</span>(<span class="ruby-identifier">other_array</span>, <span class="ruby-identifier">exclude</span> = [<span class="ruby-identifier">:id</span>,<span class="ruby-identifier">:created_at</span>,<span class="ruby-identifier">:updated_at</span>])
+18:     <span class="ruby-identifier">h</span> = <span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>)
+19:     <span class="ruby-identifier">other_array</span>.<span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>, <span class="ruby-identifier">h</span>).<span class="ruby-identifier">values</span>
+20:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000071" class="method-detail">
+        <a name="M000071"></a>
+
+        <div class="method-heading">
+          <a href="#M000071" class="method-signature">
+          <span class="method-name">active_record_uniq</span><span class="method-args">(exclude = [:id,:created_at,:updated_at])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Don&#8216;t consider certain ActiveRecord information when calculating uniq
+using this function.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000071-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000071-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/array_ext.rb, line 11</span>
+11:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active_record_uniq</span>(<span class="ruby-identifier">exclude</span> = [<span class="ruby-identifier">:id</span>,<span class="ruby-identifier">:created_at</span>,<span class="ruby-identifier">:updated_at</span>])
+12:     <span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>).<span class="ruby-identifier">values</span>
+13:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000070" class="method-detail">
+        <a name="M000070"></a>
+
+        <div class="method-heading">
+          <a href="#M000070" class="method-signature">
           <span class="method-name">mean</span><span class="method-args">()</span>
           </a>
         </div>
@@ -128,13 +220,46 @@ def sum
 end
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000053-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000053-source">
+            onclick="toggleCode('M000070-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000070-source">
 <pre>
    <span class="ruby-comment cmt"># File lib/array_ext.rb, line 5</span>
 5:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mean</span>
 6:     (<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">sum</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">size</span> <span class="ruby-operator">:</span> <span class="ruby-value">0</span>
 7:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000074" class="method-detail">
+        <a name="M000074"></a>
+
+        <div class="method-heading">
+          <a href="#M000074" class="method-signature">
+          <span class="method-name">active_record_hash</span><span class="method-args">(exclude, h = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a hash of ActiveRecord objects with certain attributes excluded
+(e.g., id, created_at, updated_at
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000074-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000074-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/array_ext.rb, line 37</span>
+37:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active_record_hash</span>(<span class="ruby-identifier">exclude</span>, <span class="ruby-identifier">h</span> = {})
+38:     <span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+39:       <span class="ruby-identifier">item_key</span>    = <span class="ruby-identifier">clean_attributes</span>(<span class="ruby-identifier">item</span>, <span class="ruby-identifier">exclude</span>).<span class="ruby-identifier">to_s</span>
+40:       <span class="ruby-identifier">h</span>[<span class="ruby-identifier">item_key</span>] = <span class="ruby-identifier">item</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">h</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">item_key</span>)
+41:     <span class="ruby-keyword kw">end</span>
+42:     <span class="ruby-identifier">h</span>
+43:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
