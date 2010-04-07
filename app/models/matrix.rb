@@ -106,6 +106,15 @@ class Matrix < ActiveRecord::Base
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
 
+  # Get a hash of statistics on this matrix.
+  def statistics
+    h = {}
+    h["DB cells"] = Cell.count(:conditions => ["matrix_id = ?",id])
+    h["DB entries"] = Entry.count(:conditions => ["matrix_id = ?",id])
+    h["DB empty_rows"] = EmptyRow.count(:conditions => ["matrix_id = ?",id])
+    h
+  end
+
   # A descriptor which uniquely identifies a matrix, useful for drop-down boxes
   # particularly when title is the same for multiple matrices.
   # In this case, it's the ID and the title.
@@ -232,21 +241,37 @@ SQL
   end
 
 
-  # Get all columns or all columns with row i
+  # Get all columns or all columns with row <i>i</i>.
   def column_indeces(i = nil)
-    self.cells_by_row_or_column(:i, :j, i)
+    self.indeces_by_row_or_column(:i, :j, i)
   end
 
-  # Get all rows or all those with column j
-  def row_indeces(j = nil)
-    new_record? ? @built_rows : cells_by_row_or_column(:j, :i, j)
+  # Get all row indeces or, if an arg <i>j</i> is provided, all those with column <i>j</i>.
+  def rows(j = nil)
+    indeces_by_row_or_column(:j, :i, j)
   end
 
-  def cells_by_row_or_column(sym, other_sym, val = nil)
+  # This gets overridden by TreeMatrix: all_rows points to the parent, and rows
+  # stays the same.
+  alias_method :all_rows, :rows
+
+  
+  # This is essentially a matrix slice function.
+  # 
+  # If you want column indeces, give it :i, :j. If you want row indeces, give it
+  # :j, :i. The third argument is the row or column index you want.
+  #
+  # If you provide no third argument, it'll return all unique columns or rows, I think,
+  # but I can't remember why I wrote it this way. Play around with it.
+  #
+  # Also note that this slice function is not properly overridden on LeafMatrices.
+  # It will give you the mask contents, which might be the complement of what you
+  # expect.
+  def indeces_by_row_or_column(sym, other_sym, val = nil)
     if val.nil?
-      self.entries.collect { |c| c.send other_sym }.uniq.reject { |c| c.nil? }
+      entries.collect { |c| c.send other_sym }.uniq.reject { |c| c.nil? }
     else
-      self.entries.find(:all, :conditions => {sym => val}).collect { |c| c.send other_sym }.uniq.reject { |c| c.nil? }
+      entries.find(:all, :conditions => {sym => val}).collect { |c| c.send other_sym }.uniq.reject { |c| c.nil? }
     end
   end
 
@@ -472,21 +497,6 @@ SQL
   end
 
 
-  def write_children_if_masks file_prefix
-    if !self.children.first.nil? && self.children.first.mask?
-      self.children.each do |child|
-        Dir.chdir(self.root) do
-          child.write( self.child_filename_internal(file_prefix, child), :force_not_masked => true )
-        end
-      end
-    end
-  end
-
-  def child_filename file_prefix, child_matrix
-    raise(ArgumentError, "Matrix #{child_matrix.id} is not a mask and is therefore not located in the same directory as its parent.") unless child_matrix.mask?
-    self.child_filename_internal(file_prefix, child_matrix)
-  end
-
   def children_filenames file_prefix
     l = []
     #if self.children.first.mask?
@@ -497,10 +507,7 @@ SQL
     l
   end
 
-  def children_file_paths file_prefix
-    self.children_filenames(file_prefix).collect { |x| self.root + x }
-  end
-
+  
   def has_experiments_to_run?
     self.experiments.not_run.count > 0
   end
@@ -510,53 +517,6 @@ SQL
   def stages
     return 0 if self.children.count == 0
     self.children.first.stages + 1 # recursive.
-  end
-
-  # Create n random subsets of this matrix, each of size (s * (n-1 / n)). If
-  # supplied with a list, repeats recursively for each of the subsets.
-  # If supplied with an integer, creates subsets which are of size (s / n),
-  # which serve as masks.
-  #
-  # n is specified by folds, which can be a Fixnum or an Array (containing Fixnum).
-  #
-  # By setting shuffle to false, you're telling it not to randomize the rows that
-  # end up as test sets. (Having shuffle as true has no effect on the row or
-  # column contents. That is handled by copy_and_randomize.)
-  def fractalize(folds, shuffle=true)
-    # Convert to an array even if there is only one
-    folds = [folds] if folds.is_a?(Fixnum)
-
-    # Set up the methods for fractalization -- there should be one for each of
-    # the entries in the folds argument
-    methods = []
-    folds.each { |fold|  methods << :row  }
-    
-    fractalize_by_method(folds, methods, shuffle)
-  end
-
-  # Does the work for fractalize, but also allows cross-validation methods (row
-  # or cell) to be specified. This functionality was deprecated when we couldn't
-  # figure out how to do cell-based cross-validation.
-  #
-  # This function used to be called simply fractalize. You should use that
-  # function instead.
-  #
-  # Note that folds and methods must both be arrays, and they must have equal
-  # size.
-  def fractalize_by_method(folds, methods, shuffle=true)
-
-    unless folds.is_a?(Array) && methods.is_a?(Array) && folds.size > 0
-      raise ArgumentError("folds and methods must be arrays of equal non-zero size")
-      raise(ArgumentError, "folds and methods must be the same size") unless folds.size == methods.size
-    end
-
-    fractalize_by_method_internal(folds, methods, shuffle)
-  end
-
-  # This should maybe become a helper function. Simply provides a list of the
-  # child matrix ids joined by commas (as a String).
-  def list_children
-    self.children.collect { |x| x.id }.join(", ")
   end
 
   # Generate two files in the current directory, one containing the row indeces,
@@ -592,23 +552,6 @@ SQL
   end
 
 protected
-  # fractalize_by_method without the error-checking.
-  def fractalize_by_method_internal folds, methods, shuffle
-    # Pop the top value.
-    fold    = folds.shift
-    meth    = methods.shift
-    STDERR.puts("fold is #{fold}, meth is #{meth}")
-
-    if folds.size >= 1
-      self.fractalize_internal(fold, meth, shuffle)
-      # recurse
-      self.children.each do |child|
-        child.fractalize_by_method_internal(folds.dup, methods.dup, shuffle)
-      end
-    else
-      self.mask_fractalize_internal fold, meth, shuffle
-    end
-  end
 
   # Used for returning either row or column of every entry corresponding to this matrix.
   def unique_entry_value_sql(field, count = false)
@@ -634,11 +577,6 @@ SQL
     sql
   end
 
-
-
-  def child_filename_internal file_prefix, child_matrix
-    "#{file_prefix}.#{self.children.count.to_s}-#{child_matrix.cardinality}"
-  end
 
   def make_inputs_internal rows_filename, cells_filename
     self.write_rows(rows_filename)
@@ -702,18 +640,6 @@ SQL
     end
   end
 
-
-  def make_submatrix_title n, total
-    self.title + " (" + (n+1).to_s + "/" + total.to_s + ")"
-  end
-
-  def build_submatrices! num
-    (0...num).each do |n|
-      self.children.build(:cardinality  =>  n,
-        :title          =>   self.make_submatrix_title(n,num),
-        :entry_info_id  =>   self.entry_info_id        )
-    end
-  end
 
   def find_or_create_cell!(i, j)
     Cell.find_or_create!(i, j, self.id)
@@ -780,31 +706,4 @@ def infer_species_from_filename fn
   fields.last =~ /^[A-Z][a-z]{1,2}$/ ? fields.last : nil
 end
 
-def split_set item_set, num_pieces
-  raise(ArgumentError, "item_set is empty") if item_set.size == 0
-  num_per_piece  = Array.new(num_pieces)
-  results        = Array.new(num_pieces)
-  startpos       = 0
 
-  # Figure out the sizes of the splits
-  (0...num_pieces).each do |piece|
-    num_per_piece[piece]  =  item_set.size / num_pieces
-    # Uneven division: need to increase the first set's size.
-    num_per_piece[piece] += 1 if piece < item_set.size % num_pieces
-
-    results[piece]        = item_set.slice(startpos, num_per_piece[piece])
-    startpos             += num_per_piece[piece]
-  end
-
-  results
-end
-
-def combine_all_but_one item_sets, leave_out
-  item_set = []
-  (0...item_sets.size).each do |n|
-    next if n == leave_out
-    item_set.concat item_sets[n]
-  end
-
-  item_set
-end
