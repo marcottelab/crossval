@@ -490,16 +490,16 @@ protected
   # the correct directory and such.
   def prepare_standard_inputs
     STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
-    cell_files = self.copy_source_matrix_inputs
+    cell_files = copy_source_matrix_inputs
 
     # Generate predict_rows file
-    self.generate_row_file(cell_files)
-    self.generate_column_file
+    generate_row_file(cell_files)
+    generate_column_file
 
     # Only copy the predict matrix cells file if it didn't come from one of the
     # source matrices.
-    unless cell_files.include?(self.predict_matrix.cell_file_path)
-      FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
+    unless cell_files.include?(predict_matrix.cell_file_path)
+      FileUtils.cp(predict_matrix.cell_file_path, self.root)
     end
   end
 

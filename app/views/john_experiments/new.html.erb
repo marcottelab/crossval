@@ -5,7 +5,7 @@
 
 <h1>New <%= @experiment.class.to_s.titleize %></h1>
 
-<% form_for([@matrix, @experiment]) do |f| %>
+<% form_for([:matrix, @experiment]) do |f| %>
   <%= render :partial => "#{@experiment.class.to_s.tableize}/form", :locals => { :f => f } %>
   <p>
     <%= f.submit 'Create' %>

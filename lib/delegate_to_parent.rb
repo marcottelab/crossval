@@ -30,8 +30,23 @@ module ParentalDelegation
       line = line.to_i
 
       attribs.each do |method|
-        if attributes.has_key?(method)
+        if methods.include?(method)
 
+          # Require a prefix; otherwise, :dependent => :destroy will cause serious
+          # problems.
+          prefix = "#{to}_" if prefix.nil?
+
+          # Have to do it slightly differently for non-attribute methods
+          module_eval(<<-EOS, file, line)
+            def #{prefix}#{method}(*args, &block)       # def customers(*args, &block)
+              if #{to}_id.nil?                          #   if parent_id.nil?
+                self.__send__ :this_#{method.to_sym}    #     self.__send__ :this_customers
+              else                                      #   else
+                #{to}.__send__(:this_#{method.to_sym})  #     parent.__send__ :customers
+              end                                       #   end
+            end                                         # end
+          EOS
+        else
           if prefix.nil? # If no prefix is given, rename the old attribute
             module_eval(<<-EOS, file, line)
               def this_#{method}(*args, &block)
@@ -48,22 +63,6 @@ module ParentalDelegation
                 #{to}.__send__(:attributes)['#{method}']             #     parent.__send__(:attributes)['customer_name']
               end                                                    #   end
             end                                                      # end
-          EOS
-        else
-
-          # Require a prefix; otherwise, :dependent => :destroy will cause serious
-          # problems.
-          prefix = "#{to}_" if prefix.nil?
-
-          # Have to do it slightly differently for non-attribute methods
-          module_eval(<<-EOS, file, line)
-            def #{prefix}#{method}(*args, &block)       # def customers(*args, &block)
-              if #{to}_id.nil?                          #   if parent_id.nil?
-                self.__send__ :this_#{method.to_sym}    #     self.__send__ :this_customers
-              else                                      #   else
-                #{to}.__send__(:this_#{method.to_sym})  #     parent.__send__ :customers
-              end                                       #   end
-            end                                         # end
           EOS
         end
       end

@@ -5,7 +5,7 @@ class ExperimentsController < MatrixGenericController
     flash[:notice] = "Queueing experiment #{params[:id]}"
 
     find_experiment
-    redirect_to url_for(@matrix)
+    redirect_to matrix_path(@matrix)
   end
 
   # GET /experiments/1

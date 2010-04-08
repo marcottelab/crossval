@@ -11,7 +11,7 @@
 
 <ul>
 <%- unless @matrix.parent_id.nil? -%>
-  <li>Parent: <%= link_to @matrix.parent_id, @matrix.parent %></li>
+  <li>Parent: <%= link_to @matrix.parent_id, matrix_path(@matrix.parent) %></li>
   <li>Cardinality: <%= cardinality(@matrix) %></li>
 <%- end -%>
 <%- unless @matrix.children.count == 0 -%>
