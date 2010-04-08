@@ -194,7 +194,7 @@ class Experiment < ActiveRecord::Base
 
   # The root directory for the experiment
   def root
-    self.predict_matrix.root + directory_name
+    self.predict_matrix.root_dir + directory_name
   end
 
   # Copy input files from each of the source matrices and the predict matrix.

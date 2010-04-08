@@ -114,29 +114,22 @@ protected
 
   # Generate two files in the current directory, one containing the row indeces,
   # the other containing the cells in the matrix.
-  def make_inputs rows_filename, cells_filename, file_prefix = "testset", dest_dir = self.root
+  def make_inputs rows_filename, cells_filename, options = {}
+    opts = { :file_prefix => "testset", :dest_dir => root_dir }.merge(options)
+    dest_dir = opts[:dest_dir]
+
+    written = []
+
     Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
     Dir.chdir(dest_dir) do
-      self.make_inputs_internal rows_filename, cells_filename
+      make_inputs_internal rows_filename, cells_filename
 
-      self.write_children_as_testsets file_prefix
+      written = write_children_using :write_rows_inverted, opts[:file_prefix]
     end
-  end
-
-
-  # write_contents writes the whole matrix, not a mask of it.
-  #
-  # This function writes a mask.
-  def write_cells_inverted(open_file)
-    parent_cells = Matrix.find(self.parent_id).cells
-
-    (parent_cells.collect{ |c| [c.i,c.j]} - cells.collect{ |c| [c.i,c.j]}).each do |entry|
-      # Construct a new cell temporarily (don't save it), and use its write
-      # function to do the output.
-      Cell.new(:i => entry[0], :j => entry[1]).write(open_file)
-    end
-
-    open_file
+    
+    written << rows_filename
+    written << cells_filename
+    written
   end
 
   # Write children to files using a specific method. That method shall be
@@ -150,7 +143,7 @@ protected
   def write_children_using write_method_sym, file_prefix="testset"
     files_written = []
     
-    Dir.chdir(self.root) do
+    Dir.chdir(root_dir) do
       children.each do |child|
         filename = child_filename_internal(file_prefix, child)
         file = File.new(filename, "w")
@@ -164,7 +157,7 @@ protected
 
 
   def children_file_paths file_prefix
-    children_filenames(file_prefix).collect { |x| self.root + x }
+    children_filenames(file_prefix).collect { |x| root_dir + x }
   end
 
   

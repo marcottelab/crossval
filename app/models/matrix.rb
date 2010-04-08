@@ -124,7 +124,7 @@ class Matrix < ActiveRecord::Base
 
   # Calls destroy, but first deletes the matrix directory on the filesystem.
   def destroy_borked
-    FileUtils.rm_rf(self.root) if self.root.to_s.include?(Matrix.work_root)
+    FileUtils.rm_rf(root_dir) if root_dir.to_s.include?(Matrix.work_root)
     destroy
   end
 
@@ -292,24 +292,24 @@ SQL
   # Prepare working directory for the matrix.
   # If force is set to true, the contents will be overwritten.
   def prepare_inputs(force = false)
-    self.make_inputs(self.row_filename, self.cell_filename) unless self.root_exists? && !force
+    make_inputs(row_filename, cell_filename) unless root_exists? && !force
   end
 
   def row_filename
-    self.entry_info.row_filename(self.column_species)
+    entry_info.row_filename(self.column_species)
   end
 
   def row_file_path
-    self.root + self.row_filename
+    root_dir + row_filename
   end
 
   def cell_filename
     # This seems counter-intuitive, but it is correct. Hopefully.
-    self.entry_info.cell_filename(self.column_species)
+    entry_info.cell_filename(self.column_species)
   end
 
   def cell_file_path
-    self.root + self.cell_filename
+    root_dir + cell_filename
   end
 
   # Use this when displaying the matrix, e.g. through Rails.
@@ -456,23 +456,20 @@ SQL
 
   # Write all row indeces to a file.
   def write_rows!(file)
-    self.save! if self.changed?
-    self.write_saved_rows(file)
+    save! if changed?
+    file = File.new(file, "w") if file.is_a?(String) || file.is_a?(Path)
+    write_rows(file)
   end
 
   # Write a single matrix's row indeces.
-  def write_rows(file, options = {})
-    opts = self.write_options options
-    
-    if self.changed?
-      raise NotImplementedError, "Sorry, you need to save the matrix before trying to write its contents. Call write_rows! instead if you want to force a save."
-    else
-      self.write_saved_rows(file)
+  def write_rows(file)
+    rows.each do |entry|
+      file.puts entry
     end
   end
 
   # Write a single matrix, not its children.
-  def write(file, options = {})
+  def write(file, options = {})w
     opts = self.write_options options
     
     if self.changed?
@@ -519,23 +516,13 @@ SQL
     self.children.first.stages + 1 # recursive.
   end
 
-  # Generate two files in the current directory, one containing the row indeces,
-  # the other containing the cells in the matrix.
-  def make_inputs rows_filename, cells_filename, file_prefix = "testset", dest_dir = self.root
-    Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
-    Dir.chdir(dest_dir) do
-      self.make_inputs_internal rows_filename, cells_filename
-      
-      self.write_children_as_testsets file_prefix
-    end
-  end
-
-  def self.work_root
+  def self.root_dir
     Rails.root + "tmp/work"
   end
+  class <<self; alias_method :work_root, :root_dir; end
 
-  def root
-    Matrix.work_root + "matrix_#{self.id}"
+  def root_dir
+    self.class.work_root + "matrix_#{self.id}"
   end
 
   def dir_exists? dir
@@ -543,15 +530,33 @@ SQL
   end
 
   def root_exists?
-    dir_exists?(self.root)
+    dir_exists?(root_dir)
   end
 
   # List files and dirs in the matrix directory
   def ls
-    Dir.entries(root).reject { |e| e == "." || e == ".." }
+    if root_exists?
+      Dir.entries(root_dir).reject { |e| e == "." || e == ".." }
+    else
+      STDERR.puts("ls: cannot access #{root_dir}: No such file or directory")
+      nil     
+    end
   end
 
 protected
+
+  # Generate two files in the current directory, one containing the row indeces,
+  # the other containing the cells in the matrix.
+  def make_inputs rows_filename, cells_filename, options = {}
+    opts = {:dest_dir => root_dir }.merge(options)
+    dest_dir = opts[:dest_dir]
+
+    Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
+    Dir.chdir(dest_dir) do
+      make_inputs_internal rows_filename, cells_filename
+    end
+    [rows_filename,cells_filename]
+  end
 
   # Used for returning either row or column of every entry corresponding to this matrix.
   def unique_entry_value_sql(field, count = false)
@@ -579,8 +584,15 @@ SQL
 
 
   def make_inputs_internal rows_filename, cells_filename
-    self.write_rows(rows_filename)
-    self.write(cells_filename)
+    rows_file = File.new(rows_filename,  "w")
+    write_rows  rows_file
+    rows_file.close
+
+    cells_file = File.new(cells_filename, "w")
+    write_cells cells_file
+    cells_file.close
+
+    [rows_filename, cells_filename]
   end
   
   def unique_row_sql(count = false)
@@ -623,7 +635,8 @@ SQL
 
 
   # Write the cells of the matrix.
-  def write_cells(open_file, options)
+  def write_cells(open_file)
+    STDERR.puts("write_cells in matrix.rb")
     cells.each do |entry|
       entry.write(open_file)
     end
@@ -631,13 +644,7 @@ SQL
   end
 
   def cells_by_row i
-    if defined?(@built_rows)
-      target = self.parent
-      target = target.parent while target.new_record?
-      target.cells.find(:all, :conditions => {:i => i}).dup
-    else
-      self.cells.find(:all, :conditions => {:i => i})
-    end
+    self.cells.find(:all, :conditions => {:i => i})
   end
 
 
@@ -695,9 +702,7 @@ end
 # opposite of readlines. Not sure why it even needs to be added here, should
 # be built in.
 def writelines(path, data)
-  File.open(path, "wb") do |file|
-    file.puts(data)
-  end
+  path.is_a?(File) ? path.puts(data) : File.open(path, "wb") { |file| file.puts(data) }
 end
 
 # See if we can infer species information from the filename.

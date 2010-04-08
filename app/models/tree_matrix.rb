@@ -26,21 +26,26 @@ protected
     entry.class.send :create!, {:matrix_id => id, :i => entry.i, :j => entry.j}
   end
 
-  # Returns the default options for write() and the functions it calls.
-  def write_options options = {}
-    super.merge({
-      :invert_mask => false
-    }).merge options
+  # write_cells writes the whole matrix, not a mask of it.
+  #
+  # This function writes a mask.
+  def write_cells_inverted(open_file)
+    (parent.cells.active_record_difference(cells)).each do |entry|
+      # Construct a new cell temporarily (don't save it), and use its write
+      # function to do the output.
+      entry.write(open_file)
+    end
+
+    open_file
   end
 
-  # Write the contents of the matrix, keeping in mind that it may be a mask or
-  # the full matrix. This should really never be called externally.
-  # MAY NEED REWRITE.
-  def write_cells(open_file, options)
-    if options[:invert_mask]
-      write_contents_inverted(open_file)      # Complex case.
-    else
-      super(open_file)  # Simple case.
+
+  # write_rows writes the whole matrix, not a mask of it.
+  #
+  # This function writes a mask (only the rows not included in this Matrix).
+  def write_rows_inverted(open_file)
+    (parent.rows - rows).each do |entry|
+      open_file.puts entry
     end
 
     open_file
@@ -49,24 +54,9 @@ protected
   def child_filename_internal file_prefix, child_matrix
     "#{file_prefix}.#{children.count.to_s}-#{child_matrix.cardinality}"
   end
-
-  # Set an in-memory property for matrices that have been built but not saved.
-  # This keeps us from having to query the database during recursion on unsaved
-  # objects.
-  def built_rows= r
-    @built_rows = r
-  end
-
-  # Returns saved rows if the property is not set.
-  def built_rows
-    if defined?(@built_rows)
-      @built_rows
-    else
-      row_indeces
-    end
-  end
 end
 
+# Divide some set into num_pieces equal or one-off portions
 def split_set item_set, num_pieces
   raise(ArgumentError, "item_set is empty") if item_set.size == 0
   num_per_piece  = Array.new(num_pieces)

@@ -11,8 +11,7 @@
 # them.
 #
 # A row test set will consist not only of masked cells but also some masked rows.
-# These are stored as empty_rows; thus, the training set would be the parent
-# NodeMatrix's empty_rows minus this_empty_rows for the LeafMatrix.
+# Do not simply use empty_rows, as this will exclude rows containing masked cells.
 class LeafMatrix < TreeMatrix
   acts_as_tree_leaf :node_class_name => 'NodeMatrix'
   mask_leaf_parent :cells, :empty_rows
@@ -32,16 +31,23 @@ protected
   # write_contents writes the whole matrix, not a mask of it.
   #
   # This function writes just the mask.
-  def write_cells_inverted(open_file)
-    cells.each do |entry|
-      entry.write(open_file)
-    end
+#  def write_cells_inverted(open_file)
+#    cells.each do |entry|
+#      entry.write(open_file)
+#    end
+#
+#    open_file
+#  end
 
-    open_file
-  end
+  # We want to invert the stuff we write as if this weren't a mask.
+  swap_methods :write_cells, :write_cells_inverted, :write_cells_temporary
+  swap_methods :write_rows, :write_rows_inverted, :write_rows_temporary
 
-  def write_rows_inverted(open_file)
-    
-  end
+
+#  def write_rows_inverted(open_file)
+#    rows.each do |row|
+#      open_file.puts row
+#    end
+#  end
 
 end
