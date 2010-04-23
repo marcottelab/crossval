@@ -21,6 +21,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "starling-starling", :lib => "starling", :source => "http://gems.github.com"
   config.gem "after_commit", :source => "http://gemcutter.org"
+  config.gem "rocker", :source => "http://gemcutter.org", :version => "0.0.2"
   #config.gem "memcache"
 
   # Only load the plugins named here, in the order given (default is alphabetical).

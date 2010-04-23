@@ -428,14 +428,13 @@ protected
   end
 
   def calculate_rocs!
-    aucs = []
-    STDERR.puts("Calling Roc.calculate")
-    Roc.calculate(self.id, self.results_path).each do |roc|
-      roc.save!
-      aucs << roc.auc
+    STDERR.puts("Calling Rocker C++ extension (Rocker gem)")
+    Dir.chdir(results_path) do
+      # This automatically inserts into the database:
+      rocker = Rocker.new("dbname=crossval_development user=jwoods password=youwish1", predict_matrix_id, self.id)
+      total_auc = rocker.mean_auc
     end
 
-    self.total_auc = mean aucs
     self.completed_at = Time.now
     STDERR.puts("Calling save_without_timestamping!")
     self.save!
