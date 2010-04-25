@@ -431,7 +431,7 @@ protected
     STDERR.puts("Calling Rocker C++ extension (Rocker gem)")
     Dir.chdir(results_path) do
       # This automatically inserts into the database:
-      rocker = Rocker.new("dbname=crossval_development user=jwoods password=youwish1", predict_matrix_id, self.id)
+      rocker = Rocker.calculate predict_matrix_id, self.id
       total_auc = rocker.mean_auc
     end
 
