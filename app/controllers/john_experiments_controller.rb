@@ -50,7 +50,7 @@ class JohnExperimentsController < MatrixGenericController
     
     if @experiment.save
       flash[:notice] = "Successfully set up experiment."
-      redirect_to matrix_john_experiment_path(@matrix, @experiment)
+      redirect_to matrix_experiment_path(@matrix, @experiment)
     else
       render :action => 'new'
     end
