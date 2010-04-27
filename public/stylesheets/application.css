@@ -144,3 +144,23 @@ h1,h2,h3 {
 table th,td {
     font-family: "Helvetica", sans-serif;
 }
+
+.avatar_mm {
+    background-color: #bdfef2;
+}
+
+.avatar_hs {
+    background-color: #ffcecd;
+}
+
+.avatar_ce {
+    background-color: #fdfd9d;
+}
+
+.avatar_sc {
+    background-color: #d8b602;
+}
+
+.avatar_at {
+    background-color: #497000;
+}

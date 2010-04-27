@@ -13,8 +13,17 @@ module MatricesHelper
     url_for( :controller => "matrices", :action => "view", :id => matrix.id )
   end
 
+  def source_avatar matrix
+    sp = matrix.column_species
+    r = false
+    r ||= sp.size == 3
+
+    sp = matrix.column_species[0..1].downcase
+    image_tag("/images/#{sp}.png", :class => "avatar_#{sp}", :title => "#{matrix.column_species}")
+  end
+
   def source_matrices(exp)
-    l = exp.source_matrices.collect { |sm| link_to(sm.title, matrix_path(sm)) }.join("\n")
+    l = exp.source_matrices.collect { |sm| link_to( source_avatar(sm), matrix_path(sm)) }.join("\n")
     if l.nil? || l.size == 0
       "None"
     else
