@@ -23,9 +23,17 @@ module MatricesHelper
   end
 
   def source_matrices(exp)
-    l = exp.source_matrices.collect { |sm| link_to( source_avatar(sm), matrix_path(sm)) }.join("\n")
+    "<ul class=\"avatars\">#{source_matrices_contents(exp)}</ul>"
+  end
+
+  def source_matrices_contents(exp)
+    l = exp.source_matrices.collect do |sm|
+      sp = sm.column_species.downcase[0..1]
+      '<li class="avatar">' + link_to( "&nbsp;", matrix_path(sm), :class => sp) + "</li>"
+    end.join("\n")
+
     if l.nil? || l.size == 0
-      "None"
+      None
     else
       l
     end

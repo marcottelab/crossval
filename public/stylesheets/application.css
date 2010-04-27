@@ -31,14 +31,25 @@ div.fixed {
 #experiment_roc_plot { width:600px; height:600px}
 
 .matrix_experiments {
-    font-size:small;
-    border:1px solid black;
-    border-spacing: 0px;
-    padding: 2px;
+    font-family: "Helvetica", sans-serif;
+    padding: 4px;
+    border-spacing: 0.5em;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+    border: 0;
+    background-color: #BBB;
 }
-.matrix_experiments td, th {
-    border:1px solid black;
-    padding:1px;
+
+.matrix_experiments tr {
+    background-color: #CCC;
+}
+
+.matrix_experiments tr td {
+    border:0;
+    padding: 0.2em;
+}
+.matrix_experiments tr th {
+    border:0;
 }
 .experiment_id {
     font-size:large;
@@ -53,7 +64,7 @@ div.fixed {
     border-collapse: collapse;
     font-family: 'Courier New',Courier,monospace;
 }
-#experiment_rocs td, th {
+#experiment_rocs td,th {
     border: 1px solid black;
     padding: 2px;
 }
@@ -145,22 +156,53 @@ table th,td {
     font-family: "Helvetica", sans-serif;
 }
 
-.avatar_mm {
-    background-color: #bdfef2;
+
+ul.avatars {
+    position:relative;
+    list-style: none;
+    padding: 0;
+    width: 152px;
+    height: 152px;
+    background-color: #DDD;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
 }
 
-.avatar_hs {
+ul.avatars li {
+    display: inline;
+}
+
+.avatar a {
+    display: block;
+    float: left;
+    width: 64px;
+    height: 64px;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+    margin: 6px;
+}
+
+.avatar a.mm {
+    background-color: #8dfde8;
+    background-image: url("/images/mm.png");
+}
+
+.avatar a.hs {
     background-color: #ffcecd;
+    background-image: url("/images/hs.png");
 }
 
-.avatar_ce {
-    background-color: #fdfd9d;
+.avatar a.ce {
+    background-color: #ff7fc5;
+    background-image: url("/images/ce.png");
 }
 
-.avatar_sc {
-    background-color: #d8b602;
+.avatar a.sc {
+    background-color: #feea7f;
+    background-image: url("/images/sc.png");
 }
 
-.avatar_at {
-    background-color: #497000;
+.avatar a.at {
+    background-color: #01bc05;
+    background-image: url("/images/at.png");
 }
