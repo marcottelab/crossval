@@ -7,9 +7,9 @@ task :load_matrices, :row_species, :randomize, :needs => :environment do |t,args
 
   row_species = args.row_species.speciesize # Make sure it was entered properly, can't trust users.
 
-  puts("Looking in data/#{args.row_species}...")
+  puts("Looking in data/#{row_species}...")
 
-  Dir.chdir("data/#{args.row_species}") do
+  Dir.chdir("data/#{row_species}") do
 
     species_list = [row_species] # Keep track of species
     row_species_found = false
