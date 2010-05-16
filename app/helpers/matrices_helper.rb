@@ -29,7 +29,7 @@ module MatricesHelper
   def source_matrices_contents(exp)
     l = exp.source_matrices.collect do |sm|
       sp = sm.column_species.downcase[0..1]
-      '<li class="avatar">' + link_to( "&nbsp;", matrix_path(sm), :class => sp) + "</li>"
+      '<li class="avatar">' + link_to( "&nbsp;", matrix_path(sm), :class => sp, :title => sm.column_species) + "</li>"
     end.join("\n")
 
     if l.nil? || l.size == 0
