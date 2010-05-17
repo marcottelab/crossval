@@ -76,13 +76,15 @@ task :numeric_loci, :row_species, :needs => :environment do |t,args|
         transform_matrix t, file
 
         FileUtils.mv file, "original/"
-        FileUtils.mv "#{file}.out", file
+        `sort #{file}.out |uniq > #{file}`
+        `rm #{file}.out`
 
       elsif file =~ /^genes\.[A-Z][a-z]$/
         transform_rows t, file
 
         FileUtils.mv file, "original/"
-        FileUtils.mv "#{file}.out", file
+        `sort #{file}.out |uniq > #{file}`
+        `rm #{file}.out`
         
       end
 
