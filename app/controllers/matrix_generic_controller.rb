@@ -2,9 +2,9 @@ class MatrixGenericController < ApplicationController
   before_filter :find_matrix
 
 protected
-  def find_experiment
+  def find_experiment *find_options
     @experiment_id = params[:id]
-    @experiment = @matrix.experiments.find(@experiment_id)
+    @experiment = @matrix.experiments.find(@experiment_id, *find_options)
     @klass = @experiment.class
     @view = @klass.to_s.tableize
     @experiment

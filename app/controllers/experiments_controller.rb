@@ -11,7 +11,7 @@ class ExperimentsController < MatrixGenericController
   # GET /experiments/1
   # GET /experiments/1.xml
   def show
-    find_experiment
+    find_experiment :include => :rocs
     @flot        = plot_experiment_with_children(@experiment)
 
     respond_to do |format|

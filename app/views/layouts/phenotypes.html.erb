@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
-    <title><%= h(yield(:title) || "Experiment Display") %></title>
+    <title><%= h(yield(:title) || "Phenotype Display") %></title>
     <%= stylesheet_link_tag 'application' %>
     <%#= javascript_include_tag :defaults %>
     <%#= flot_includes %>
@@ -10,7 +10,7 @@
   </head>
   <body>
     <%= render :partial => 'layouts/nav' %>
-    
+
     <%- flash.each do |name, msg| -%>
       <%= content_tag :div, msg, :id => "flash_#{name}" %>
     <%- end -%>
