@@ -46,24 +46,20 @@ class JohnExperiment < JohnPredictor
   validates_inclusion_of :method, :in => AVAILABLE_METHODS.values
   validates_inclusion_of :validation_type, :in => ['row', 'cell']
 
-  # Command line arguments for running something in the shell.
-  def argument_string
-    s = "-m #{method} -d #{self.distance_measure} -n #{self.predict_matrix.children.count} -S #{self.predict_species} -s #{self.source_species_to_s} -t #{self.validation_type} -k #{self.k} #{self.arguments} "
-    s << "-x #{self.min_genes} " unless self.min_genes.nil?
-    s
+  def run_analysis
+    begin
+      analysis = setup_analysis
+      analysis.crossvalidate
+      self.run_result = 0
+    rescue ArgumentError
+      self.run_result = 1
+    rescue
+      self.run_result = 2
+    end
   end
 
   def after_run
     sort_results_and_calculate_rocs!
-  end
-
-protected
-
-  # Prepare the input files including cross-validation/test-set information.
-  def prepare_standard_inputs
-    STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
-    super
-    copy_testsets
   end
 
 end

@@ -25,9 +25,9 @@
   <%= f.text_field :min_genes %>
 </p>
 
-<div id='experiment_sources'>
+<div id="experiment_sources">
   <% f.fields_for :sources do |source_form| %>
-    <%= render :partial => 'experiments/source', :locals => { :f => source_form } %>
+    <%= render :partial => 'experiments/source', :locals => { :f => source_form, :predict_matrix => predict_matrix } %>
   <% end %>
 </div>
 

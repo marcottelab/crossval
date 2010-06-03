@@ -204,6 +204,11 @@ ul.avatars li {
     background-image: url("/images/sc.png");
 }
 
+.avatar a.dm {
+    background-color: #FF5333;
+    background-image: url("/images/dm.png");
+}
+
 .avatar a.at {
     background-color: #01bc05;
     background-image: url("/images/at.png");

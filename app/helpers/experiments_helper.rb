@@ -4,6 +4,11 @@ module ExperimentsHelper
     form.collection_select field, Experiment.find(:all, :conditions => {:parent_id => nil, :predict_matrix_id => matrix_id}, :order => :id), :id, :unique_descriptor
   end
 
+  # Require that all matrices displayed have the appropriate row species
+  def select_source_matrix form, field, row_species
+    form.collection_select field, Matrix.find(:all, :conditions => {:row_species => row_species}, :order => :id), :id, :unique_descriptor
+  end
+
   def remove_source_link(name, form_builder)
     form_builder.hidden_field(:_delete) + link_to_function(name, "remove_source(this)")
   end
@@ -15,7 +20,7 @@ module ExperimentsHelper
 
   def new_source_fields(source, form_builder)
     form_builder.fields_for(source.pluralize.to_sym, source.camelize.constantize.new, :child_index => 'NEW_RECORD') do |f|
-      render(:partial => "experiments/#{source.underscore}", :locals => { :f => f })
+      render(:partial => "experiments/#{source.underscore}", :locals => { :f => f, :predict_matrix => @matrix })
     end
   end
 

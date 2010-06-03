@@ -210,18 +210,24 @@ class Experiment < ActiveRecord::Base
       yield block
     end
   end
-  
+
+  # Override this for your specific experiment. This portion happens inside the
+  # working directory where input and output should go.
+  def run_analysis
+    STDERR.puts("Command: #{self.command_string}")
+      `#{self.command_string_with_pipes}`
+
+      # Get the exit status when the bin finishes.
+      self.run_result = $?.to_i
+  end
+
   # To be called by a Worker object, usually.
   def run
     before_run_internal
     before_run # sets and saves started_at
 
     Dir.chdir(self.root) do
-      STDERR.puts("Command: #{self.command_string}")
-      `#{self.command_string_with_pipes}`
-
-      # Get the exit status when the bin finishes.
-      self.run_result = $?.to_i
+      run_analysis
     end
     # Expect a great deal of time between the beginning of this function and the
     # end. That's why we're saving again -- because the binary will have returned

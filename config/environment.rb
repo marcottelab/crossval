@@ -22,6 +22,7 @@ Rails::Initializer.run do |config|
   config.gem "starling-starling", :lib => "starling", :source => "http://gems.github.com"
   config.gem "after_commit", :source => "http://gemcutter.org"
   config.gem "rocker", :source => "http://gemcutter.org"
+  config.gem "fastknn"
   #config.gem "memcache"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
