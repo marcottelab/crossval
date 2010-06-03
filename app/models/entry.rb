@@ -1,9 +1,7 @@
 class Entry < ActiveRecord::Base
   belongs_to :matrix
-
+  belongs_to :phenotype, :foreign_key => :j
   named_scope :for_matrix, lambda { |m_id| { :conditions => { :matrix_id => m_id } } }
-
-
 
   def to_s(sep = "\t")
     str  =  self.i.to_s

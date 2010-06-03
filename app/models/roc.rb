@@ -1,5 +1,6 @@
 class Roc < ActiveRecord::Base
   belongs_to :experiment
+  belongs_to :phenotype, :foreign_key => :column
 
   delegate :predict_matrix, :predict_matrix_id, :to => :experiment
 

@@ -28,7 +28,7 @@
   </tr>
 <%- @experiment.rocs.each do |roc| -%>
   <tr>
-    <td><%= roc.column %></td>
+    <td title="<%= roc.phenotype.long_desc %>"><%= roc.column %></td>
     <td><%= roc.auc %></td>
     <td><%= roc.true_positives %></td>
     <td><%= roc.false_positives %></td>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100331212603) do
+ActiveRecord::Schema.define(:version => 20100603174438) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -84,6 +84,16 @@ ActiveRecord::Schema.define(:version => 20100331212603) do
   end
 
   add_index "matrices", ["parent_id", "cardinality"], :name => "index_matrices_on_parent_id_and_cardinality", :unique => true
+
+  create_table "phenotypes", :force => true do |t|
+    t.string   "short_desc"
+    t.text     "long_desc",               :null => false
+    t.string   "species",    :limit => 3, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "phenotypes", ["species"], :name => "index_phenotypes_on_species"
 
   create_table "roc_group_items", :force => true do |t|
     t.integer  "roc_group_id",  :null => false
