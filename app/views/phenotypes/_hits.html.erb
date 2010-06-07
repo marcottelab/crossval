@@ -1,0 +1,11 @@
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Distance</th>
+    <th>Source Matrix</th>
+  </tr>
+
+  <% (0 ... hits.size).each do |n| %>
+    <%= render :partial => 'hit', :object => hits[n], :locals => {:phenotype => phenotypes[n]} %>
+  <% end %>
+</table>

@@ -101,4 +101,14 @@ module ExperimentsHelper
     end
   end
 
+  def link_to_phenotype roc
+    link_to(roc.column,
+      phenotype_path(roc.phenotype,
+        :predict_matrix_id => @matrix_id,
+        :source_matrix_ids => @experiment.source_matrix_ids,
+        :classifier => @experiment.send(:method),
+        :k => @experiment.k,
+        :distance => @experiment.distance_measure
+      ), :title => roc.phenotype.long_desc)
+  end
 end

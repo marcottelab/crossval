@@ -3,3 +3,21 @@
   <dt>Description</dt>
   <dd><%= @phenotype.long_desc %></dd>
 </dl>
+
+<% unless @distance_matrix.nil? %>
+  <h2>Analyses (<%= params[:distance] %>)</h2>
+
+  <%= plot_hits @nearestk %>
+
+  <h3>Nearest</h3>
+  <%= render :partial => 'hits', :locals => {:phenotypes => [@nearest_phenotype]}, :object => [@nearest] %>
+
+  <% if params_k > 1 %>
+    <h3>k=1 k-Nearest Neighbors</h3>
+    <%= render :partial => 'hits', :locals => {:phenotypes => @nearest_k_phenotypes }, :object => @nearest1 %>
+  <% end %>
+
+  <h3>k=<%= params_k %> k-Nearest Neighbors</h3>
+  <%= render :partial => 'hits', :locals => {:phenotypes => @nearest_k_phenotypes }, :object => @nearestk %>
+
+<% end %>

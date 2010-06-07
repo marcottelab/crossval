@@ -1,0 +1,14 @@
+<h1>Phenotype Neighbor Plots</h1>
+
+<table>
+  <tr><th>ID</th><th>Desc</th><th>Neighbors</th><th>Genes</th></tr>
+  <%- @phenotypes.each do |phenotype| -%>
+  <tr>
+    <td><%= phenotype.id %></td>
+    <td><%= phenotype.long_desc %></td>
+    <td><%= plot_hits @nearestk[phenotype.id] %></td>
+    <td><%= @genes[phenotype.id] %></td>
+  </tr>
+  <%- end -%>
+
+</table>

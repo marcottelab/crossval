@@ -23,6 +23,7 @@ Rails::Initializer.run do |config|
   config.gem "after_commit", :source => "http://gemcutter.org"
   config.gem "rocker", :source => "http://gemcutter.org"
   config.gem "fastknn"
+  config.gem "sparklines"
   #config.gem "memcache"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
