@@ -111,4 +111,11 @@ module ExperimentsHelper
         :distance => @experiment.distance_measure
       ), :title => roc.phenotype.long_desc)
   end
+
+  def mini_roc_plot sorted_aucs_as_integers, mult = 1000
+    sparkline_tag(sorted_aucs_as_integers,
+      :type => 'area', :upper => mult/20, :height => 150, :step => 0.5,
+      :above_color => "blue", :below_color => "red", :background_color => "#DDD") unless sorted_aucs_as_integers.nil? || sorted_aucs_as_integers.size == 0
+  end
+
 end

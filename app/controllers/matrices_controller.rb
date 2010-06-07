@@ -32,7 +32,7 @@ class MatricesController < ApplicationController
   def expand_experiments
     @matrix      = Matrix.find(params[:id], :include => {:experiments => :rocs})
     @experiments = @matrix.experiments
-    @rocs        = rocs(@matrix)
+    load_rocs 1000
 
     render :update do |page|
       page['experiment_list'].show
@@ -98,6 +98,13 @@ protected
       f.bars
       f.legend :position => "se"
       f.series nil, matrix.row_distribution
+    end
+  end
+
+  def load_rocs mult
+    @rocs = {}
+    @experiments.each do |experiment|
+      @rocs[experiment.id] = experiment.rocs.spark_aucs(mult)
     end
   end
 end

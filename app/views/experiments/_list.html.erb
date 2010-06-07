@@ -33,9 +33,7 @@
     <%= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
   <% end %>
   </table>
-
-  <br/>
-  <%= render :partial => 'plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => rocs} %>
+  <%#= render :partial => 'plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => rocs} %>
 <%- else -%>
 <p><em>None found.</em></p>
 <%- end -%>

@@ -4,6 +4,12 @@ class Roc < ActiveRecord::Base
 
   delegate :predict_matrix, :predict_matrix_id, :to => :experiment
 
+  named_scope :auc_only, {:select => 'auc', :order => 'auc'}
+
+  def self.spark_aucs mult = 1000
+    self.auc_only.collect { |a| (a.auc * mult).to_i }
+  end
+
   # Calculates the ROC statistics for each column of the results for a given experiment.
   # Takes the experiment as an argument
   def self.calculate(experiment_id, results_path)

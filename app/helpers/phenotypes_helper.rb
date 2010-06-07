@@ -10,9 +10,6 @@ module PhenotypesHelper
   end
 
   def plot_hits hits
-    hits.each do |h|
-      puts "Hit1 is #{h[1]}"
-    end
     sparkline_tag(scientific_to_relative(hits),
       :type => 'discrete', :upper => 1, :above_color => "gray", :below_color => "red")
   end

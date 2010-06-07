@@ -36,11 +36,13 @@ class ExperimentsController < MatrixGenericController
   end
 
   def index
-    @experiments = Experiment.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil})
+    @experiments = Experiment.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil}, :include => :rocs)
+    #load_rocs 1000 # specifies level of precision for sparkline
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @experiments }
     end
   end
+
 end
