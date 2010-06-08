@@ -1,0 +1,27 @@
+<ul class="matrix_info">
+
+<%- unless matrix.parent_id.nil? -%>
+  <li class="matrix_parent_info">This is matrix <%= cardinality(matrix).split("/").join("of") %>.
+    <%= link_to "Go to parent", matrix_path(matrix.parent), :title => matrix.parent_id.to_s %>.</li>
+<%- end -%>
+
+<%- unless matrix.children.count == 0 -%>
+  <li class="submatrix_info">Submatrices
+    <ul>
+      <% matrix.children.each do |child| %>
+      <li><%= link_to child.id, matrix_path(child), :class => "submatrix_link" %><%= experiments_progress_bar(child) %></li>
+      <% end %>
+    </ul>
+  </li>
+<%- end -%>
+  <li>Belongs to <%= matrix_avatar matrix.row_species %></li>
+  <li>Created <%= distance_of_time_in_words_to_now matrix.created_at %> ago</li>
+  <%- unless matrix.created_at == matrix.updated_at -%><li>Updated <%= distance_of_time_in_words_to_now matrix.updated_at %> ago</li><%- end -%>
+
+</ul>
+
+<%#= flot_canvas 'matrix_row_distribution' %>
+
+<%# flot_graph('matrix_row_distribution', @row_distribution) do %>
+  <%#= flot_plot %>
+<%# end %>

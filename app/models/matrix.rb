@@ -103,8 +103,17 @@ class Matrix < ActiveRecord::Base
   has_many :entries, :dependent => :destroy
   has_many :experiments, :foreign_key => :predict_matrix_id
 
+  named_scope :by_row_species, lambda { |s| { :conditions => { :row_species => s } } }
+
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
+
+  def integrators; self.experiments.by_type('Integrator'); end
+  def john_experiments; self.experiments.by_type('JohnExperiment'); end
+  def john_predictors; self.experiments.by_type('JohnPredictor'); end
+  def john_distributions; self.experiments.by_type('JohnDistribution'); end
+
+  FULL_SPECIES_NAME = {'Hs' => "Homo sapiens", 'At' => "Arabidopsis thaliana" }
 
   # Get a hash of statistics on this matrix.
   def statistics

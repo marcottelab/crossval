@@ -13,13 +13,24 @@ module MatricesHelper
     url_for( :controller => "matrices", :action => "view", :id => matrix.id )
   end
 
-  def source_avatar matrix
-    sp = matrix.column_species
+  def source_avatar matrix_or_string, sp = nil
+    sp = matrix_or_string.is_a?(String) ? matrix_or_string.downcase : matrix_or_string.column_species.downcase
+    title = matrix_or_string.is_a?(String) ? matrix_or_string : matrix_or_string.column_species
     r = false
     r ||= sp.size == 3
 
-    sp = matrix.column_species[0..1].downcase
-    image_tag("/images/#{sp}.png", :class => "avatar_#{sp}", :title => "#{matrix.column_species}")
+    image_tag("/images/#{sp}.png", :class => "avatar_#{sp}", :title => title)
+  end
+
+  def matrix_avatar matrix_or_string
+    sp = matrix_or_string.is_a?(String) ? matrix_or_string.downcase : matrix_or_string.column_species.downcase
+    "<div class=\"avatar\"><a class=\"#{sp}\">#{source_avatar(matrix_or_string, sp)}</div>"
+  end
+
+  def matrix_avatar_link matrix, hover_activates_info_box = false
+    options = {:class => matrix.column_species.downcase, :title => matrix.column_species}
+    options[:onMouseover] = "showInfoBox('ul#info#{matrix.id}');" if hover_activates_info_box
+    "<div class=\"avatar\">" + link_to( "&nbsp;", matrix_path(matrix), options) + "</div>"
   end
 
   def source_matrices(exp)
@@ -28,7 +39,7 @@ module MatricesHelper
 
   def source_matrices_contents(exp)
     l = exp.source_matrices.collect do |sm|
-      sp = sm.column_species.downcase[0..1]
+      sp = sm.column_species.downcase
       '<li class="avatar">' + link_to( "&nbsp;", matrix_path(sm), :class => sp, :title => sm.column_species) + "</li>"
     end.join("\n")
 
@@ -81,7 +92,7 @@ module MatricesHelper
     if total > 0
       progress_bar(succ / total.to_f, :denominator => total)
     else
-      "None"
+      progress_bar(0, :denominator => 0)
     end
   end
 end

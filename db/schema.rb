@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100603174438) do
+ActiveRecord::Schema.define(:version => 20100607204905) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(:version => 20100603174438) do
   end
 
   add_index "entries", ["i", "j", "matrix_id"], :name => "index_entries_on_i_and_j_and_matrix_id", :unique => true
+  add_index "entries", ["j"], :name => "index_entries_on_j"
 
   create_table "entry_infos", :force => true do |t|
     t.string "row_title",    :limit => 20, :default => "gene",      :null => false
@@ -55,6 +56,8 @@ ActiveRecord::Schema.define(:version => 20100603174438) do
     t.integer  "min_genes"
     t.string   "type"
     t.integer  "parent_id"
+    t.text     "note"
+    t.string   "package_version"
   end
 
   add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
@@ -72,18 +75,21 @@ ActiveRecord::Schema.define(:version => 20100603174438) do
   create_table "matrices", :force => true do |t|
     t.integer  "parent_id"
     t.integer  "cardinality"
-    t.string   "row_species",    :limit => 3,   :default => "Hs", :null => false
-    t.string   "column_species", :limit => 3,   :default => "Hs", :null => false
-    t.integer  "row_count",                     :default => 0
-    t.integer  "column_count",                  :default => 0
-    t.string   "title",          :limit => 300,                   :null => false
-    t.integer  "entry_info_id",                                   :null => false
+    t.string   "row_species",         :limit => 3,   :default => "Hs", :null => false
+    t.string   "column_species",      :limit => 3,   :default => "Hs", :null => false
+    t.integer  "row_count",                          :default => 0
+    t.integer  "column_count",                       :default => 0
+    t.string   "title",               :limit => 300,                   :null => false
+    t.integer  "entry_info_id",                                        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
+    t.integer  "conjugate_matrix_id"
   end
 
+  add_index "matrices", ["conjugate_matrix_id"], :name => "index_matrices_on_conjugate_matrix_id"
   add_index "matrices", ["parent_id", "cardinality"], :name => "index_matrices_on_parent_id_and_cardinality", :unique => true
+  add_index "matrices", ["row_species"], :name => "index_matrices_on_row_species"
 
   create_table "phenotypes", :force => true do |t|
     t.string   "short_desc"

@@ -121,6 +121,7 @@ class Experiment < ActiveRecord::Base
   named_scope :not_run, :conditions => {:total_auc => nil}
   named_scope :not_completed, :conditions => {:completed_at => nil}
   named_scope :not_started, :conditions => {:started_at => nil}
+  named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
 
   # Make sure sources are valid
   validates_associated :sources

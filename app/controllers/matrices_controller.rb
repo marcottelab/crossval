@@ -1,5 +1,7 @@
 class MatricesController < ApplicationController
 
+  helper :all
+
   def run
    
     @matrix = Matrix.find(params[:id])
@@ -32,6 +34,12 @@ class MatricesController < ApplicationController
   def expand_experiments
     @matrix      = Matrix.find(params[:id], :include => {:experiments => :rocs})
     @experiments = @matrix.experiments
+
+    @integrators = @matrix.integrators
+    @john_experiments = @matrix.john_experiments
+    @john_predictors = @matrix.john_predictors
+    @john_distributions = @matrix.john_distributions
+
     load_rocs 1000
 
     render :update do |page|
@@ -70,7 +78,7 @@ class MatricesController < ApplicationController
   # GET /matrices
   # GET /matrices.xml
   def index
-    @matrices = NodeMatrix.roots.sort_by{ |m| m.id }
+    load_matrices_by_row_species
 
     respond_to do |format|
       format.html # index.html.erb
@@ -105,6 +113,23 @@ protected
     @rocs = {}
     @experiments.each do |experiment|
       @rocs[experiment.id] = experiment.rocs.spark_aucs(mult)
+    end
+  end
+
+  def load_matrices_by_row_species
+    @matrices = NodeMatrix.roots.sort_by{ |m| m.id }
+    @source_matrices_by_species = Hash.new { |h,k| h[k] = [] }
+    @predict_matrices_by_species = Hash.new { |h,k| h[k] = [] }
+    @matrices.each do |matrix|
+
+      rsp = matrix.row_species
+      # csp = matrix.column_species[0..1]
+
+      if matrix.column_species == rsp # same and not random
+        @predict_matrices_by_species[rsp] << matrix
+      elsif matrix.column_species !~ /^[A-Z][a-z]r$/ # not same, not random
+        @source_matrices_by_species[rsp] << matrix
+      end
     end
   end
 end

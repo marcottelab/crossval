@@ -1,36 +1,46 @@
+<ul class="matrix_groups">
+<% @predict_matrices_by_species.each_pair do |species, predict_matrices| %>
+  
+  <li class="matrix_group" id="species_<%= species %>"><h2><i><%= Matrix::FULL_SPECIES_NAME[species] %></i></h2>
 
-<table>
-  <tr>
-    <th rowspan="2">Matrix</th>
-    <th colspan="2">Columns</th>
-    <th colspan="2">Rows</th>
-    <th>Cells</th>
-    <th>Density</th>
-    <th rowspan="2">Experiments</th>
-  </tr>
-  <tr>
-    <th>Species</th>
-    <th>Total</th>
-    <th>Species</th>
-    <th>Total</th>
-    <th>Total</th>
-    <th>cells/column</th>
-  </tr>
+    <ul class="predict_matrices">
+      <% predict_matrices.each do |predict_matrix| %>
+        <li class="predict_matrix" id="pm%<= predict_matrix.id %>">
+          <%= matrix_avatar_link(predict_matrix, true) %>
+          <ul class="predict_matrix_info">
+            <li><%- if predict_matrix.conjugate_matrix_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(predict_matrix.conjugate_matrix_id), :title => "Show Random" %><%- end -%>
+          <%= link_to 'Show', matrix_path(predict_matrix) %> <%= link_to 'Inspect', view_matrix_path(predict_matrix) %></li>
+            <li>rows: <%= predict_matrix.row_count %> / columns: <%= predict_matrix.column_count %></li>
+            <li>cells: <%= predict_matrix.cells.count %></li>
+            <li>density: <%= fractional_density(predict_matrix) %></li>
+            <li>folds: <%= predict_matrix.children.count %> / <%= predict_matrix.has_grandchildren? ? 2 : 1 %></li>
+            <li><%= experiments_progress_bar(predict_matrix) %></li>
+          </ul>
 
-<% @matrices.each do |matrix| %>
-  <tr>
-    <td><%= h matrix.title %></td>
-    <td><%= h matrix.column_species %></td>
-    <td><%= h matrix.column_count %></th>
-    <td><%= h matrix.row_species %></td>
-    <td><%= matrix.row_count %></td>
-    <td><%= matrix.cells.count %></td>
-    <td><%= fractional_density(matrix) %></td>
-    <td><%= experiments_progress_bar(matrix) %></td>
-    <!--td><%#= run_link_if_appropriate(matrix) %></td-->
-    <td><%= link_to 'Show', matrix_path(matrix) %></td>
-    <td><%= link_to 'View', view_matrix_path(matrix) %></td>
-    <td><%= link_to 'Delete', matrix_path(matrix), :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+        </li>
+      <% end %>
+    </ul>
+    <br/>
+    <ul class="source_matrices">
+      <% @source_matrices_by_species[species].each do |source_matrix| %>
+        <li><%= matrix_avatar_link(source_matrix, true) %></li>
+      <% end %>
+    </ul>
+    <br/>
+    <ul class="matrix_info_box">
+      <li>
+      <% @source_matrices_by_species[species].each do |matrix| %>
+        <ul class="info" id="info<%= matrix.id %>" style="display:none">
+          <li><%- if matrix.conjugate_matrix_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(matrix.conjugate_matrix_id), :title => "Show Random" %><%- end -%>
+          <%= link_to 'Show', matrix_path(matrix) %> <%= link_to 'Inspect', view_matrix_path(matrix) %></li>
+          <li>rows: <%= matrix.row_count %> / columns: <%= matrix.column_count %></li>
+          <li>cells: <%= matrix.cells.count %></li>
+          <li>density: <%= fractional_density(matrix) %></li>
+        </ul>
+      <% end %>
+      </li>
+    </ul>
+  </li>
+
 <% end %>
-</table>
+</ul>

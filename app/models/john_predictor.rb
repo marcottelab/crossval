@@ -16,6 +16,7 @@ class JohnPredictor < Experiment
   validates_inclusion_of :distance_measure, :in => AVAILABLE_DISTANCE_MEASURES.values
 
   def setup_analysis
+    self.package_version = "Fastknn #{Fastknn::VERSION}"
     Fastknn::DistanceMatrix.new self.predict_matrix_id, self.source_matrix_ids, self.distance_measure, {:classifier => self.read_attribute(:method).to_sym, :k => self.k }
   end
 

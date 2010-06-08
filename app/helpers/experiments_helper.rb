@@ -24,14 +24,15 @@ module ExperimentsHelper
     end
   end
 
-  def link_to_experiment_if_appropriate(matrix, experiment)
+  def link_to_experiment_if_appropriate(matrix, experiment, caption = nil)
     return nil if experiment.run_result != 0
     if experiment.is_a?(JohnExperiment) || experiment.is_a?(MartinExperiment)
       return nil if experiment.total_auc.nil?
-      link_to experiment.total_auc, matrix_experiment_path(matrix, experiment)
+      caption ||= experiment.total_auc.to_s
     else
-      link_to "Distribution", matrix_experiment_path(matrix, experiment)
+      caption ||= "Distribution"
     end
+    link_to caption, matrix_experiment_path(matrix, experiment)
   end
 
   def select_method form, field
@@ -116,6 +117,14 @@ module ExperimentsHelper
     sparkline_tag(sorted_aucs_as_integers,
       :type => 'area', :upper => mult/20, :height => 150, :step => 0.5,
       :above_color => "blue", :below_color => "red", :background_color => "#DDD") unless sorted_aucs_as_integers.nil? || sorted_aucs_as_integers.size == 0
+  end
+
+  def method_avatar method_title
+    image_tag "#{method_title}.png", :title => method_title
+  end
+
+  def distance_function_avatar distance_function
+    image_tag "#{distance_function}.png", :title => distance_function
   end
 
 end

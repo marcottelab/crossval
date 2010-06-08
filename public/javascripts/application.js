@@ -31,3 +31,8 @@ function remove_roc_group_item(element) {
   $(element).up(".roc_group_item").hide();
 }
 
+function showInfoBox(element) {
+    $('ul.info').stop().hide();
+    $(element).css("opacity", 1);
+    $(element).fadeIn();
+}

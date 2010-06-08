@@ -28,6 +28,7 @@ div.fixed {
     color: cyan;
 }
 
+
 #experiment_roc_plot { width:600px; height:600px}
 
 .matrix_experiments {
@@ -37,11 +38,12 @@ div.fixed {
     -moz-border-radius: 0.8em;
     -webkit-border-radius: 0.8em;
     border: 0;
-    background-color: #BBB;
+    background-color: #EEE;
 }
 
 .matrix_experiments tr {
-    background-color: #CCC;
+    background-color: #EEE;
+    border-bottom: 5px solid #CCC;
 }
 
 .matrix_experiments tr td {
@@ -51,10 +53,12 @@ div.fixed {
 .matrix_experiments tr th {
     border:0;
 }
-.experiment_id {
-    font-size:large;
+.experiment_id a {
+    font-size:3em;
     font-weight:bold;
+    text-decoration: none;
 }
+
 .experiment_argument_string {
     font-size:large;
     text-align:center;
@@ -156,6 +160,35 @@ table th,td {
     font-family: "Helvetica", sans-serif;
 }
 
+ul.matrix_info {
+    float: left;
+    clear: both;
+    list-style: none;
+}
+ul.matrix_info li {
+    float: left;
+    clear: both;
+}
+
+li.submatrix_info ul li {
+    display:inline;
+    clear: none;
+}
+
+li.submatrix_info div,a.submatrix_link {
+    float: left;
+    margin:0.2em;
+}
+
+li.submatrix_info a.submatrix_link {
+    margin-left: 0.5em;
+}
+
+.container {
+    float: left;
+    clear: both;
+}
+
 
 ul.avatars {
     position:relative;
@@ -189,9 +222,19 @@ ul.avatars li {
     background-image: url("/images/mm.png");
 }
 
+.avatar a.mmr {
+    background-color: #8dfde8;
+    background-image: url("/images/mmr.png");
+}
+
 .avatar a.hs {
     background-color: #ffcecd;
     background-image: url("/images/hs.png");
+}
+
+.avatar a.hsr {
+    background-color: #ffcecd;
+    background-image: url("/images/hsr.png");
 }
 
 .avatar a.ce {
@@ -199,9 +242,19 @@ ul.avatars li {
     background-image: url("/images/ce.png");
 }
 
+.avatar a.cer {
+    background-color: #ff7fc5;
+    background-image: url("/images/cer.png");
+}
+
 .avatar a.sc {
     background-color: #feea7f;
     background-image: url("/images/sc.png");
+}
+
+.avatar a.scr {
+    background-color: #feea7f;
+    background-image: url("/images/scr.png");
 }
 
 .avatar a.dm {
@@ -209,7 +262,66 @@ ul.avatars li {
     background-image: url("/images/dm.png");
 }
 
+.avatar a.dmr {
+    background-color: #FF5333;
+    background-image: url("/images/dmr.png");
+}
+
 .avatar a.at {
     background-color: #01bc05;
     background-image: url("/images/at.png");
+}
+
+.avatar a.atr {
+    background-color: #01bc05;
+    background-image: url("/images/atr.png");
+}
+
+ul.matrix_groups {
+    list-style: none;
+}
+
+.matrix_group h2 {
+    margin-top:0;
+}
+
+.matrix_groups li.matrix_group {
+    display: inline;
+    float: left;
+    width: 300px;
+    background-color: #DDD;
+    padding: 1em;
+    margin: 0.8em;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+}
+li.matrix_group ul {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+ul.predict_matrices ul {
+    margin-bottom: 2em;
+}
+ul.predict_matrices li {
+    list-style: none;
+}
+.predict_matrices .avatar {
+    margin: 2em;
+}
+
+ul.source_matrices ul {
+    list-style: none;
+}
+ul.source_matrices li,ul.predict_matrix_info {
+    display: inline;
+}
+ul.matrix_info_box {
+    list-style: none;
+    overflow: hidden;
+    width: 250px;
+}
+ul.matrix_info_box li.info {
+    background-color: yellow;
+    display: none;
 }

@@ -1,16 +1,10 @@
     <tr>
       <td rowspan="2" class="experiment_id"><%= link_to experiment.id, matrix_experiment_path(@matrix, experiment) %></td>
-      <td><tt><%= experiment.method %></tt></td>
-      <td><tt><%= experiment.distance_measure %></tt></td>
+      <td><%= method_avatar experiment.method %></td>
       <td><%= source_matrices(experiment) %></td>
-      <td><%= experiment.min_genes %></td>
-      <td><%= distance_of_time_in_words_to_now experiment.created_at %> ago</td>
-      <td><%- if experiment.created_at == experiment.updated_at -%>
-        Not updated
-      <%- else -%>
-        <%= distance_of_time_in_words_to_now experiment.updated_at %> ago
-      <%- end -%>
-      </td>
+      <td><%= distance_function_avatar experiment.distance_measure %></td>
+      <td><%= experiment.note %></td>
+      <td><%= distance_of_time_in_words_to_now experiment.updated_at %> ago</td>
       <td>
         <%- if experiment.children.count > 0 -%>
           <%= subexperiments_progress_bar(experiment) %>
@@ -19,15 +13,17 @@
         <%- elsif experiment.completed_at.nil? -%>
           Started <%= distance_of_time_in_words_to_now_ago(experiment.started_at) %>
         <%- else -%>
-          Completed <%= link_to_experiment_with_when_completed(@matrix, experiment) %>
+          Completed <%= distance_of_time_in_words_to_now_ago(experiment.completed_at) %>
         <%- end -%>
       </td>
-      <td><%= experiment.run_result %></td>
+      <td style="font-size:smaller;"><tt>
+        <%- if experiment.run_result? -%>exit: <%= experiment.run_result %><br/><%- end -%>
+        <%- if experiment.package_version? -%>version: <%= experiment.package_version %><%- end -%>
+      </tt></td>
       <td title="<%= experiment.total_auc %>">
-        <%= mini_roc_plot @rocs[experiment.id], 1000 %>
-        <%= link_to_experiment_if_appropriate(@matrix, experiment) %>
+        <%= link_to_experiment_if_appropriate(@matrix, experiment, mini_roc_plot(@rocs[experiment.id], 1000)) %>
       </td>
-      <!--li><h4>Comments</h4><%#= render :partial => 'comments', :object => experiment.comments %></li-->
+      <%# li><h4>Comments</h4><%= render :partial => 'comments', :object => experiment.comments ></li-- %>
     </tr>
     <tr>
       <td colspan="10" class="experiment_argument_string"><%= experiment.argument_string %></td>
