@@ -57,13 +57,13 @@ protected
   end
 
   def prepare_distance_matrix
-    @distance_matrix ||= Fastknn::DistanceMatrix.new params_predict_matrix_id, params_source_matrix_ids, params[:distance], {:classifier => (params[:classifier] || :naivebayes).to_sym, :k => params_k}
+    @distance_matrix ||= Fastknn::DistanceMatrix.new params_predict_matrix_id, params_source_matrix_ids, params[:dfn], {:classifier => (params[:classifier] || :naivebayes).to_sym, :k => params_k, :max_distance => params_max_distance || 1.0 }
   end
 
   def quick_analysis
     @nearest  = @distance_matrix.nearest params[:id].to_i
-    @nearest1 = @distance_matrix.knearest(params[:id].to_i, 1) unless params_k == 1
-    @nearestk = @distance_matrix.knearest(params[:id].to_i, params[:k].to_i)
+    @nearest1 = @distance_matrix.knearest(params[:id].to_i, 1, 1.0) unless params_k == 1
+    @nearestk = @distance_matrix.knearest(params[:id].to_i, params_k, params_max_distance || 1.0)
     find_nearest_k_phenotypes
   end
 
@@ -76,7 +76,11 @@ protected
   end
 
   def params_k
-    params[:k].to_i
+    (params[:k] || 1).to_i
+  end
+
+  def params_max_distance
+    (params[:max_distance] || 1).to_f
   end
 
   def params_predict_matrix_id

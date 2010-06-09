@@ -13,11 +13,21 @@ class JohnPredictor < Experiment
       "Euclidean" => "euclidean"}
 
   validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"
+  validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
   validates_inclusion_of :distance_measure, :in => AVAILABLE_DISTANCE_MEASURES.values
 
   def setup_analysis
     self.package_version = "Fastknn #{Fastknn::VERSION}"
-    Fastknn::DistanceMatrix.new self.predict_matrix_id, self.source_matrix_ids, self.distance_measure, {:classifier => self.read_attribute(:method).to_sym, :k => self.k }
+
+    classifier_parameters = {
+      :classifier => self.read_attribute(:method).to_sym,
+      :k => self.k,
+      :max_distance => 1.0
+    }
+    # If the user has set a max distance, use that instead of 1.0
+    classifier_parameters[:max_distance] = self.max_distance unless self.max_distance.nil?
+
+    Fastknn::DistanceMatrix.new self.predict_matrix_id, self.source_matrix_ids, self.distance_measure, classifier_parameters
   end
 
   def run_analysis
@@ -70,7 +80,7 @@ class JohnPredictor < Experiment
   end
 
   def argument_string
-    "#{self.predict_matrix_id} <- [#{self.source_matrix_ids.join(", ")}] by #{self.distance_measure} using #{self.read_attribute(:method)} (k=#{self.k})"
+    "#{self.predict_matrix_id} <- [#{self.source_matrix_ids.join(", ")}] by #{self.distance_measure} using #{self.read_attribute(:method)} (k=#{self.k}, max_distance=#{self.max_distance || 1.0})"
   end
 
 protected

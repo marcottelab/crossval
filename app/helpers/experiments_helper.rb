@@ -109,7 +109,8 @@ module ExperimentsHelper
         :source_matrix_ids => @experiment.source_matrix_ids,
         :classifier => @experiment.send(:method),
         :k => @experiment.k,
-        :distance => @experiment.distance_measure
+        :dfn => @experiment.distance_measure,
+        :max_distance => @experiment.max_distance || 1.0
       ), :title => roc.phenotype.long_desc)
   end
 
