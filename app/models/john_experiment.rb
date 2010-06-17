@@ -48,13 +48,14 @@ class JohnExperiment < JohnPredictor
 
   def run_analysis
     begin
-      analysis = setup_analysis
-      analysis.crossvalidate
-      self.run_result = 0
+      Fastknn.crossvalidate self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2), self.distance_measure.to_sym, self.classifier_parameters, Dir.pwd
     rescue ArgumentError
       self.run_result = 1
-    rescue
+    rescue => e
+      logger.error(e.backtrace.join("\n"))
       self.run_result = 2
+    else
+      self.run_result = 0
     end
   end
 

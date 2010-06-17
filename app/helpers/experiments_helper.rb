@@ -110,7 +110,8 @@ module ExperimentsHelper
         :classifier => @experiment.send(:method),
         :k => @experiment.k,
         :dfn => @experiment.distance_measure,
-        :max_distance => @experiment.max_distance || 1.0
+        :max_distance => @experiment.max_distance || 1.0,
+        :min_genes => @experiment.min_genes || 2
       ), :title => roc.phenotype.long_desc)
   end
 

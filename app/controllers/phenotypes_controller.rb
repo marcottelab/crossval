@@ -57,7 +57,10 @@ protected
   end
 
   def prepare_distance_matrix
-    @distance_matrix ||= Fastknn::DistanceMatrix.new params_predict_matrix_id, params_source_matrix_ids, params[:dfn], {:classifier => (params[:classifier] || :naivebayes).to_sym, :k => params_k, :max_distance => params_max_distance || 1.0 }
+    @distance_matrix ||= Fastknn.fetch_distance_matrix params_predict_matrix_id, params_source_matrix_ids, params_min_genes
+    @distance_matrix.distance_function = params_distance_function
+    @distance_matrix.classifier = params_for_classifier
+    @distance_matrix
   end
 
   def quick_analysis
@@ -75,6 +78,10 @@ protected
     @nearest_phenotype = @nearest_k_phenotypes.first
   end
 
+  def params_min_genes
+    (params[:min_genes] || 2).to_i
+  end
+
   def params_k
     (params[:k] || 1).to_i
   end
@@ -89,6 +96,18 @@ protected
 
   def params_source_matrix_ids
     params[:source_matrix_ids].collect{|s| s.to_i}
+  end
+
+  def params_distance_function
+    params[:dfn].to_sym
+  end
+
+  def params_for_classifier
+    {
+      :classifier => (params[:classifier] || :naivebayes).to_sym,
+      :k => params_k,
+      :max_distance => params_max_distance || 1.0
+    }
   end
 
 end

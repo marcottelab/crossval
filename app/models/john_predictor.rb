@@ -16,18 +16,21 @@ class JohnPredictor < Experiment
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
   validates_inclusion_of :distance_measure, :in => AVAILABLE_DISTANCE_MEASURES.values
 
+  def classifier_parameters
+    cp = {
+      :classifier => self.read_attribute(:method).to_sym,
+      :k => self.k,
+      :max_distance => self.max_distance || 1.0
+    }
+  end
+
   def setup_analysis
     self.package_version = "Fastknn #{Fastknn::VERSION}"
 
-    classifier_parameters = {
-      :classifier => self.read_attribute(:method).to_sym,
-      :k => self.k,
-      :max_distance => 1.0
-    }
-    # If the user has set a max distance, use that instead of 1.0
-    classifier_parameters[:max_distance] = self.max_distance unless self.max_distance.nil?
-
-    Fastknn::DistanceMatrix.new self.predict_matrix_id, self.source_matrix_ids, self.distance_measure, classifier_parameters
+    dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
+    dm.distance_function = self.distance_measure.to_sym
+    dm.classifier = self.classifier_parameters
+    dm
   end
 
   def run_analysis
