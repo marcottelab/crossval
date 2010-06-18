@@ -35,16 +35,16 @@ module ExperimentsHelper
     link_to caption, matrix_experiment_path(matrix, experiment)
   end
 
-  def select_method form, field
-    form.select field, form.object.class::AVAILABLE_METHODS
+  def select_method form, field, selected = "naivebayes"
+    form.select field, form.object.class::AVAILABLE_METHODS, :selected => selected
   end
 
-  def select_distance_measure form, field
-    form.select field, form.object.class::AVAILABLE_DISTANCE_MEASURES
+  def select_distance_measure form, field, selected = "hypergeometric"
+    form.select field, form.object.class::AVAILABLE_DISTANCE_MEASURES, :selected => selected
   end
 
-  def select_validation_type form, field
-    form.select field, ["row", "cell"]
+  def select_validation_type form, field, selected = "row"
+    form.select field, ["row", "cell"], :selected => selected
   end
 
   def integrands(experiment)

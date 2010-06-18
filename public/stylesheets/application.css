@@ -1,3 +1,8 @@
+body {
+    font-family: "Helvetica", sans-serif;
+    font-size: large;
+}
+
 div.fixed {
     font-family: monospace;
     font-size: 4px;
@@ -33,6 +38,7 @@ div.fixed {
 
 .matrix_experiments {
     font-family: "Helvetica", sans-serif;
+    font-size: small;
     padding: 4px;
     border-spacing: 0.5em;
     -moz-border-radius: 0.8em;
@@ -83,6 +89,14 @@ margin-right: 1em;
 float: left;
 width: auto;
 position: relative;
+}
+
+#experiment_sources {
+    list-style:none;
+    float: left;
+    clear: both;
+    padding-left: 0;
+    margin: 0;
 }
 
 td.legendLabel {
@@ -324,4 +338,24 @@ ul.matrix_info_box {
 ul.matrix_info_box li.info {
     background-color: yellow;
     display: none;
+}
+
+dl {
+    float: left;
+    clear: both;
+    display: block;
+    margin: 0.5em;
+    font-size: large;
+    font-family: sans-serif;
+}
+dl dt {
+    float: left;
+    width: 9em;
+}
+dl dd {
+    float: left;
+    margin-left: 0;
+}
+dl select,option,input {
+    font-size: large;
 }

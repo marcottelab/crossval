@@ -7,9 +7,9 @@
 
 <% form_for([:matrix, @experiment]) do |f| %>
   <%= render :partial => "#{@experiment.class.to_s.tableize}/form", :locals => { :f => f, :predict_matrix => @matrix } %>
-  <p>
+  <div style="float: left; clear: both; padding-left: 9.5em;">
     <%= f.submit 'Create' %>
-  </p>
+  </div>
 <% end %>
 
-<%= link_to 'Back', matrix_path(@matrix) %>
+<p style="float:left;clear:both;font-size:large;"><%= link_to 'Back', matrix_path(@matrix) %></p>

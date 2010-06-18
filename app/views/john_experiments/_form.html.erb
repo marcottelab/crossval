@@ -1,46 +1,44 @@
 <%= f.error_messages %>
+<%= matrix_avatar predict_matrix %>
+<%= f.hidden_field :predict_matrix_id %>
+<%= f.hidden_field :validation_type, :value => "row" %>
 
-<p>
-  <%= f.label :predict_matrix %><br />
-  <%= select_matrix f, :predict_matrix_id %>
-</p>
+<dl>
+  <dt><%= f.label :note %></dt>
+  <dd><%= f.text_area :note, :size => "40x3" %></dd>
+</dl>
 
-<p>
-  <%= f.label :method %><br />
-  <%= select_method f, :method %>
-</p>
+<dl>
+  <dt><%= f.label :method, "Classifier" %></dt>
+  <dd><%= select_method f, :method %></dd>
+</dl>
 
-<p>
-  <%= f.label :distance_measure %><br />
-  <%= select_distance_measure f, :distance_measure %>
-</p>
+<dl>
+  <dt><%= f.label :distance_measure, "Distance Function" %></dt>
+  <dd><%= select_distance_measure f, :distance_measure %></dd>
+</dl>
 
-<p>
-  <%= f.label :validation_type %><br />
-  <%= select_validation_type f, :validation_type %>
-</p>
+<dl>
+  <dt><%= f.label :k, "k (# nearest neighbors)" %></dt>
+  <dd><%= f.text_field :k, :value => "1", :size => 4, :maxlength => 3  %></dd>
+</dl>
 
-<p>
-  <%= f.label :k %><br />
-  <%= f.text_field :k %>
-</p>
+<dl>
+  <dt><%= f.label :max_distance, "Max Distance" %></dt>
+  <dd><%= f.text_field :max_distance, :value => "1.0", :size => 8, :maxlength => 10 %></dd>
+</dl>
 
-<p>
-  <%= f.label :max_distance %><br/>
-  <%= f.text_field :max_distance, :value => "1.0" %>
-</p>
+<dl>
+  <dt><%= f.label :min_genes, "Min Genes" %></dt>
+  <dd><%= f.text_field :min_genes, :value => "2", :size => 4, :maxlength => 3 %></dd>
+</dl>
 
-<p>
-  <%= f.label :min_genes %><br />
-  <%= f.text_field :min_genes %>
-</p>
-
-<div id="experiment_sources">
+<ul id="experiment_sources">
   <% f.fields_for :sources do |source_form| %>
-    <%= render :partial => 'experiments/source', :locals => { :f => source_form, :predict_matrix => predict_matrix } %>
+    <li><%= render :partial => 'experiments/source', :locals => { :f => source_form, :predict_matrix => predict_matrix } %></li>
   <% end %>
-</div>
+</ul>
 
-<p>
+<div style="float: left; clear: both; padding-left: 9.5em; padding-bottom: 1em;">
   <%= add_source_link 'Add a Source', 'source', f %>
-</p>
+</div>

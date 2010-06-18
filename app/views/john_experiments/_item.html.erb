@@ -3,7 +3,6 @@
       <td><%= method_avatar experiment.method %></td>
       <td><%= source_matrices(experiment) %></td>
       <td><%= distance_function_avatar experiment.distance_measure %></td>
-      <td><%= experiment.note %></td>
       <td><%= distance_of_time_in_words_to_now experiment.updated_at %> ago</td>
       <td>
         <%- if experiment.children.count > 0 -%>
@@ -17,6 +16,8 @@
         <%- end -%>
       </td>
       <td style="font-size:smaller;"><tt>
+        <%- if experiment.min_genes? -%>min_genes=<%= experiment.min_genes %><br/><%- end -%>
+        <%- if experiment.k? -%>k=<%= experiment.k %><br/><%- end -%>
         <%- if experiment.run_result? -%>exit: <%= experiment.run_result %><br/><%- end -%>
         <%- if experiment.package_version? -%>version: <%= experiment.package_version %><%- end -%>
       </tt></td>
@@ -26,5 +27,5 @@
       <%# li><h4>Comments</h4><%= render :partial => 'comments', :object => experiment.comments ></li-- %>
     </tr>
     <tr>
-      <td colspan="10" class="experiment_argument_string"><%= experiment.argument_string %></td>
+      <td colspan="3"><%= experiment.note %></td>
     </tr>

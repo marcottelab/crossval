@@ -1,8 +1,10 @@
-<div class="source">
-  <p>
+<dl class="source">
+  <dt>
     <%= f.hidden_field :_delete, :class => 'delete' %>
-    <%= f.label :source_matrix_id %>
+    <%= f.label :source_matrix_id, "Source Matrix" %>
+  </dt>
+  <dd>
     <%= select_source_matrix f, :source_matrix_id, predict_matrix.row_species %>
     <%= remove_source_link 'remove', f %>
-  </p>
-</div>
+  </dd>
+</dl>

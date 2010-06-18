@@ -40,7 +40,7 @@
 #   the predict_matrix has.
 class JohnExperiment < JohnPredictor
 
-  AVAILABLE_METHODS = {"Naive Bayes (JOW)" => "naivebayes", "Partial Bayes (JOW)" => "partialbayes"}
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Partial Bayes" => "partialbayes"}
 
   validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"  
   validates_inclusion_of :method, :in => AVAILABLE_METHODS.values

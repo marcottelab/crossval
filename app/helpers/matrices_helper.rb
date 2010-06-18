@@ -24,7 +24,7 @@ module MatricesHelper
 
   def matrix_avatar matrix_or_string
     sp = matrix_or_string.is_a?(String) ? matrix_or_string.downcase : matrix_or_string.column_species.downcase
-    "<div class=\"avatar\"><a class=\"#{sp}\">#{source_avatar(matrix_or_string, sp)}</div>"
+    "<div class=\"avatar\"><a class=\"#{sp}\">#{source_avatar(matrix_or_string, sp)}</a></div>"
   end
 
   def matrix_avatar_link matrix, hover_activates_info_box = false

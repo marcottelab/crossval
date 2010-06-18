@@ -128,7 +128,7 @@ class Matrix < ActiveRecord::Base
   # particularly when title is the same for multiple matrices.
   # In this case, it's the ID and the title.
   def unique_descriptor
-    "#{self.id}: #{self.title}"
+    "#{self.id}:#{self.column_species}"
   end
 
   # Calls destroy, but first deletes the matrix directory on the filesystem.
