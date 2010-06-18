@@ -1,4 +1,5 @@
 class Cell < Entry
+  belongs_to :matrix, :counter_cache => :cell_count
   # validates_uniqueness_of :i, :scope => [:j, :matrix_id], :message => "cell row value {{value}} is a duplicate"
   # validates_presence_of :i, :j, :matrix_id
 

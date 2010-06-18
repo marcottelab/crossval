@@ -219,7 +219,7 @@ class Matrix < ActiveRecord::Base
   # Gives a metric describing the number of cells in the matrix as a fraction of
   # the size -- in terms of the number of cells per column.
   def density
-    (self.cells.count / column_count.to_f).round
+    (self.cell_count / column_count.to_f).round
   end
 
   # Get a hash of the column identifiers to the number of rows that have non-zero

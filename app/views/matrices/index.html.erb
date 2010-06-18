@@ -1,3 +1,5 @@
+<h1>Select a Species to Predict</h1>
+
 <ul class="matrix_groups">
 <% @predict_matrices_by_species.each_pair do |species, predict_matrices| %>
   
@@ -17,10 +19,11 @@
             <li><%= experiments_progress_bar(predict_matrix) %></li>
           </ul>
 
+          <%= link_to 'New experiment', new_matrix_experiment_path(predict_matrix) %>
         </li>
       <% end %>
     </ul>
-    <br/>
+    <h3>Can predict from matrices:</h3>
     <ul class="source_matrices">
       <% @source_matrices_by_species[species].each do |source_matrix| %>
         <li><%= matrix_avatar_link(source_matrix, true) %></li>
@@ -34,7 +37,7 @@
           <li><%- if matrix.conjugate_matrix_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(matrix.conjugate_matrix_id), :title => "Show Random" %><%- end -%>
           <%= link_to 'Show', matrix_path(matrix) %> <%= link_to 'Inspect', view_matrix_path(matrix) %></li>
           <li>rows: <%= matrix.row_count %> / columns: <%= matrix.column_count %></li>
-          <li>cells: <%= matrix.cells.count %></li>
+          <li>cells: <%= matrix.cell_count %></li>
           <li>density: <%= fractional_density(matrix) %></li>
         </ul>
       <% end %>
