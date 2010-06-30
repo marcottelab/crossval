@@ -1,4 +1,4 @@
-class PhenotypesController < ApplicationController
+class PhenotypesController < MatrixGenericController
   helper :sparklines
   helper_method :params_k
   # GET /phenotypes/1
@@ -91,7 +91,7 @@ protected
   end
 
   def params_predict_matrix_id
-    params[:predict_matrix_id].to_i
+    @matrix_id
   end
 
   def params_source_matrix_ids

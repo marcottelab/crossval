@@ -104,8 +104,7 @@ module ExperimentsHelper
 
   def link_to_phenotype roc
     link_to(roc.column,
-      phenotype_path(roc.phenotype,
-        :predict_matrix_id => @matrix_id,
+      matrix_phenotype_path(@matrix, roc.phenotype,
         :source_matrix_ids => @experiment.source_matrix_ids,
         :classifier => @experiment.send(:method),
         :k => @experiment.k,

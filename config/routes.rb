@@ -7,13 +7,11 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :matrix_pairs
 
-  map.resources :phenotypes
-
   # The priority is based upon order of creation: first created -> highest priority.
 
   map.resources :matrices, :member => {:expand_experiments => :get, :collapse_experiments => :get} do |matrices|
     matrices.resources :experiments, :member => {:against => :get}
-
+    matrices.resources :phenotypes
     matrices.resources :john_experiments
     matrices.resources :john_predictors
     matrices.resources :john_distributions
