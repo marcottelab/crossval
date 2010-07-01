@@ -1,0 +1,12 @@
+<%= f.error_messages %>
+<%= f.hidden_field :species, :value => matrix.species %>
+
+<dl>
+  <dt><%= f.label :long_desc %></dt>
+  <dd><%= f.text_area :long_desc, :size => "40x3" %></dd>
+</dl>
+
+<dl>
+  <dt><%= f.label :short_desc %></dt>
+  <dd><%= f.text_field :short_desc, :size => 40 %></dd>
+</dl>

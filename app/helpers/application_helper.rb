@@ -9,6 +9,11 @@ module ApplicationHelper
     form.collection_select field, Experiment.find(:all, :order => :id), :id, :unique_descriptor
   end
 
+  def select_species form, field
+    species_list = Matrix.find(:all, :select => "DISTINCT species").collect{ |m| [m.species, m.species] }
+    form.select field, species_list
+  end
+
   def remove_nested_link(name, nested_type, form_builder)
     form_builder.hidden_field(:_delete) + link_to_function(name, "remove_nested('#{nested_type.to_s}', this)")
   end
