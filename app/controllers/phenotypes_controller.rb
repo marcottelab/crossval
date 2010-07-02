@@ -32,6 +32,65 @@ class PhenotypesController < MatrixGenericController
     end
   end
 
+  def new
+    @phenotype = Phenotype.new(:species => @matrix.column_species)
+
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @phenotype }
+    end
+  end
+
+  def edit
+    find_phenotype
+
+    if @phenotype.id < 2000000
+      flash[:notice] = "Sorry, phenotype is not editable."
+      redirect_to matrix_path(@matrix)
+    else
+      respond_to do |format|
+        format.html
+        format.xml { render :xml => @phenotype }
+      end
+    end
+  end
+
+  def create
+    @phenotype = Phenotype.new(params[:phenotype])
+    @phenotype.species = @matrix.column_species # Don't let some hacker screw around with the species.
+
+    if @phenotype.save
+      flash[:notice] = "Phenotype created."
+      redirect_to matrix_phenotype_path(@matrix, @phenotype)
+    else
+      render :action => 'new'
+    end
+  end
+
+  def update
+    find_phenotype
+
+    respond_to do |format|
+
+      # Prevent some 1337 hacker from changing the hidden field for species, as
+      # this could mess up matrix dimensions!
+      phenotype_params = params[:phenotype]
+      phenotype_params[:species] = @matrix.column_species
+
+      if @phenotype.id < 2000000
+        flash[:notice] = "Sorry, phenotype is not editable."
+        redirect_to matrix_path(@matrix)
+      elsif @phenotype.update_attributes(phenotype_params)
+        flash[:notice] = 'Phenotype updated successfully.'
+        format.html { redirect_to matrix_phenotype_path(@matrix, @phenotype) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml { render :xml => @phenotype.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
 protected
   def find_phenotype
     @phenotype ||= Phenotype.find params[:id]
@@ -57,17 +116,29 @@ protected
   end
 
   def prepare_distance_matrix
-    @distance_matrix ||= Fastknn.fetch_distance_matrix params_predict_matrix_id, params_source_matrix_ids, params_min_genes
-    @distance_matrix.distance_function = params_distance_function
-    @distance_matrix.classifier = params_for_classifier
+    if params.size > 4
+      STDERR.puts "params size is #{params.size}"
+      @distance_matrix ||= Fastknn.fetch_distance_matrix params_predict_matrix_id, params_source_matrix_ids, params_min_genes
+      @distance_matrix.distance_function = params_distance_function
+      @distance_matrix.classifier = params_for_classifier
+    else
+      @distance_matrix = nil
+    end
     @distance_matrix
   end
 
   def quick_analysis
-    @nearest  = @distance_matrix.nearest params[:id].to_i
-    @nearest1 = @distance_matrix.knearest(params[:id].to_i, 1, 1.0) unless params_k == 1
-    @nearestk = @distance_matrix.knearest(params[:id].to_i, params_k, params_max_distance || 1.0)
-    find_nearest_k_phenotypes
+    if params.size > 4
+      @nearest  = @distance_matrix.nearest params[:id].to_i
+      @nearest1 = @distance_matrix.knearest(params[:id].to_i, 1, 1.0) unless params_k == 1
+      @nearestk = @distance_matrix.knearest(params[:id].to_i, params_k, params_max_distance || 1.0)
+      find_nearest_k_phenotypes
+    else
+      @nearest = nil
+      @nearest1 = nil
+      @nearestk = nil
+      nil
+    end
   end
 
   def find_nearest_k_phenotypes
@@ -79,15 +150,15 @@ protected
   end
 
   def params_min_genes
-    (params[:min_genes] || 2).to_i
+    params.has_key?(:min_genes) ? (params[:min_genes] || 2).to_i : nil
   end
 
   def params_k
-    (params[:k] || 1).to_i
+    params.has_key?(:k) ? (params[:k] || 1).to_i : nil
   end
 
   def params_max_distance
-    (params[:max_distance] || 1).to_f
+    params.has_key?(:max_distance) ? (params[:max_distance] || 1).to_f : nil
   end
 
   def params_predict_matrix_id
@@ -95,19 +166,23 @@ protected
   end
 
   def params_source_matrix_ids
-    params[:source_matrix_ids].collect{|s| s.to_i}
+    params.has_key?(:source_matrix_ids) ? params[:source_matrix_ids].collect{|s| s.to_i} : nil
   end
 
   def params_distance_function
-    params[:dfn].to_sym
+    params.has_key?(:dfn) ? params[:dfn].to_sym : nil
   end
 
   def params_for_classifier
-    {
-      :classifier => (params[:classifier] || :naivebayes).to_sym,
-      :k => params_k,
-      :max_distance => params_max_distance || 1.0
-    }
+    if params.has_key?(:classifier)
+      return {
+        :classifier => (params[:classifier] || :naivebayes).to_sym,
+        :k => params_k,
+        :max_distance => params_max_distance || 1.0
+      }
+    else
+      return nil
+    end
   end
 
 end

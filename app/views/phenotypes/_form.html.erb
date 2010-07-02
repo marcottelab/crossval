@@ -1,5 +1,9 @@
 <%= f.error_messages %>
-<%= f.hidden_field :species, :value => matrix.species %>
+
+<dl>
+  <dt><%= f.label :species %></dt>
+  <dd><%= f.object.species %><%= f.hidden_field :species %></dd>
+</dl>
 
 <dl>
   <dt><%= f.label :long_desc %></dt>

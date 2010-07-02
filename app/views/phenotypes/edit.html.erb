@@ -1,0 +1,10 @@
+<h1>Edit Phenotype</h1>
+
+<% form_for([@matrix, @phenotype], :url => matrix_phenotype_path(@matrix, @phenotype)) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f, :matrix => @matrix } %>
+  <div style="float: left; clear: both; padding-left: 9.5em;">
+    <%= f.submit 'Update' %>
+  </div>
+<% end %>
+
+<p style="float:left;clear:both;font-size:large;"><%= link_to 'Back', matrix_phenotype_path(@matrix, @phenotype) %></p>

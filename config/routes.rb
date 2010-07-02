@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # The priority is based upon order of creation: first created -> highest priority.
 
-  map.resources :matrices, :member => {:expand_experiments => :get, :collapse_experiments => :get} do |matrices|
+  map.resources :matrices, :has_many => [:phenotypes], :member => {:expand_experiments => :get, :collapse_experiments => :get} do |matrices|
     matrices.resources :experiments, :member => {:against => :get}
     matrices.resources :phenotypes
     matrices.resources :john_experiments
