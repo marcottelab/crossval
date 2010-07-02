@@ -11,7 +11,7 @@ protected
   end
 
   def find_matrix
-    @matrix_id = params[:matrix_id]
+    @matrix_id = params[:matrix_id].to_i
     return(redirect_to(matrices_url)) unless @matrix_id
     @matrix = Matrix.find(@matrix_id)
   end

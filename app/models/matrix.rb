@@ -102,6 +102,11 @@ class Matrix < ActiveRecord::Base
   has_many :cells, :dependent => :destroy
   has_many :entries, :dependent => :destroy
   has_many :experiments, :foreign_key => :predict_matrix_id
+  has_many :phenotypes, :finder_sql =>
+    'SELECT DISTINCT p.* FROM phenotypes p ' +
+    'INNER JOIN entries c ON (p.id = c.j) ' +
+    'WHERE c.matrix_id = #{id} AND ' +
+    "c.type = 'Cell' ORDER BY p.id"
 
   named_scope :by_row_species, lambda { |s| { :conditions => { :row_species => s } } }
 

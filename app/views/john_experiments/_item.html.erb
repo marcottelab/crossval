@@ -5,7 +5,7 @@
       <td><%= distance_function_avatar experiment.distance_measure %></td>
       <td><%= distance_of_time_in_words_to_now experiment.updated_at %> ago</td>
       <td>
-        <%- if experiment.children.count > 0 -%>
+        <%- if experiment.is_a?(NodeMatrix) && experiment.children.count > 0 -%>
           <%= subexperiments_progress_bar(experiment) %>
         <%- elsif experiment.started_at.nil? -%>
           <%= run_link(experiment) %>

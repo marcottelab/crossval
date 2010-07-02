@@ -55,6 +55,19 @@ class PhenotypesController < MatrixGenericController
     end
   end
 
+  def edit_observations
+    find_phenotype
+    if @phenotype.id < 2000000
+      flash[:notice] = "Sorry, phenotype is not editable."
+      redirect_to matrix_path(@matrix)
+    else
+      respond_to do |format|
+        format.html
+        format.xml { render :xml => @phenotype }
+      end
+    end
+  end
+
   def create
     @phenotype = Phenotype.new(params[:phenotype])
     @phenotype.species = @matrix.column_species # Don't let some hacker screw around with the species.
@@ -64,6 +77,24 @@ class PhenotypesController < MatrixGenericController
       redirect_to matrix_phenotype_path(@matrix, @phenotype)
     else
       render :action => 'new'
+    end
+  end
+
+  def update_observations
+    find_phenotype
+
+    respond_to do |format|
+      if @phenotype.id < 2000000 && !@matrix.is_a?(TreeMatrix)
+        flash[:notice] = "Sorry, phenotype is not editable for this matrix."
+        redirect_to matrix_phenotype_path(@matrix, @phenotype)
+      elsif @phenotype.update_observations(@matrix, params[:phenotype][:entries])
+        flash[:notice] = 'Phenotype updated successfully.'
+        format.html { redirect_to matrix_phenotype_path(@matrix, @phenotype) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit_observations" }
+        format.xml { render :xml => @phenotype.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
@@ -79,7 +110,7 @@ class PhenotypesController < MatrixGenericController
 
       if @phenotype.id < 2000000
         flash[:notice] = "Sorry, phenotype is not editable."
-        redirect_to matrix_path(@matrix)
+        redirect_to matrix_phenotype_path(@matrix, @phenotype)
       elsif @phenotype.update_attributes(phenotype_params)
         flash[:notice] = 'Phenotype updated successfully.'
         format.html { redirect_to matrix_phenotype_path(@matrix, @phenotype) }
@@ -92,6 +123,7 @@ class PhenotypesController < MatrixGenericController
   end
 
 protected
+
   def find_phenotype
     @phenotype ||= Phenotype.find params[:id]
     @distance_matrix ||= nil
@@ -117,7 +149,6 @@ protected
 
   def prepare_distance_matrix
     if params.size > 4
-      STDERR.puts "params size is #{params.size}"
       @distance_matrix ||= Fastknn.fetch_distance_matrix params_predict_matrix_id, params_source_matrix_ids, params_min_genes
       @distance_matrix.distance_function = params_distance_function
       @distance_matrix.classifier = params_for_classifier

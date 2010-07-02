@@ -11,7 +11,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :matrices, :has_many => [:phenotypes], :member => {:expand_experiments => :get, :collapse_experiments => :get} do |matrices|
     matrices.resources :experiments, :member => {:against => :get}
-    matrices.resources :phenotypes
+    matrices.resources :phenotypes, :member => {:edit_observations => :get, :update_observations => :put}
     matrices.resources :john_experiments
     matrices.resources :john_predictors
     matrices.resources :john_distributions

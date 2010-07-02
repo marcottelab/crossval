@@ -1,18 +1,20 @@
 <ul class="matrix_info">
 
-<%- unless matrix.parent_id.nil? -%>
-  <li class="matrix_parent_info">This is matrix <%= cardinality(matrix).split("/").join("of") %>.
-    <%= link_to "Go to parent", matrix_path(matrix.parent), :title => matrix.parent_id.to_s %>.</li>
-<%- end -%>
+<%- if matrix.is_a?(TreeMatrix) # Not appropriate for regular matrix -%>
+  <%- unless matrix.parent_id.nil? -%>
+    <li class="matrix_parent_info">This is matrix <%= cardinality(matrix).split("/").join("of") %>.
+      <%= link_to "Go to parent", matrix_path(matrix.parent), :title => matrix.parent_id.to_s %>.</li>
+  <%- end -%>
 
-<%- unless matrix.children.count == 0 -%>
-  <li class="submatrix_info">Submatrices
-    <ul>
-      <% matrix.children.each do |child| %>
-      <li><%= link_to child.id, matrix_path(child), :class => "submatrix_link" %><%= experiments_progress_bar(child) %></li>
-      <% end %>
-    </ul>
-  </li>
+  <%- unless matrix.children.count == 0 -%>
+    <li class="submatrix_info">Submatrices
+      <ul>
+        <% matrix.children.each do |child| %>
+        <li><%= link_to child.id, matrix_path(child), :class => "submatrix_link" %><%= experiments_progress_bar(child) %></li>
+        <% end %>
+      </ul>
+    </li>
+  <%- end -%>
 <%- end -%>
   <li>Belongs to <%= matrix_avatar matrix.row_species %></li>
   <li>Created <%= distance_of_time_in_words_to_now matrix.created_at %> ago</li>

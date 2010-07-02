@@ -1,0 +1,8 @@
+<%= f.error_messages %>
+
+<p>Please enter genes one-per-line.</p>
+
+<dl>
+  <dt><%= f.label :entries %></dt>
+  <dd><%= f.text_area :entries, :size => "15x20", :value => @phenotype.entries.collect{|e|e.i}.join("\n") %></dd>
+</dl>

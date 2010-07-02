@@ -11,10 +11,12 @@ class JohnPredictor < Experiment
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",
       "Euclidean" => "euclidean"}
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Partial Bayes" => "partialbayes"}
 
   validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
-  validates_inclusion_of :distance_measure, :in => AVAILABLE_DISTANCE_MEASURES.values
+  validates_inclusion_of :method, :in => JohnPredictor::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
+  validates_inclusion_of :distance_measure, :in => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
 
   def classifier_parameters
     cp = {

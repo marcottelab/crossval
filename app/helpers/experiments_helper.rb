@@ -102,16 +102,26 @@ module ExperimentsHelper
     end
   end
 
-  def link_to_phenotype roc
-    link_to(roc.column,
-      matrix_phenotype_path(@matrix, roc.phenotype,
+  def link_to_phenotype roc_or_phenotype_id
+    p = nil
+    if roc_or_phenotype_id.is_a?(Roc)
+      p = Phenotype.find(roc_or_phenotype_id.column)
+    elsif roc_or_phenotype_id.is_a?(Phenotype)
+      p = roc_or_phenotype_id
+    else
+      p = Phenotype.find(roc_or_phenotype_id)
+    end
+    
+
+    link_to(p.id,
+      matrix_phenotype_path(@matrix, p,
         :source_matrix_ids => @experiment.source_matrix_ids,
         :classifier => @experiment.send(:method),
         :k => @experiment.k,
         :dfn => @experiment.distance_measure,
         :max_distance => @experiment.max_distance || 1.0,
         :min_genes => @experiment.min_genes || 2
-      ), :title => roc.phenotype.long_desc)
+      ), :title => p.long_desc)
   end
 
   def mini_roc_plot sorted_aucs_as_integers, mult = 1000

@@ -25,7 +25,7 @@ class JohnPredictorsController < MatrixGenericController
   end
 
   def create
-    @experiment = JohnPredictor.new(params[:john_experiment])
+    @experiment = JohnPredictor.new(params[:john_predictor])
     # ensure_predict_matrix_set(@experiment, @matrix_id)
     if @experiment.save
       flash[:notice] = "Successfully set up experiment."

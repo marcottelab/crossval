@@ -4,6 +4,21 @@
   <dd><%= @phenotype.long_desc %></dd>
 </dl>
 
+<dl>
+  <dt>Genes</dt>
+  <dd>
+    <%- if @phenotype.entries.count == 0 -%>
+      None&nbsp;
+    <%- else -%>
+      <%= @phenotype.entries.collect{ |e| e.i }.sort.uniq.join(", ") %>
+    <%- end -%>
+      
+    <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
+      <%= link_to "edit", edit_matrix_phenotype_path(@matrix,@phenotype)+"_observations" %>
+    <%- end -%>
+  </dd>
+</dl>
+
 <% unless @distance_matrix.nil? %>
   <h2>Analyses (<%= params[:dfn].to_s %>)</h2>
 

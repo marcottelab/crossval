@@ -1,0 +1,31 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag 'jquery-ui.js' %>
+  <%= javascript_include_tag 'jrails.js' %>
+  <%= javascript_include_tag 'prototype.js' %>
+<% end %>
+
+<div>
+<%- if @experiment.run_result.nil? -%>
+<%= link_to('Edit', edit_matrix_experiment_path(@matrix, @experiment)) %> |
+<%- end -%>
+<%= link_to 'Back', matrix_path(@matrix) %>
+</div>
+
+<h1>Viewing Phenotypes for Predictor <%= @experiment.id %></h1>
+<div class="experiment_data">
+<table id="experiment_rocs">
+  <tr>
+    <th><%= @experiment.predict_matrix.column_title %></th>
+    <th>Description</th>
+    <th/>
+  </tr>
+<%- @matrix.phenotypes.each do |phenotype| -%>
+  <tr>
+    <td><%= link_to_phenotype(phenotype) %></td>
+    <td><%= phenotype.short_desc || phenotype.long_desc %></td>
+    <td><%= link_to("Edit", edit_matrix_phenotype_path(@matrix, phenotype)) if phenotype.id >= 2000000  %></td>
+  </tr>
+<%- end -%>
+</table>
+</div>

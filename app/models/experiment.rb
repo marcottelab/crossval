@@ -163,7 +163,7 @@ class Experiment < ActiveRecord::Base
   # Ensure child experiments have been created with the same set of parameters.
   # Instructs those children to prepare_inputs
   def prepare_children
-    if predict_matrix.has_grandchildren?
+    if predict_matrix.is_a?(NodeMatrix) && predict_matrix.has_grandchildren?
 
       # Create one child experiment for each child (not grandchild) matrix
       predict_matrix.children.each do |child_matrix|

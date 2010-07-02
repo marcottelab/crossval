@@ -24,4 +24,17 @@ class String
       self
     end
   end
+
+  # Determine whether can be easily converted to a number
+  def is_numeric?
+    self =~ /[0-9]/
+  end
+
+  def is_integer?
+    self.is_numeric? && self !~ /\.[0-9]/
+  end
+
+  def is_positive_integer?
+    self.to_i > 0
+  end
 end

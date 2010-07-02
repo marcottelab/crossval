@@ -1,5 +1,5 @@
 <%- if experiments.size > 0 -%>
-  <%- if @matrix.has_grandchildren? -%>
+  <%- if @matrix.is_a?(NodeMatrix) && @matrix.has_grandchildren? -%>
     <h3>Integrators</h3>
     <%- if @integrators.size == 0 -%>
       <p>None found.</p>
@@ -21,14 +21,14 @@
   <% end %>
   </table>
   
-  <%#*<h3>Predictors with John's methods</h3>%>
+  <h3>Predictors with John's methods</h3>
   
-  <%#*<table class="matrix_experiments">%>
-  <%#= render :partial => 'john_predictors/list_header' %>
-  <%# john_predictors(experiments).each do |experiment| %>
-    <%#= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
-  <%# end %>
-  <%#*</table>%>
+  <table class="matrix_experiments">
+  <%= render :partial => 'john_predictors/list_header' %>
+  <% john_predictors(experiments).each do |experiment| %>
+    <%= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
+  <% end %>
+  </table>
 
   <%#*<h3>Distributions with John's methods</h3>%>
 
