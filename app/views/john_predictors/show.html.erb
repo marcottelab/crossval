@@ -24,7 +24,7 @@
   <tr>
     <td><%= link_to_phenotype(phenotype) %></td>
     <td><%= phenotype.short_desc || phenotype.long_desc %></td>
-    <td><%= link_to("Edit", edit_matrix_phenotype_path(@matrix, phenotype)) if phenotype.id >= 2000000  %></td>
+    <td><%= link_to("Edit", edit_matrix_phenotype_path(@matrix, phenotype)+"_observations") if phenotype.id >= 2000000  %></td>
   </tr>
 <%- end -%>
 </table>
