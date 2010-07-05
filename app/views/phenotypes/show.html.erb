@@ -14,7 +14,7 @@
     <%- end -%>
       
     <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
-      <%= link_to "edit", edit_matrix_phenotype_path(@matrix,@phenotype)+"_observations" %>
+      <%= link_to "edit", edit_matrix_phenotype_observations_path(@matrix, @phenotype) %>
     <%- end -%>
   </dd>
 </dl>

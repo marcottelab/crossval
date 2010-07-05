@@ -142,6 +142,15 @@ class Matrix < ActiveRecord::Base
     destroy
   end
 
+  # Asks relevant RubyGem (e.g., fastknn) whether the matrix is cached
+  def is_cached?
+    Fastknn.is_cached? self.id
+  end
+
+  # Force a reload of this matrix on the next predict call.
+  def uncache
+    Fastknn.uncache self.id
+  end
 
 
   # Make a copy of the matrix in memory.

@@ -8,7 +8,6 @@ class Phenotype < ActiveRecord::Base
 
     # This stores the rows the user entered.
     rows_at_completion = []
-
     
     entries_param.split("\n").each do |gene|
       gene.strip!
@@ -86,6 +85,10 @@ class Phenotype < ActiveRecord::Base
         matrix.save!
       end # END TRANSACTION
 
+      # Force reload of the matrix in the cache.
+      matrix.uncache if matrix.is_cached?
+
+      true
     else
       false
     end

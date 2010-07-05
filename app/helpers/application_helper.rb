@@ -34,6 +34,10 @@ module ApplicationHelper
     distance_of_time_in_words_to_now(datetime) + " ago"
   end
 
+  def edit_matrix_phenotype_observations_path matrix, phenotype
+    edit_matrix_phenotype_path(matrix,phenotype)+"_observations"
+  end
+
 
   # Create a static progress bar to show how many of the calculations have been
   # run.

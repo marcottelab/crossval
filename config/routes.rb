@@ -7,9 +7,11 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :matrix_pairs
 
+  map.resource :meta, :member => {:status => :get}, :controller => "meta"
+
   # The priority is based upon order of creation: first created -> highest priority.
 
-  map.resources :matrices, :has_many => [:phenotypes], :member => {:expand_experiments => :get, :collapse_experiments => :get} do |matrices|
+  map.resources :matrices, :has_many => [:phenotypes], :member => {:expand_experiments => :get, :collapse_experiments => :get, :reload => :put} do |matrices|
     matrices.resources :experiments, :member => {:against => :get}
     matrices.resources :phenotypes, :member => {:edit_observations => :get, :update_observations => :put}
     matrices.resources :john_experiments

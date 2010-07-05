@@ -1,0 +1,40 @@
+body {
+    font-family: "Helvetica", sans-serif;
+    font-size: large;
+}
+
+div.infobox {
+    display: inline-block;
+    border: 2px solid gray;
+    background-color: #F9F9F9;
+    padding: 0.4em;
+    position: relative;
+    font-size: medium;
+}
+.infobox p {
+    float: left;
+    clear: both;
+    font-style: italic;
+}
+
+.infobox dl {
+    position: relative;
+    font-size: medium;
+    float: left;
+    clear: both;
+    margin: 0.1em 0.1em 0.1em 1em;
+    padding: 0.2em;
+    background-color: #EEE;
+    border: 1px solid #CCC;
+    width: 20em;
+}
+
+.infobox dl dt,dd {
+    float: left;
+    display: block;
+}
+.infobox dl dt {
+    width: 9em;
+    text-align: right;
+    color: #666;
+}
