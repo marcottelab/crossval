@@ -1,35 +1,10 @@
-<h1>Editing gene</h1>
+<h1>Editing gene <%= @gene.symbol %></h1>
 
 <% form_for(@gene) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :symbol %><br />
-    <%= f.text_field :symbol %>
-  </p>
-  <p>
-    <%= f.label :full_name %><br />
-    <%= f.text_field :full_name %>
-  </p>
-  <p>
-    <%= f.label :ensembl_id %><br />
-    <%= f.text_field :ensembl_id %>
-  </p>
-  <p>
-    <%= f.label :species %><br />
-    <%= f.text_field :species %>
-  </p>
-  <p>
-    <%= f.label :synonyms %><br />
-    <%= f.text_area :synonyms %>
-  </p>
-  <p>
-    <%= f.label :summary %><br />
-    <%= f.text_area :summary %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+    <%= f.submit 'Save' %>
 <% end %>
 
 <%= link_to 'Show', @gene %> |

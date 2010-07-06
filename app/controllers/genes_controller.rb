@@ -15,9 +15,12 @@ class GenesController < ApplicationController
   def show
     @gene = Gene.find(params[:id])
 
+    @gene.update_from_entrez! if @gene.needs_update?
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @gene }
+      format.json { render :json => @gene }
     end
   end
 

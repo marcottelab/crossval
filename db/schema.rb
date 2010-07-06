@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100607204905) do
+ActiveRecord::Schema.define(:version => 20100706173242) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -58,10 +58,26 @@ ActiveRecord::Schema.define(:version => 20100607204905) do
     t.integer  "parent_id"
     t.text     "note"
     t.string   "package_version"
+    t.decimal  "max_distance"
   end
 
   add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
   add_index "experiments", ["predict_matrix_id"], :name => "index_experiments_on_predict_matrix_id"
+
+  create_table "genes", :force => true do |t|
+    t.string   "symbol",     :limit => 20
+    t.string   "full_name",  :limit => 80
+    t.string   "ensembl_id", :limit => 20
+    t.string   "species",    :limit => 3
+    t.text     "synonyms"
+    t.text     "summary"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "genes", ["ensembl_id"], :name => "index_genes_on_ensembl_id"
+  add_index "genes", ["species"], :name => "index_genes_on_species"
+  add_index "genes", ["symbol"], :name => "index_genes_on_symbol"
 
   create_table "integrands", :force => true do |t|
     t.integer  "integrator_id",                :null => false
@@ -85,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20100607204905) do
     t.datetime "updated_at"
     t.string   "type"
     t.integer  "conjugate_matrix_id"
+    t.integer  "cell_count"
   end
 
   add_index "matrices", ["conjugate_matrix_id"], :name => "index_matrices_on_conjugate_matrix_id"
