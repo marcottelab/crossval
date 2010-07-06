@@ -1,25 +1,73 @@
 <h1><%= phenotype_header(@phenotype) %></h1>
-<dl>
-  <dt>Description</dt>
-  <dd><%= @phenotype.long_desc %></dd>
-</dl>
+<div class="container">
+  <dl>
+    <dt>Description</dt>
+    <dd><%= @phenotype.long_desc %></dd>
+  </dl>
 
-<dl>
-  <dt>Genes</dt>
-  <dd>
-    <%- if @phenotype.entries.count == 0 -%>
-      None&nbsp;
-    <%- else -%>
-      <%= @phenotype.entries.collect{ |e| e.i }.sort.uniq.join(", ") %>
-    <%- end -%>
-      
-    <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
-      <%= link_to "edit", edit_matrix_phenotype_observations_path(@matrix, @phenotype) %>
-    <%- end -%>
-  </dd>
-</dl>
+  <dl>
+    <dt>Genes</dt>
+    <dd>
+      <%- if @phenotype.entries.count == 0 -%>
+        None&nbsp;
+      <%- else -%>
+        <%= @phenotype.entries.collect{ |e| e.i }.sort.uniq.join(", ") %>
+      <%- end -%>
+
+      <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
+        <%= link_to "edit", edit_matrix_phenotype_observations_path(@matrix, @phenotype) %>
+      <%- end -%>
+    </dd>
+  </dl>
+</div>
 
 <% unless @distance_matrix.nil? %>
+  <div class="container">
+    <h2>Analysis Parameters</h2>
+    <dl>
+      <dt>Predicting</dt>
+      <dd><%= @matrix_id %></dd>
+    </dl>
+    <dl>
+      <dt>Sources</dt>
+      <dd><%= params_source_matrix_ids.join(", ") %></dd>
+    </dl>
+    <dl>
+      <dt>Min Genes</dt>
+      <dd><%= params_min_genes %></dd>
+    </dl>
+    <dl>
+      <dt>Classifier</dt>
+      <dd><%= params_classifier %></dd>
+    </dl>
+    <dl>
+      <dt>Distance Function</dt>
+      <dd><%= params_distance_function %></dd>
+    </dl>
+    <dl>
+      <dt>Max Distance</dt>
+      <dd><%= params_max_distance %></dd>
+    </dl>
+    <dl>
+      <dt>k</dt>
+      <dd><%= params_k %></dd>
+    </dl>
+  </div>
+
+<div class="container">
+  <h2>Prediction</h2>
+  <table style="font-size: small;">
+    <tr><th>Score</th><th>Gene(s)</th></tr>
+  <%- @predictions.keys.sort{ |a,b| b <=> a }.each do |score| -%>
+    <tr>
+      <td><%= score %></td>
+      <td><%= @predictions[score].join(", ") -%></td>
+    </tr>
+  <%- end -%>
+  </table>
+</div>
+
+<div class="container">
   <h2>Analyses (<%= params[:dfn].to_s %>)</h2>
 
   <%= plot_hits @nearestk %>
@@ -35,4 +83,5 @@
   <h3>k=<%= params_k %> k-Nearest Neighbors</h3>
   <%= render :partial => 'hits', :locals => {:phenotypes => @nearest_k_phenotypes }, :object => @nearestk %>
 
+</div>
 <% end %>

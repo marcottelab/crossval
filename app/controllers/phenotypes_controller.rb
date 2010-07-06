@@ -1,12 +1,13 @@
 class PhenotypesController < MatrixGenericController
   helper :sparklines
-  helper_method :params_k
+  helper_method :params_k, :params_source_matrix_ids, :params_max_distance, :params_min_genes, :params_k, :params_classifier, :params_distance_function
   # GET /phenotypes/1
   # GET /phenotypes/1.xml
   def show
     find_phenotype
     prepare_distance_matrix
     quick_analysis
+    quick_predict
 
     respond_to do |format|
       format.html # show.html.erb
@@ -158,6 +159,16 @@ protected
     @distance_matrix
   end
 
+  def quick_predict
+    predictions = @distance_matrix.predict(params[:id].to_i)
+    predictions.delete_if { |k,v| v == 0.0 }
+    @predictions = Hash.new{ |h,k| h[k] = [] }
+    predictions.each_pair do |k,v|
+      @predictions[v] << k
+    end
+    @predictions
+  end
+
   def quick_analysis
     if params.size > 4
       @nearest  = @distance_matrix.nearest params[:id].to_i
@@ -204,10 +215,14 @@ protected
     params.has_key?(:dfn) ? params[:dfn].to_sym : nil
   end
 
+  def params_classifier
+    params.has_key?(:classifier) ? params[:classifier].to_sym : :naivebayes
+  end
+
   def params_for_classifier
     if params.has_key?(:classifier)
       return {
-        :classifier => (params[:classifier] || :naivebayes).to_sym,
+        :classifier => params_classifier,
         :k => params_k,
         :max_distance => params_max_distance || 1.0
       }
