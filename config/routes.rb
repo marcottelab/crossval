@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :genes
+
   # map.resources :experiments
 
   map.resources :roc_groups

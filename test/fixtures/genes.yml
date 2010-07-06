@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  symbol: MyString
+  full_name: MyString
+  ensembl_id: MyString
+  species: MyString
+  synonyms: MyText
+  summary: MyText
+
+two:
+  symbol: MyString
+  full_name: MyString
+  ensembl_id: MyString
+  species: MyString
+  synonyms: MyText
+  summary: MyText
