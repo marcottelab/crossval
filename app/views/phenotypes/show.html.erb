@@ -11,7 +11,10 @@
       <%- if @phenotype.entries.count == 0 -%>
         None&nbsp;
       <%- else -%>
-        <%= @phenotype.entries.collect{ |e| e.i }.sort.uniq.join(", ") %>
+        <ul class="gene_list">
+          <%= @phenotype.entries.collect{|e|e.i}.sort.uniq.collect{ |g| "<li id=\"s_#{g}\">#{g}</li>" } %>
+        </ul>
+        <div class="tooltip"></div>
       <%- end -%>
 
       <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
@@ -56,12 +59,14 @@
 
 <div class="container">
   <h2>Prediction</h2>
-  <table style="font-size: small;">
-    <tr><th>Score</th><th>Gene(s)</th></tr>
+  <table style="font-size: small; margin-right: 11em;">
+    <tr><th style="width: 11em;">Score</th><th>Gene(s)</th></tr>
   <%- @predictions.keys.sort{ |a,b| b <=> a }.each do |score| -%>
     <tr>
       <td><%= score %></td>
-      <td><%= @predictions[score].join(", ") -%></td>
+      <td>
+        <ul class="gene_list"><%= @predictions[score].sort.collect{|g| "<li id=\"p_gene_#{g}\">#{g}</li>"} -%></ul>
+      </td>
     </tr>
   <%- end -%>
   </table>
@@ -85,3 +90,4 @@
 
 </div>
 <% end %>
+

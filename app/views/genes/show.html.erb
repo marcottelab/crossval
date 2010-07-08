@@ -1,33 +1,36 @@
-<dl>
-  <dt>Symbol</dt>
-  <dd><%=h @gene.symbol %></dd>
-</dl>
+<h1>Viewing Gene <%=h @gene.symbol %></h1>
 
-<dl>
-  <dt>Full name</dt>
-  <dd><%=h @gene.full_name %></dd>
-</dl>
+<div class="container">
+  <dl>
+    <dt>Symbol</dt>
+    <dd><%=h @gene.symbol %> <a href="http://www.ncbi.nlm.nih.gov/gene/<%= @gene.id %>">NCBI</a></dd>
+  </dl>
 
-<dl>
-  <dt>Ensembl</dt>
-  <dd><%=h @gene.ensembl_id %></dd>
-</dl>
+  <dl>
+    <dt>Full name</dt>
+    <dd><%=h @gene.full_name %></dd>
+  </dl>
 
-<dl>
-  <dt>Species</dt>
-  <dd><%=h @gene.species %></dd>
-</dl>
+  <dl>
+    <dt>Ensembl</dt>
+    <dd><%=h @gene.ensembl_id %></dd>
+  </dl>
 
-<dl>
-  <dt>Synonyms</dt>
-  <dd><%=h @gene.synonyms %></dd>
-</dl>
+  <dl>
+    <dt>Species</dt>
+    <dd><%=h @gene.species %></dd>
+  </dl>
 
-<dl>
-  <dt>Summary</dt>
-  <dd><%=h @gene.summary %></dd>
-</dl>
+  <dl>
+    <dt>Synonyms</dt>
+    <dd><%=h @gene.synonyms %></dd>
+  </dl>
 
+  <dl>
+    <dt>Summary</dt>
+    <dd><%=h @gene.summary %></dd>
+  </dl>
+</div>
 
 <%= link_to 'Edit', edit_gene_path(@gene) %> |
 <%= link_to 'Back', genes_path %>
