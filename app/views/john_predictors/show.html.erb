@@ -13,19 +13,13 @@
 </div>
 
 <h1>Viewing Phenotypes for Predictor <%= @experiment.id %></h1>
-<div class="experiment_data">
-<table id="experiment_rocs">
-  <tr>
-    <th><%= @experiment.predict_matrix.column_title %></th>
-    <th>Description</th>
-    <th/>
-  </tr>
-<%- @matrix.phenotypes.each do |phenotype| -%>
-  <tr>
-    <td><%= link_to_phenotype(phenotype) %></td>
-    <td><%= phenotype.short_desc || phenotype.long_desc %></td>
-    <td><%= link_to("Edit", edit_matrix_phenotype_path(@matrix, phenotype)+"_observations") if phenotype.id >= 2000000  %></td>
-  </tr>
-<%- end -%>
-</table>
+<div class="experiment_data" style="width: 100%">
+  <dl>
+  <%- @matrix.phenotypes.each_with_index do |phenotype, count| -%>
+    <dt>
+      <%= link_to_phenotype(phenotype) %>
+    </dt>
+    <dd<%= " class=\"noline\"" unless count > 0 %>><%= phenotype.short_desc || phenotype.long_desc %> <%= link_to("Edit", edit_matrix_phenotype_path(@matrix, phenotype)+"_observations") if phenotype.id >= 2000000  %></dd>
+  <%- end -%>
+  <dl>
 </div>

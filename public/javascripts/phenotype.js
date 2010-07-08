@@ -2,44 +2,41 @@ function load_gene_tooltip(id) {
     $.getJSON("/genes/" + id + ".json", function(data) {
         summary = "No summary";
         if (data.gene.summary != null) summary = data.gene.summary;
-        $(".tooltip #st_" + id).html("<div class=\"container\"><dl><dt style=\"font-size: small;\">" + data.gene.symbol + "</dt><dd><a href=\"http://www.ncbi.nlm.nih.gov/gene/" + id
-            + "\">NCBI</a>, <a href=\"/genes/" + id + "\">full record</a></dd></dl>\n<p style=\"float:left; clear:both; margin:0.4em;\">"
-            + data.gene.full_name + "</p>\n<dl><dt style=\"display:none;\">Summary</dt><dd>" + summary
-            + "</dd></dl>\n<dl><dt>Other symbols</dt><dd>" + data.gene.synonyms + "</dd></dl></div>");
+        $(".tooltip #st-" + id).html("<h1><a href=\"/genes/" + id + "\">"
+            + data.gene.symbol +"</a> <a href=\"http://www.ncbi.nlm.nih.gov/gene/"
+            + id + "\">(NCBI)</a></h1>\n<dl class=\"container\">\n<dt>Name</dt><dd class=\"noline\">"
+            + data.gene.full_name + "</dd>\n" + "<dt>Summary</dt><dd>" + summary
+            + "</dd>\n<dt>Aliases</dt><dd>" + data.gene.synonyms + "</dd></dl>");
     });
+}
+
+function add_gene_tooltip_div(id) {
+    tooltip = $(".tooltip");
+    tooltip.html(tooltip.html() + "<div id=\"st-" + id + "\">Loading...</div>");
+}
+
+// Make sure the tooltip div exists (create/load if not)
+function ensure_gene_tooltip_div(sel, id) {
+    var gene_tip  = $(sel);
+    if (gene_tip.length == 0) {
+        add_gene_tooltip_div(id);
+        load_gene_tooltip(id);
+    } else if (gene_tip.html().length < 12) {
+        load_gene_tooltip(id);
+    }
 }
 
 $(document).ready(function() {
     $("ul.gene_list li").each(
         function() {
-            var gene = $(this);
-            //gene.mouseover(function() {
-//                alert($(".tooltip").html());
-                //$(".tooltip").html("Gene is " + $(this).html());
-//            });
-            gene.tooltip({
+            $(this).tooltip({
                 tip: '.tooltip', effect: 'fade',
                 onShow: function() {
-                    // Hide all others
-                    $(".tooltip div:visible").hide();
-                    
+                    $(".tooltip div[id|=st]").hide();
                     var id = this.getTrigger().html();
-                    var gene_tip = $(".tooltip #st_" + id);
-
-                    if (gene_tip.length == 0) {
-                        $(".tooltip").html($(".tooltip").html() + "<div id=\"st_" + id + "\">Loading...</div>");
-                        load_gene_tooltip(id);
-                        //$(".tooltip #st_" + id).load("/genes/" + id + " .container");
-                    } else if (gene_tip.html().length < 12) {
-                        load_gene_tooltip(id);
-                        //$(".tooltip #st_" + id).load("/genes/" + id + " .container");
-                    }
-                    $(".tooltip #st_" + id + " .container").show();
-                    $(".tooltip #st_" + id).show();
-                },
-                onHide: function() {
-                    //id = this.getTrigger().html();
-                    $(".tooltip div:visible").hide();
+                    var tooltip_s = ".tooltip #st-" + id;
+                    ensure_gene_tooltip_div(tooltip_s, id);
+                    $(tooltip_s).show();
                 }
             });
         }

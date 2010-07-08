@@ -10,6 +10,14 @@ protected
     @experiment
   end
 
+  def find_phenotype *find_options
+    @phenotype_id = params[:id]
+    @phenotype    = @matrix.phenotypes.find(@phenotype_id, *find_options)
+    @klass        = @phenotype.class
+    @view         = @klass.to_s.tableize
+    @phenotype
+  end
+
   def find_matrix
     @matrix_id = params[:matrix_id].to_i
     return(redirect_to(matrices_url)) unless @matrix_id

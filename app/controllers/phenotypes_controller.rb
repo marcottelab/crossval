@@ -5,6 +5,8 @@ class PhenotypesController < MatrixGenericController
   # GET /phenotypes/1.xml
   def show
     find_phenotype
+    find_genes_by_phenotype
+    initialize_globals
     prepare_distance_matrix
     quick_analysis
     quick_predict
@@ -125,8 +127,11 @@ class PhenotypesController < MatrixGenericController
 
 protected
 
-  def find_phenotype
-    @phenotype ||= Phenotype.find params[:id]
+  def find_genes_by_phenotype
+    @genes = Gene.find(:all, :joins => "INNER JOIN entries e ON (genes.id = e.i)", :conditions => "e.matrix_id = #{@matrix_id.to_i} AND e.j = #{@phenotype_id.to_i}")
+  end
+
+  def initialize_globals
     @distance_matrix ||= nil
     @nearestk = nil
   end

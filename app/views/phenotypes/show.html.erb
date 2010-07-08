@@ -2,17 +2,17 @@
 <div class="container">
   <dl>
     <dt>Description</dt>
-    <dd><%= @phenotype.long_desc %></dd>
-  </dl>
-
-  <dl>
+    <dd class="noline"><%= @phenotype.long_desc %></dd>
+    
     <dt>Genes</dt>
     <dd>
       <%- if @phenotype.entries.count == 0 -%>
         None&nbsp;
       <%- else -%>
         <ul class="gene_list">
-          <%= @phenotype.entries.collect{|e|e.i}.sort.uniq.collect{ |g| "<li id=\"s_#{g}\">#{g}</li>" } %>
+          <%- @genes.each do |g| -%>
+            <li id="s_<%= g.id %>"><%= g.id %></li>
+          <%- end -%>
         </ul>
         <div class="tooltip"></div>
       <%- end -%>
@@ -29,29 +29,23 @@
     <h2>Analysis Parameters</h2>
     <dl>
       <dt>Predicting</dt>
-      <dd><%= @matrix_id %></dd>
-    </dl>
-    <dl>
+      <dd class="noline"><%= @matrix_id %></dd>
+
       <dt>Sources</dt>
       <dd><%= params_source_matrix_ids.join(", ") %></dd>
-    </dl>
-    <dl>
+
       <dt>Min Genes</dt>
       <dd><%= params_min_genes %></dd>
-    </dl>
-    <dl>
+
       <dt>Classifier</dt>
       <dd><%= params_classifier %></dd>
-    </dl>
-    <dl>
+
       <dt>Distance Function</dt>
       <dd><%= params_distance_function %></dd>
-    </dl>
-    <dl>
+
       <dt>Max Distance</dt>
       <dd><%= params_max_distance %></dd>
-    </dl>
-    <dl>
+
       <dt>k</dt>
       <dd><%= params_k %></dd>
     </dl>
