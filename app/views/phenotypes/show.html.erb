@@ -14,7 +14,6 @@
             <li id="s_<%= g.id %>"><%= g.id %></li>
           <%- end -%>
         </ul>
-        <div class="tooltip"></div>
       <%- end -%>
 
       <%- if !@matrix.is_a?(TreeMatrix) && @phenotype.id >= 2000000 -%>
@@ -85,3 +84,4 @@
 </div>
 <% end %>
 
+<div class="tooltip"></div>
