@@ -61,5 +61,9 @@ class JohnExperiment < JohnPredictor
     sort_results_and_calculate_rocs!
   end
 
+  def before_run
+    prepare_inputs
+  end
+
 end
 

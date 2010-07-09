@@ -159,7 +159,7 @@ class Experiment < ActiveRecord::Base
     "#{self.id}#{parent_descriptor_component}: #{self.title}"
   end
 
-  
+
   # Ensure child experiments have been created with the same set of parameters.
   # Instructs those children to prepare_inputs
   def prepare_children
@@ -411,12 +411,12 @@ protected
 
   # Update the 'started_at' value and save. This needs to be fixed so it doesn't
   # call ActiveRecord::save! which will change other timestamps as well.
-  def before_run
+  def before_run;; end
+
+  def before_run_internal
     self.started_at = Time.now
     self.save!
   end
-
-  def before_run_internal;; end
 
   # Sort/calculate ROCs for an experiment. You can override this function for things
   # like JohnDistribution so you calculate other things instead of ROCs.
@@ -564,6 +564,7 @@ protected
       raise(IOError, "#{self.class.to_s} #{self.id} has no source matrices!")
     end
   end
+
 end
 
 

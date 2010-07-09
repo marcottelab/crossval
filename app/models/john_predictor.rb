@@ -67,7 +67,11 @@ class JohnPredictor < Experiment
     self.total_auc    = nil
     self.save!
 
-    self.clean_predictions_dirs
+    begin
+      self.clean_predictions_dirs
+    rescue Errno::ENOENT
+      Rails.logger.error("reset_for_new_run! was unable to remove non-existent directory")
+    end
   end
   
 
