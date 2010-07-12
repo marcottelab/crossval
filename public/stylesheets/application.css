@@ -75,8 +75,16 @@ div.fixed {
     font-family: 'Courier New',Courier,monospace;
 }
 #experiment_rocs td,th {
-    border: 1px solid black;
+    border: 1px solid #AAA;
     padding: 2px;
+}
+#experiment_rocs tr.even {
+    background-color: #CFC;
+}
+
+table.sortable th a {
+    text-decoration: none;
+    color: black;
 }
 
 .experiment_data {

@@ -17,9 +17,9 @@
 
 <h1>Results for Cross-validation Experiment <%= @experiment.id %></h1>
 <div class="experiment_data">
-<table id="experiment_rocs">
+<table id="experiment_rocs" class="sortable">
   <tr>
-    <th><%= @experiment.predict_matrix.column_title %></th>
+    <th class="startsort"><%= @experiment.predict_matrix.column_title %></th>
     <th>AUC</th>
     <th>TP</th>
     <th>FP</th>
