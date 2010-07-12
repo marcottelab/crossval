@@ -4,14 +4,14 @@
     <dt>Description</dt>
     <dd class="noline"><%= @phenotype.long_desc %></dd>
     
-    <dt>Genes</dt>
+    <dt>Known Genes</dt>
     <dd>
       <%- if @phenotype.entries.count == 0 -%>
         None&nbsp;
       <%- else -%>
-        <ul class="gene_list">
+        <ul class="gene_list known">
           <%- @genes.each do |g| -%>
-            <li id="s_<%= g.id %>"><%= g.id %></li>
+            <%= gene_list_item(g.id, "s_") %>
           <%- end -%>
         </ul>
       <%- end -%>
@@ -51,14 +51,18 @@
   </div>
 
 <div class="container">
-  <h2>Prediction</h2>
+  <h2>Predictions</h2>
   <table style="font-size: small; margin-right: 11em;">
     <tr><th style="width: 11em;">Score</th><th>Gene(s)</th></tr>
   <%- @predictions.keys.sort{ |a,b| b <=> a }.each do |score| -%>
     <tr>
       <td><%= score %></td>
       <td>
-        <ul class="gene_list"><%= @predictions[score].sort.collect{|g| "<li id=\"p_gene_#{g}\">#{g}</li>"} -%></ul>
+        <ul class="gene_list">
+<%- @predictions[score].sort.each do |gene_id| -%>
+  <%= gene_list_item(gene_id, "p_", @known_genes.has_key?(gene_id)) %>
+<%- end -%>
+        </ul>
       </td>
     </tr>
   <%- end -%>

@@ -13,4 +13,16 @@ module PhenotypesHelper
     sparkline_tag(scientific_to_relative(hits),
       :type => 'discrete', :upper => 1, :above_color => "gray", :below_color => "red")
   end
+
+  def gene_list_item gene_id, id_prefix="g_", known=false
+    open_tag  = "<li id=\"#{id_prefix}#{gene_id}\""
+
+    if known
+      open_tag += " class=\"known\">"
+    else
+      open_tag += ">"
+    end
+
+    open_tag + gene_id.to_s + "</li>"
+  end
 end

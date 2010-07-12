@@ -129,6 +129,11 @@ protected
 
   def find_genes_by_phenotype
     @genes = Gene.find(:all, :joins => "INNER JOIN entries e ON (genes.id = e.i)", :conditions => "e.matrix_id = #{@matrix_id.to_i} AND e.j = #{@phenotype_id.to_i}")
+    @known_genes = {}
+    @genes.each do |gene|
+      @known_genes[gene.id] = true
+    end
+    @genes
   end
 
   def initialize_globals
