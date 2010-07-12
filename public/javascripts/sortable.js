@@ -6,6 +6,8 @@ Distributed under the MIT license: http://www.kryogenix.org/code/browser/licence
 Copyright (c) 1997-2007 Stuart Langridge, Joost de Valk.
 
 Version 1.5.7
+
+Modified by John Woods, Marcotte Lab. There were a few bugs involving table header, apparently.
 */
 
 /* You can change these values */
