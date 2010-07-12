@@ -28,10 +28,10 @@
     <h2>Analysis Parameters</h2>
     <dl>
       <dt>Predicting</dt>
-      <dd class="noline"><%= @matrix_id %></dd>
+      <dd class="noline"><%= predict_matrix_avatar(@matrix) %></dd>
 
       <dt>Sources</dt>
-      <dd><%= params_source_matrix_ids.join(", ") %></dd>
+      <dd class="horiz"><%= source_matrices(params_source_matrix_ids) %></dd>
 
       <dt>Min Genes</dt>
       <dd><%= params_min_genes %></dd>

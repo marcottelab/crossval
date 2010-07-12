@@ -211,7 +211,6 @@ li.submatrix_info a.submatrix_link {
     clear: both;
 }
 
-
 ul.avatars {
     position:relative;
     list-style: none;
@@ -224,8 +223,23 @@ ul.avatars {
     -webkit-border-radius: 0.8em;
 }
 
+dd.horiz ul.avatars,div.single_avatar {
+    height: 76px;
+    width: auto;
+    margin: 0.3em 0 0.3em 0;
+}
+
 ul.avatars li {
     display: inline;
+}
+
+div.single_avatar {
+    position: relative;
+    padding: 0;
+    width: 76px;
+    background-color: #DDD;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
 }
 
 .avatar a {
