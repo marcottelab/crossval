@@ -170,13 +170,17 @@ protected
   end
 
   def quick_predict
-    predictions = @distance_matrix.predict(params[:id].to_i)
-    predictions.delete_if { |k,v| v == 0.0 }
-    @predictions = Hash.new{ |h,k| h[k] = [] }
-    predictions.each_pair do |k,v|
-      @predictions[v] << k
+    if params.size > 4
+      predictions = @distance_matrix.predict(params[:id].to_i)
+      predictions.delete_if { |k,v| v == 0.0 }
+      @predictions = Hash.new{ |h,k| h[k] = [] }
+      predictions.each_pair do |k,v|
+        @predictions[v] << k
+      end
+      @predictions
+    else
+      @predictions = nil
     end
-    @predictions
   end
 
   def quick_analysis
