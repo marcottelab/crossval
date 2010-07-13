@@ -11,13 +11,10 @@ protected
   end
 
   def find_phenotype *find_options
-    STDERR.puts("find_phenotype called")
     @phenotype_id = params[:id].to_i
-    STDERR.puts("phenotype_id = #{@phenotype_id}, matrix = #{@matrix.id}")
     @phenotype    = Phenotype.find(@phenotype_id, *find_options)
     @klass        = @phenotype.class
     @view         = @klass.to_s.tableize
-    STDERR.puts("phenotype is #{@phenotype.nil? ? "nil" : @phenotype.to_s }")
     @phenotype
   end
 
