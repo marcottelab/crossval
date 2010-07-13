@@ -25,6 +25,7 @@
     <th>FP</th>
     <th>TN</th>
     <th>FN</th>
+    <th>Genes</th>
   </tr>
 <%- @experiment.rocs.each do |roc| -%>
   <tr>
@@ -34,6 +35,7 @@
     <td><%= roc.false_positives %></td>
     <td><%= roc.true_negatives %></td>
     <td><%= roc.false_negatives %></td>
+    <td><%= roc.false_negatives + roc.true_positives %></td>
   </tr>
 <%- end -%>
 </table>
