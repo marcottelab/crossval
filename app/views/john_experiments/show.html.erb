@@ -8,12 +8,9 @@
   <%= javascript_include_tag 'flotomatic.js' %>
 <% end %>
 
-<div>
 <%- if @experiment.run_result.nil? -%>
-<%= link_to('Edit', edit_matrix_experiment_path(@matrix, @experiment)) %> |
+  <div><%= link_to('Edit', edit_matrix_experiment_path(@matrix, @experiment)) %></div>
 <%- end -%>
-<%= link_to 'Back', matrix_path(@matrix) %>
-</div>
 
 <h1>Results for Cross-validation Experiment <%= @experiment.id %></h1>
 <div class="experiment_data">
