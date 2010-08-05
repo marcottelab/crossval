@@ -12,10 +12,10 @@ class JohnPredictor < Experiment
       "Manhattan" => "manhattan",
       "Euclidean" => "euclidean",
       "Jaccard" => "jaccard",
-      "Hellinger" => "hellinger",
-      "Cosine similarity" => "cosine_similarity",
-      "Tanimoto coefficient" => "tanimoto_coefficient" }
-  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Partial Bayes" => "partialbayes"}
+      "Sorensen" => "sorensen",
+      "Cosine similarity" => "cosine",
+      "Tanimoto coefficient" => "tanimoto" }
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes"}
 
   validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
@@ -26,7 +26,8 @@ class JohnPredictor < Experiment
     cp = {
       :classifier => self.read_attribute(:method).to_sym,
       :k => self.k,
-      :max_distance => self.max_distance || 1.0
+      :max_distance => self.max_distance || 1.0,
+      :distance_exponent => self.distance_exponent || 1.0
     }
   end
 
@@ -36,7 +37,7 @@ class JohnPredictor < Experiment
     dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
     dm.distance_function = self.distance_measure.to_sym
     dm.classifier = self.classifier_parameters
-    dm.distance_threshold = self.idf_threshold
+    dm.min_idf = self.idf_threshold
     dm
   end
 

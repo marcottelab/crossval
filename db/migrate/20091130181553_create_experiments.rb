@@ -8,6 +8,7 @@ class CreateExperiments < ActiveRecord::Migration
       t.integer :k, :default => 1
       t.integer :min_genes
       t.decimal :idf_threshold, :default => 0
+      t.decimal :distance_exponent, :default => 1
       t.string :arguments, :limit => 200 # Beyond :method and :distance_measure
 
       # These are only used when experiments/analyses are run.
