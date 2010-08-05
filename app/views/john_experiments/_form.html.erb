@@ -1,11 +1,11 @@
 <%= f.error_messages %>
-<%= matrix_avatar predict_matrix %>
+<%#= matrix_avatar predict_matrix %>
 <%= f.hidden_field :predict_matrix_id %>
 <%= f.hidden_field :validation_type, :value => "row" %>
 
 <dl>
   <dt><%= f.label :note %></dt>
-  <dd><%= f.text_area :note, :size => "40x3" %></dd>
+  <dd class="noline"><%= f.text_area :note, :size => "40x3" %></dd>
 
   <dt><%= f.label :method, "Classifier" %></dt>
   <dd><%= select_method f, :method %></dd>
@@ -13,7 +13,7 @@
   <dt><%= f.label :distance_measure, "Distance Function" %></dt>
   <dd><%= select_distance_measure f, :distance_measure %></dd>
 
-  <dt><%= f.label :k, "k (# nearest neighbors)" %></dt>
+  <dt><%= f.label :k, "k", :title => "k nearest neighbors" %></dt>
   <dd><%= f.text_field :k, :value => "1", :size => 4, :maxlength => 3  %></dd>
 
   <dt><%= f.label :max_distance, "Max Distance" %></dt>
@@ -21,6 +21,9 @@
 
   <dt><%= f.label :min_genes, "Min Genes" %></dt>
   <dd><%= f.text_field :min_genes, :value => "2", :size => 4, :maxlength => 3 %></dd>
+
+  <dt><%= f.label :idf_threshold, "IDF Threshold" %></dt>
+  <dd><%= f.text_field :idf_threshold, :value => "0.0", :size => 5, :max_length => 10 %></dd>
 </dl>
 
 <ul id="experiment_sources">
