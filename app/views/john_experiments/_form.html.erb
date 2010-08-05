@@ -6,29 +6,19 @@
 <dl>
   <dt><%= f.label :note %></dt>
   <dd><%= f.text_area :note, :size => "40x3" %></dd>
-</dl>
 
-<dl>
   <dt><%= f.label :method, "Classifier" %></dt>
   <dd><%= select_method f, :method %></dd>
-</dl>
 
-<dl>
   <dt><%= f.label :distance_measure, "Distance Function" %></dt>
   <dd><%= select_distance_measure f, :distance_measure %></dd>
-</dl>
 
-<dl>
   <dt><%= f.label :k, "k (# nearest neighbors)" %></dt>
   <dd><%= f.text_field :k, :value => "1", :size => 4, :maxlength => 3  %></dd>
-</dl>
 
-<dl>
   <dt><%= f.label :max_distance, "Max Distance" %></dt>
   <dd><%= f.text_field :max_distance, :value => "1.0", :size => 8, :maxlength => 10 %></dd>
-</dl>
 
-<dl>
   <dt><%= f.label :min_genes, "Min Genes" %></dt>
   <dd><%= f.text_field :min_genes, :value => "2", :size => 4, :maxlength => 3 %></dd>
 </dl>
