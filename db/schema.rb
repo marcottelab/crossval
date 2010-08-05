@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100706173242) do
+ActiveRecord::Schema.define(:version => 20100805213635) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -41,12 +41,11 @@ ActiveRecord::Schema.define(:version => 20100706173242) do
   add_index "entry_infos", ["row_title", "column_title"], :name => "index_entry_infos_on_row_title_and_column_title", :unique => true
 
   create_table "experiments", :force => true do |t|
-    t.integer  "predict_matrix_id",                :null => false
+    t.integer  "predict_matrix_id",                                 :null => false
     t.string   "method",            :limit => 200
     t.string   "distance_measure",  :limit => 200
     t.string   "validation_type",   :limit => 4
     t.integer  "k"
-    t.integer  "min_genes"
     t.string   "arguments",         :limit => 200
     t.integer  "run_result"
     t.decimal  "total_auc"
@@ -54,11 +53,14 @@ ActiveRecord::Schema.define(:version => 20100706173242) do
     t.datetime "completed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "min_genes"
     t.string   "type"
     t.integer  "parent_id"
     t.text     "note"
     t.string   "package_version"
     t.decimal  "max_distance"
+    t.decimal  "idf_threshold",                    :default => 0.0
+    t.decimal  "distance_exponent",                :default => 1.0
   end
 
   add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
@@ -135,16 +137,17 @@ ActiveRecord::Schema.define(:version => 20100706173242) do
   end
 
   create_table "rocs", :force => true do |t|
-    t.integer "experiment_id",   :null => false
-    t.integer "column",          :null => false
-    t.decimal "auc",             :null => false
-    t.integer "true_positives",  :null => false
-    t.integer "false_positives", :null => false
-    t.integer "true_negatives",  :null => false
-    t.integer "false_negatives", :null => false
+    t.integer "experiment_id",                    :null => false
+    t.integer "column",                           :null => false
+    t.decimal "auc",                              :null => false
+    t.integer "true_positives",                   :null => false
+    t.integer "false_positives",                  :null => false
+    t.integer "true_negatives",                   :null => false
+    t.integer "false_negatives",                  :null => false
+    t.decimal "threshold",       :default => 0.0
   end
 
-  add_index "rocs", ["column", "experiment_id"], :name => "index_rocs_on_column_and_experiment_id", :unique => true
+  add_index "rocs", ["column", "experiment_id", "threshold"], :name => "index_rocs_on_column_and_experiment_id_and_threshold", :unique => true
 
   create_table "sources", :force => true do |t|
     t.integer "experiment_id",    :null => false
