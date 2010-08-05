@@ -22,7 +22,7 @@ Rails::Initializer.run do |config|
   config.gem "starling-starling", :lib => "starling", :source => "http://gems.github.com"
   config.gem "after_commit", :source => "http://gemcutter.org"
   config.gem "rocker", :source => "http://gemcutter.org"
-  config.gem "fastknn", :version => ">= 0.0.6"
+  config.gem "fastknn", :version => ">= 0.0.9"
   config.gem "sparklines"
   #config.gem "memcache"
 

@@ -10,7 +10,11 @@
 class JohnPredictor < Experiment
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",
-      "Euclidean" => "euclidean"}
+      "Euclidean" => "euclidean",
+      "Jaccard" => "jaccard",
+      "Hellinger" => "hellinger",
+      "Cosine similarity" => "cosine_similarity",
+      "Tanimoto coefficient" => "tanimoto_coefficient" }
   AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Partial Bayes" => "partialbayes"}
 
   validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"

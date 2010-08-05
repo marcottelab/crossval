@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20100706173242) do
     t.string   "distance_measure",  :limit => 200
     t.string   "validation_type",   :limit => 4
     t.integer  "k"
+    t.integer  "min_genes"
     t.string   "arguments",         :limit => 200
     t.integer  "run_result"
     t.decimal  "total_auc"
@@ -53,7 +54,6 @@ ActiveRecord::Schema.define(:version => 20100706173242) do
     t.datetime "completed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "min_genes"
     t.string   "type"
     t.integer  "parent_id"
     t.text     "note"
