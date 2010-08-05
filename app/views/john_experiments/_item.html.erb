@@ -16,10 +16,12 @@
         <%- end -%>
       </td>
       <td style="font-size:smaller;"><tt>
-        <%- if experiment.min_genes? -%>min_genes=<%= experiment.min_genes %><br/><%- end -%>
+        min_genes=<%= experiment.min_genes || 2 %><br/>
         <%- if experiment.k? -%>k=<%= experiment.k %><br/><%- end -%>
         <%- if experiment.run_result? -%>exit: <%= experiment.run_result %><br/><%- end -%>
-        <%- if experiment.package_version? -%>version: <%= experiment.package_version %><%- end -%>
+        <%- if experiment.package_version? -%>version: <%= experiment.package_version %><br/><%- end -%>
+        <%- if experiment.distance_exponent? && experiment.distance_exponent != 1.0 -%>distance exp: <%= experiment.distance_exponent %><%- end -%>
+        min IDF: <%= experiment.idf_threshold || 0 %><br/>
       </tt></td>
       <td title="<%= experiment.total_auc %>">
         <%= link_to_experiment_if_appropriate(@matrix, experiment, mini_roc_plot(@rocs[experiment.id], 1000)) %>

@@ -17,7 +17,7 @@ class JohnPredictor < Experiment
       "Tanimoto coefficient" => "tanimoto" }
   AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes"}
 
-  validates_numericality_of :min_genes, :greater_than => 2, :only_integer => true, :allow_nil => true, :message => "should be blank for 2 or otherwise set to 3 or greater"
+  validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
   validates_inclusion_of :method, :in => JohnPredictor::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
   validates_inclusion_of :distance_measure, :in => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
