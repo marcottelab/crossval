@@ -119,7 +119,9 @@ module ExperimentsHelper
         :classifier => @experiment.send(:method),
         :k => @experiment.k,
         :dfn => @experiment.distance_measure,
+        :min_idf => @experiment.idf_threshold || 0,
         :max_distance => @experiment.max_distance || 1.0,
+        :distance_exponent => @experiment.distance_exponent || 1,
         :min_genes => @experiment.min_genes || 2
       ), :title => p.long_desc)
   end

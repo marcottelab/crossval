@@ -5,7 +5,11 @@ module PhenotypesHelper
 
   def scientific_to_relative hits
     hits.collect do |h|
-      -1 * Math.log10(h[1].to_d).to_i
+      begin
+        -1 * Math.log10(h[1].to_d).to_i
+      rescue
+        -1.0/0
+      end
     end
   end
 

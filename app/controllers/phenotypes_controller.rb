@@ -1,6 +1,6 @@
 class PhenotypesController < MatrixGenericController
   helper :sparklines
-  helper_method :params_k, :params_source_matrix_ids, :params_max_distance, :params_min_genes, :params_k, :params_classifier, :params_distance_function
+  helper_method :params_k, :params_source_matrix_ids, :params_max_distance, :params_min_genes, :params_k, :params_classifier, :params_distance_function, :params_distance_exponent, :params_min_idf
   # GET /phenotypes/1
   # GET /phenotypes/1.xml
   def show
@@ -163,6 +163,7 @@ protected
       @distance_matrix ||= Fastknn.fetch_distance_matrix params_predict_matrix_id, params_source_matrix_ids, params_min_genes
       @distance_matrix.distance_function = params_distance_function
       @distance_matrix.classifier = params_for_classifier
+      @distance_matrix.min_idf = params_min_idf
     else
       @distance_matrix = nil
     end
@@ -229,6 +230,14 @@ protected
     params.has_key?(:dfn) ? params[:dfn].to_sym : nil
   end
 
+  def params_distance_exponent
+    params.has_key?(:distance_exponent) ? params[:distance_exponent].to_f : 1.0
+  end
+
+  def params_min_idf
+    params.has_key?(:min_idf) ? params[:min_idf].to_f : 0.0
+  end
+
   def params_classifier
     params.has_key?(:classifier) ? params[:classifier].to_sym : :naivebayes
   end
@@ -238,7 +247,8 @@ protected
       return {
         :classifier => params_classifier,
         :k => params_k,
-        :max_distance => params_max_distance || 1.0
+        :max_distance => params_max_distance || 1.0,
+        :distance_exponent => params_distance_exponent || 1.0
       }
     else
       return nil
