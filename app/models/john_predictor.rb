@@ -36,6 +36,7 @@ class JohnPredictor < Experiment
     dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
     dm.distance_function = self.distance_measure.to_sym
     dm.classifier = self.classifier_parameters
+    dm.distance_threshold = self.idf_threshold
     dm
   end
 
