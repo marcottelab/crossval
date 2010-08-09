@@ -145,6 +145,11 @@ class Experiment < ActiveRecord::Base
   # Return the ancestor of this experiment or itself if there is no ancestor
   def ancestor_or_self; parent_id.nil? ? self : parent.ancestor_or_self ; end
 
+  def roc_plot phenotype_id
+    require "gnuplot"
+    Rocker.roc_plot self.predict_matrix_id, self.id, time_to_file_suffix(self.started_at || Time.now), phenotype_id
+  end
+
 
   # Most of these can be overridden, with care. That's not the same as *should*, though.
 
@@ -407,6 +412,22 @@ class Experiment < ActiveRecord::Base
     Dir.entries(root).reject { |e| e == "." || e == ".." }
   end
 
+  # Calculate more rocs but this time don't save and use a threshold.
+  def calculate_extra_rocs threshold = 0.0
+    Rails.logger.info("Calling Rocker C++ extension (Rocker gem)")
+
+    results = []
+    total_auc = 0.0
+    
+    Dir.chdir(results_path) do
+      rocker = Rocker.create predict_matrix_id, self.id
+      results = rocker.process_results threshold
+      total_auc = rocker.mean_auc
+    end
+
+    [results, total_auc]
+  end
+
 protected
 
   # Update the 'started_at' value and save. This needs to be fixed so it doesn't
@@ -429,21 +450,24 @@ protected
     self.sort_results
 
     # Calculating the AUCs also marks the task as completed and saves the record.
-    STDERR.puts("Calling calculate_rocs!")
+    # STDERR.puts("Calling calculate_rocs!")
     self.calculate_rocs!
-    STDERR.puts("Done calling calculate_rocs!")
+    # STDERR.puts("Done calling calculate_rocs!")
+    self.completed_at = Time.now
+    self.save!
   end
 
-  def calculate_rocs!
-    STDERR.puts("Calling Rocker C++ extension (Rocker gem)")
+  def calculate_rocs! threshold = 0.0
+    Rails.logger.info("Calling Rocker C++ extension (Rocker gem)")
     Dir.chdir(results_path) do
       # This automatically inserts into the database:
-      rocker = Rocker.calculate predict_matrix_id, self.id
+      rocker = Rocker.create predict_matrix_id, self.id
+      rocker.acquire_results threshold
       total_auc = rocker.mean_auc
     end
 
-    self.completed_at = Time.now
-    STDERR.puts("Calling save_without_timestamping!")
+    # self.completed_at = Time.now
+    # STDERR.puts("Calling save_without_timestamping!")
     self.save!
     self
   end

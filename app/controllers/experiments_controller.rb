@@ -12,7 +12,14 @@ class ExperimentsController < MatrixGenericController
   # GET /experiments/1.xml
   def show
     find_experiment :include => :rocs
-    @flot        = plot_experiment_with_children(@experiment)
+    if @experiment.child_ids.size > 0
+      @flot        = plot_experiment_with_children(@experiment)
+    elsif @experiment.has_run_successfully?
+      p = Statistics::Plot.new(@experiment, (params[:threshold] || 0).to_f)
+      @flot        = p.flot(:area_under_roc)
+    else
+      @flot        = plot_experiment_with_children(@experiment)
+    end
 
     respond_to do |format|
       format.html { render_polymorphic_template('show')}# show.html.erb

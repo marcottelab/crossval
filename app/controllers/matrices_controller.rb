@@ -110,9 +110,10 @@ protected
   end
 
   def load_rocs mult
-    @rocs = {}
+    @aurocs = {}
+    @auprcs = {}
     @experiments.each do |experiment|
-      @rocs[experiment.id] = experiment.rocs.spark_aucs(mult)
+      @aurocs[experiment.id],@auprcs[experiment.id] = experiment.rocs.spark_areas(mult)
     end
   end
 

@@ -8,9 +8,6 @@
         <%- if experiment.min_genes? -%>min_genes=<%= experiment.min_genes %><br/><%- end -%>
         <%- if experiment.k? -%>k=<%= experiment.k %><br/><%- end -%>
       </tt></td>
-      <td title="<%= experiment.total_auc %>">
-        <%= link_to_experiment_if_appropriate(@matrix, experiment, mini_roc_plot(@rocs[experiment.id], 1000)) %>
-      </td>
       <%# li><h4>Comments</h4><%= render :partial => 'comments', :object => experiment.comments ></li-- %>
     </tr>
     <tr>

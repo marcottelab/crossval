@@ -126,10 +126,18 @@ module ExperimentsHelper
       ), :title => p.long_desc)
   end
 
-  def mini_roc_plot sorted_aucs_as_integers, mult = 1000
-    sparkline_tag(sorted_aucs_as_integers,
-      :type => 'area', :upper => mult/20, :height => 150, :step => 0.5,
-      :above_color => "blue", :below_color => "red", :background_color => "#DDD") unless sorted_aucs_as_integers.nil? || sorted_aucs_as_integers.size == 0
+  def mini_auc_plot aucs, log = false, mult = 1000
+
+    target = 500
+    if log
+      aucs.each { |a| a = Math::log(a + 0.00001)*100 }
+      target = Math::log(target + 0.00001)*100
+    end
+
+    sparkline_tag(aucs,
+      :type => 'smooth', :target => target, :height => 100, :step => 0.5,
+      :has_last => true, :background_color => "#DDD", :line_color => 'black',
+      :target_color => 'blue') unless aucs.nil? || aucs.size == 0
   end
 
   def method_avatar method_title
