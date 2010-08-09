@@ -27,8 +27,8 @@ module ExperimentsHelper
   def link_to_experiment_if_appropriate(matrix, experiment, caption = nil)
     return nil if experiment.run_result != 0
     if experiment.is_a?(JohnExperiment) || experiment.is_a?(MartinExperiment)
-      return nil if experiment.total_auc.nil?
-      caption ||= experiment.total_auc.to_s
+      return nil if experiment.roc_area.nil?
+      caption ||= experiment.roc_area.to_s
     else
       caption ||= "Distribution"
     end
@@ -119,7 +119,7 @@ module ExperimentsHelper
         :classifier => @experiment.send(:method),
         :k => @experiment.k,
         :dfn => @experiment.distance_measure,
-        :min_idf => @experiment.idf_threshold || 0,
+        :min_idf => @experiment.min_idf || 0,
         :max_distance => @experiment.max_distance || 1.0,
         :distance_exponent => @experiment.distance_exponent || 1,
         :min_genes => @experiment.min_genes || 2

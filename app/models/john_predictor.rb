@@ -19,6 +19,8 @@ class JohnPredictor < Experiment
 
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
+  validates_numericality_of :min_idf, :greater_than_or_equal_to => 0.0, :only_integer => false
+  validates_numericality_of :distance_exponent, :only_integer => false
   validates_inclusion_of :method, :in => JohnPredictor::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
   validates_inclusion_of :distance_measure, :in => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
 
@@ -37,7 +39,7 @@ class JohnPredictor < Experiment
     dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
     dm.distance_function = self.distance_measure.to_sym
     dm.classifier = self.classifier_parameters
-    dm.min_idf = self.idf_threshold
+    dm.min_idf = self.min_idf
     dm
   end
 
@@ -67,10 +69,12 @@ class JohnPredictor < Experiment
   end
 
   def reset_for_new_run!
-    self.started_at   = nil
-    self.completed_at = nil
-    self.run_result   = nil
-    self.total_auc    = nil
+    self.started_at       = nil
+    self.completed_at     = nil
+    self.run_result       = nil
+    self.roc_area         = nil
+    self.pr_area          = nil
+    self.package_version  = nil
     self.save!
 
     begin

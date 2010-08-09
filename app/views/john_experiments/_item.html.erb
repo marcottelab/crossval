@@ -21,12 +21,12 @@
         <%- if experiment.run_result? -%>exit: <%= experiment.run_result %><br/><%- end -%>
         <%- if experiment.package_version? -%>version: <%= experiment.package_version %><br/><%- end -%>
         <%- if experiment.distance_exponent? && experiment.distance_exponent != 1.0 -%>distance exp: <%= experiment.distance_exponent %><br/><%- end -%>
-        min IDF: <%= experiment.idf_threshold || 0 %><br/>
+        min IDF: <%= experiment.min_idf || 0 %><br/>
       </tt></td>
-      <td title="<%= experiment.total_auc %>">
+      <td title="<%= experiment.roc_area %>">
         <%= link_to_experiment_if_appropriate(@matrix, experiment, mini_auc_plot(@aurocs[experiment.id], false)) %>
       </td>
-      <td>
+      <td title="<%= experiment.pr_area %>">
         <%= mini_auc_plot(@auprcs[experiment.id], true) %>
       </td>
       <%# li><h4>Comments</h4><%= render :partial => 'comments', :object => experiment.comments ></li-- %>

@@ -118,7 +118,7 @@ class Experiment < ActiveRecord::Base
   has_many :rocs, :dependent => :destroy
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
-  named_scope :not_run, :conditions => {:total_auc => nil}
+  named_scope :not_run, :conditions => {:roc_area => nil}
   named_scope :not_completed, :conditions => {:completed_at => nil}
   named_scope :not_started, :conditions => {:started_at => nil}
   named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
@@ -130,7 +130,7 @@ class Experiment < ActiveRecord::Base
   after_create :prepare_children
 
   # These things should be fetched from the parent if a parent is set.
-  delegate_to_parent :k, :validation_type, :distance_measure, :arguments, :method, :min_genes
+  delegate_to_parent :k, :distance_measure, :method, :min_genes, :min_idf, :max_distance
 
   AVAILABLE_METHODS = {}
   AVAILABLE_DISTANCE_MEASURES = {}
@@ -266,7 +266,7 @@ class Experiment < ActiveRecord::Base
 
   # Returns whether this has finished running and has done so successfully
   def has_run_successfully?
-    self.run_result == 0 && !self.total_auc.nil?
+    self.run_result == 0 && !self.roc_area.nil?
   end
 
   def children_have_been_run_successfully?
@@ -316,7 +316,8 @@ class Experiment < ActiveRecord::Base
     self.started_at   = nil
     self.completed_at = nil
     self.run_result   = nil
-    self.total_auc    = nil
+    self.roc_area     = nil
+    self.pr_area      = nil
     self.save!
 
     self.clean_predictions_dirs
@@ -417,15 +418,17 @@ class Experiment < ActiveRecord::Base
     Rails.logger.info("Calling Rocker C++ extension (Rocker gem)")
 
     results = []
-    total_auc = 0.0
+    roc_area = 0.0
+    pr_area  = 0.0
     
     Dir.chdir(results_path) do
       rocker = Rocker.create predict_matrix_id, self.id
       results = rocker.process_results threshold
-      total_auc = rocker.mean_auc
+      roc_area = rocker.roc_area
+      pr_area   = rocker.pr_area
     end
 
-    [results, total_auc]
+    [results, roc_area, pr_area]
   end
 
 protected
@@ -463,24 +466,14 @@ protected
       # This automatically inserts into the database:
       rocker = Rocker.create predict_matrix_id, self.id
       rocker.acquire_results threshold
-      total_auc = rocker.mean_auc
+      roc_area = rocker.roc_area
+      pr_area  = rocker.pr_area
     end
 
     # self.completed_at = Time.now
     # STDERR.puts("Calling save_without_timestamping!")
     self.save!
     self
-  end
-
-  def calculate_aucs_old
-    Dir.chdir(self.root) do
-      aucs_file = self.aucs_file
-      `#{self.aucs_bin_path} #{self.results_dir} 1>> #{aucs_file} 2>> #{self.error_log_file}`
-      self.total_auc = calculate_average_auc(read_aucs(aucs_file))
-    end
-    
-    self.completed_at = Time.now
-    self.save_without_timestamping!
   end
 
   # Takes an absolute path, mind you. Creates a directory. By default, creates
@@ -491,7 +484,7 @@ protected
   
   # BROKEN (I think)
   # Force a save without updating timestamps.
-  # Used to update total_auc, which is not technically part of the model.
+  # Used to update roc_area, which is not technically part of the model.
   # Also -- for completed_at and started_at
   def save_without_timestamping!
     class << self

@@ -70,15 +70,15 @@ div.fixed {
     text-align:center;
 }
 
-#experiment_rocs {
+#experiment_rocs,#experiments {
     border-collapse: collapse;
     font-family: 'Courier New',Courier,monospace;
 }
-#experiment_rocs td,th {
+#experiment_rocs,#experiments td,th {
     border: 1px solid #AAA;
     padding: 2px;
 }
-#experiment_rocs tr.even {
+#experiment_rocs,#experiments tr.even {
     background-color: #CFC;
 }
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100805213635) do
+ActiveRecord::Schema.define(:version => 20100809215623) do
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
@@ -44,9 +44,7 @@ ActiveRecord::Schema.define(:version => 20100805213635) do
     t.integer  "predict_matrix_id",                                 :null => false
     t.string   "method",            :limit => 200
     t.string   "distance_measure",  :limit => 200
-    t.string   "validation_type",   :limit => 4
     t.integer  "k"
-    t.string   "arguments",         :limit => 200
     t.integer  "run_result"
     t.decimal  "total_auc"
     t.datetime "started_at"
@@ -59,8 +57,10 @@ ActiveRecord::Schema.define(:version => 20100805213635) do
     t.text     "note"
     t.string   "package_version"
     t.decimal  "max_distance"
-    t.decimal  "idf_threshold",                    :default => 0.0
     t.decimal  "distance_exponent",                :default => 1.0
+    t.decimal  "roc_area"
+    t.decimal  "pr_area"
+    t.decimal  "min_idf"
   end
 
   add_index "experiments", ["parent_id"], :name => "index_experiments_on_parent_id"
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(:version => 20100805213635) do
     t.integer "true_negatives",                   :null => false
     t.integer "false_negatives",                  :null => false
     t.decimal "threshold",       :default => 0.0
+    t.decimal "pr_area",                          :null => false
   end
 
   add_index "rocs", ["column", "experiment_id", "threshold"], :name => "index_rocs_on_column_and_experiment_id_and_threshold", :unique => true

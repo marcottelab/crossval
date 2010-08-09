@@ -31,14 +31,22 @@ class MatricesController < ApplicationController
     end
   end
 
+
+  def table
+    @matrix     = Matrix.find(params[:id])
+
+    load_experiments
+
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @matrix }
+    end
+  end
+
+
   def expand_experiments
     @matrix      = Matrix.find(params[:id], :include => {:experiments => :rocs})
-    @experiments = @matrix.experiments
-
-    @integrators = @matrix.integrators
-    @john_experiments = @matrix.john_experiments
-    @john_predictors = @matrix.john_predictors
-    @john_distributions = @matrix.john_distributions
+    load_experiments
 
     load_rocs 1000
 
@@ -99,6 +107,15 @@ class MatricesController < ApplicationController
   end
 
 protected
+
+  def load_experiments
+    @experiments = @matrix.experiments
+
+    @integrators = @matrix.integrators
+    @john_experiments = @matrix.john_experiments
+    @john_predictors = @matrix.john_predictors
+    @john_distributions = @matrix.john_distributions
+  end
 
   def row_distribution matrix
     Flot.new('matrix_row_distribution') do |f|

@@ -1,36 +1,43 @@
 <h1>Listing experiments</h1>
 
-<table>
+<table id="experiments" class="sortable">
   <tr>
+    <th>ID</th>
     <th>Method</th>
-    <th>Distance measure</th>
-    <th>Validation type</th>
+    <th>Distance function</th>
+    <th>Sources</th>
     <th>K</th>
-    <th>Arguments</th>
+    <th>g<sub>min</sub></th>
+    <th>d<sub>max</sub></th>
+    <th>d<sup>x</sup></th>
+    <th>idf<sub>min</sub></th>
     <th>Run result</th>
-    <th>Total auc</th>
-    <th>Started at</th>
-    <th>Completed at</th>
+    <th>AUROC</th>
+    <th>AUPRC</th>
+    <th>Gem/Version</th>
+    <th/>
   </tr>
 
 <% @experiments.each do |experiment| %>
   <tr>
+    <td><%=h experiment.id %></td>
     <td><%=h experiment.method %></td>
     <td><%=h experiment.distance_measure %></td>
-    <td><%=h experiment.validation_type %></td>
+    <td><%=h experiment.source_matrix_ids.sort{|a,b| a.to_i <=> b.to_i}.join(", ") %></td>
     <td><%=h experiment.k %></td>
-    <td><%=h experiment.arguments %></td>
+    <td><%=h experiment.min_genes %></td>
+    <td><%=h experiment.max_distance %></td>
+    <td><%=h experiment.distance_exponent %></td>
+    <td><%=h experiment.min_idf %></td>
     <td><%=h experiment.run_result %></td>
-    <td><%=h experiment.total_auc %></td>
-    <td><%=h experiment.started_at %></td>
-    <td><%=h experiment.completed_at %></td>
-    <td><%= link_to 'Show', experiment %></td>
-    <td><%= link_to 'Edit', edit_experiment_path(experiment) %></td>
-    <td><%= link_to 'Destroy', experiment, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%=h experiment.roc_area %></td>
+    <td><%=h experiment.pr_area %></td>
+    <td><%=h experiment.package_version %></td>
+    <td><%= link_to_experiment_if_appropriate(@matrix, experiment, "Show") %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New experiment', new_experiment_path %>
+<%= link_to 'New experiment', '/experiments/new' %>

@@ -41,7 +41,6 @@
 class JohnExperiment < JohnPredictor
 
   validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"  
-  validates_inclusion_of :validation_type, :in => ['row']
 
   def run_analysis
     begin
