@@ -16,7 +16,7 @@ class JohnPredictor < Experiment
       "Cosine similarity" => "cosine",
       "Tanimoto coefficient" => "tanimoto",
       "Pearson correlation" => "pearson"}
-  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes"}
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Average" => "average", "Simple" => "simple"}
 
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
