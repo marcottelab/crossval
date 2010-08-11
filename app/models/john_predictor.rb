@@ -14,7 +14,8 @@ class JohnPredictor < Experiment
       "Jaccard" => "jaccard",
       "Sorensen" => "sorensen",
       "Cosine similarity" => "cosine",
-      "Tanimoto coefficient" => "tanimoto" }
+      "Tanimoto coefficient" => "tanimoto",
+      "Pearson correlation" => "pearson"}
   AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes"}
 
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
