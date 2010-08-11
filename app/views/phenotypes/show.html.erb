@@ -81,7 +81,7 @@
   <%= plot_hits @nearestk %>
 
   <h3>Nearest</h3>
-  <%= render :partial => 'hits', :locals => {:phenotypes => [@nearest_phenotype]}, :object => [@nearest] %>
+  <%#= render :partial => 'hits', :locals => {:phenotypes => [@nearest_phenotype]}, :object => [@nearest] %>
 
   <% if params_k > 1 %>
     <h3>k=1 k-Nearest Neighbors</h3>

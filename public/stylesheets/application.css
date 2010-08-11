@@ -74,11 +74,18 @@ div.fixed {
     border-collapse: collapse;
     font-family: 'Courier New',Courier,monospace;
 }
-#experiment_rocs,#experiments td,th {
+#experiment_rocs td,th {
     border: 1px solid #AAA;
     padding: 2px;
 }
-#experiment_rocs,#experiments tr.even {
+#experiments td,th {
+    border: 1px solid #AAA;
+    padding: 2px;
+}
+#experiment_rocs tr.even {
+    background-color: #CFC;
+}
+#experiments tr.even {
     background-color: #CFC;
 }
 

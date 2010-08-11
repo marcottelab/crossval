@@ -45,7 +45,7 @@ class JohnExperiment < JohnPredictor
   def run_analysis
     begin
       self.package_version = "Fastknn #{Fastknn::VERSION}"
-      Fastknn.crossvalidate self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2), self.distance_measure.to_sym, self.classifier_parameters, Dir.pwd
+      Fastknn.crossvalidate self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2), self.distance_measure.to_sym, (self.min_idf || 0.0), self.classifier_parameters, Dir.pwd
     rescue ArgumentError
       self.run_result = 1
     rescue => e

@@ -17,21 +17,15 @@
 <table id="experiment_rocs" class="sortable">
   <tr>
     <th class="startsort"><%= @experiment.predict_matrix.column_title %></th>
-    <th>AUC</th>
-    <th>TP</th>
-    <th>FP</th>
-    <th>TN</th>
-    <th>FN</th>
+    <th>AUROC</th>
+    <th>AUPRC</th>
     <th>Genes</th>
   </tr>
 <%- @experiment.rocs.each do |roc| -%>
   <tr>
     <td><%= link_to_phenotype(roc) %></td>
-    <td><%= roc.auc %></td>
-    <td><%= roc.true_positives %></td>
-    <td><%= roc.false_positives %></td>
-    <td><%= roc.true_negatives %></td>
-    <td><%= roc.false_negatives %></td>
+    <td><%= sprintf("%#1.6f", roc.auc) %></td>
+    <td><%= roc.pr_area %></td>
     <td><%= roc.false_negatives + roc.true_positives %></td>
   </tr>
 <%- end -%>
