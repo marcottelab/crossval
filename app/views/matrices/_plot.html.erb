@@ -6,7 +6,7 @@
 
 <%#= flot_overview("asdhasdlsdfh") %>
 
-<% flot_graph(canvas_id, rocs) do %>
+<% flot_graph(canvas_id, data) do %>
   <%= flot_plot(:dynamic => true, :overview => false) %>
   <%= flot_tooltip %>
 <% end %>

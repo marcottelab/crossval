@@ -106,6 +106,13 @@ class MatricesController < ApplicationController
     end
   end
 
+  
+  def graph
+    @matrix = Matrix.find(params[:id])
+    @canvas_id = "experiments_plot"
+    @flot = Statistics::ExperimentsPlot.new(@matrix, x_method, plot_options).flot(y_method, @canvas_id)
+  end
+
 protected
 
   def load_experiments
@@ -149,5 +156,18 @@ protected
         @source_matrices_by_species[rsp] << matrix
       end
     end
+  end
+
+  def x_method
+    params.has_key?(:x_method) ? params[:x_method].to_sym : :k
+  end
+
+  def y_method
+    params.has_key?(:y_method) ? params[:y_method].to_sym : :roc_area
+  end
+
+  # Generate ExperimentsPlot options from params
+  def plot_options
+    Statistics::ExperimentsPlot.plot_options params
   end
 end

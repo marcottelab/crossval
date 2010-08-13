@@ -1,0 +1,12 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag 'jquery.flot.min.js' %>
+  <%= javascript_include_tag 'jquery-ui.js' %>
+  <%= javascript_include_tag 'jrails.js' %>
+  <%= javascript_include_tag 'prototype.js' %>
+  <%= javascript_include_tag 'flotomatic.js' %>
+<% end %>
+
+<%= link_to 'Back', matrix_experiments_path(@matrix.id) %>
+
+<%= render :partial => 'plot', :locals => {:canvas_id => @canvas_id, :data => @flot} %>

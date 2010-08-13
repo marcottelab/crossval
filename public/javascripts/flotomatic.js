@@ -22,7 +22,10 @@ Flotomatic.prototype = {
 		}
 
 		function tooltipFormatter(item) {
-			return item.series.label + ": " + item.datapoint[1] + "</a>";
+                    if (item.datapoint.length > 2)
+                        return item.datapoint[1] + ": " + item.datapoint[2] + "</a>";
+                    else
+			return item.datapoint[1] + ": " + item.series.label + "</a>";
 		}
 
 		placeholder.bind("plothover", this.tooltip, function(event, pos, item) {

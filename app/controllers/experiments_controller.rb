@@ -15,7 +15,7 @@ class ExperimentsController < MatrixGenericController
     if @experiment.child_ids.size > 0
       @flot        = plot_experiment_with_children(@experiment)
     elsif @experiment.has_run_successfully?
-      p = Statistics::Plot.new(@experiment, (params[:threshold] || 0).to_f)
+      p = Statistics::ExperimentPlot.new(@experiment)
       @flot        = p.flot(:area_under_roc)
     else
       @flot        = plot_experiment_with_children(@experiment)
@@ -43,7 +43,7 @@ class ExperimentsController < MatrixGenericController
   end
 
   def index
-    @experiments = Experiment.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil}, :include => :rocs)
+    @experiments = Experiment.find(:all, :conditions => {:predict_matrix_id => @matrix_id, :parent_id => nil}, :order => :id)
     #load_rocs 1000 # specifies level of precision for sparkline
 
     respond_to do |format|

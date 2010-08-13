@@ -27,7 +27,7 @@
     <td><%=h experiment.k %></td>
     <td><%=h experiment.min_genes %></td>
     <td><%=h experiment.max_distance %></td>
-    <td><%=h experiment.distance_exponent %></td>
+    <td><%=h experiment.method == "average" ? "NA" : experiment.distance_exponent %></td>
     <td><%=h experiment.min_idf %></td>
     <td><%=h experiment.run_result %></td>
     <td><%=h experiment.roc_area %></td>
