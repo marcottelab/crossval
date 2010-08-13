@@ -1,11 +1,11 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'flotomatic' %>
   <%= javascript_include_tag 'jquery.js' %>
-  <%= javascript_include_tag 'jquery.flot.min.js' %>
+  <%= javascript_include_tag 'flotomatic/jquery.flot.min.js' %>
   <%= javascript_include_tag 'jquery-ui.js' %>
   <%= javascript_include_tag 'jrails.js' %>
   <%= javascript_include_tag 'prototype.js' %>
-  <%= javascript_include_tag 'flotomatic.js' %>
+  <%= javascript_include_tag 'flotomatic/flotomatic.js' %>
 <% end %>
 
 <%- if @experiment.run_result.nil? -%>
@@ -33,5 +33,5 @@
 </div>
 <div class="experiment_plot">
 <h2>AUCs (experiment with average of children)</h2>
-<%= render :partial => 'matrices/plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => @flot} %>
+<%= render :partial => 'matrices/plot', :locals => {:canvas_id => 'experiment_roc_plot', :data => @flot} %>
 </div>

@@ -130,7 +130,7 @@ class Experiment < ActiveRecord::Base
   after_create :prepare_children
 
   # These things should be fetched from the parent if a parent is set.
-  delegate_to_parent :k, :distance_measure, :method, :min_genes, :min_idf, :max_distance
+  delegate_to_parent :k, :distance_measure, :method, :min_genes, :min_idf, :max_distance, :distance_exponent
 
   AVAILABLE_METHODS = {}
   AVAILABLE_DISTANCE_MEASURES = {}
@@ -148,6 +148,11 @@ class Experiment < ActiveRecord::Base
   def roc_plot phenotype_id
     require "gnuplot"
     Rocker.roc_plot self.predict_matrix_id, self.id, time_to_file_suffix(self.started_at || Time.now), phenotype_id
+  end
+
+  # For identifying specific experiments on a Flot plot.
+  def tooltip
+    Statistics::ExperimentsPlot.experiment_tooltip(self)
   end
 
 
