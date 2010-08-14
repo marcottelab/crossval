@@ -4,7 +4,7 @@ module Statistics
     DEFAULT_OPTIONS = {
       :series_by => [:method, :distance_measure],
       :for_sources => [1,3,5,7,9,11], # or :any
-      :order_by => :k,
+      #:order_by => :k,
       :find_conditions => {:min_genes => 2},
       :min_idf_less_than => 500.0,
       :max_distance_greater_than => 0.0,
@@ -62,6 +62,7 @@ module Statistics
       options.reverse_merge! ExperimentsPlot::DEFAULT_OPTIONS
       options[:find_conditions][:min_genes] = options[:min_genes] if options.has_key?(:min_genes)
       @plot_mode = options.has_key?(:plot_mode) ? options[:plot_mode] : :points
+      options[:order_by] ||= x_method
       @legend = {}
       @legend[:position] = options.has_key?(:legend_pos) ? options[:legend_pos] : 'sw'
       raise(ArgumentError, "x method must be a symbol") unless x_method.is_a?(Symbol)
