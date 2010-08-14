@@ -9,7 +9,6 @@ module Statistics
       :min_idf_less_than => 500.0,
       :max_distance_greater_than => 0.0,
       :plot_mode => :lines,
-      :legend_pos => 'se'
     }
 
     # Convert http params to a plot options hash.
@@ -21,7 +20,6 @@ module Statistics
       options[:max_distance_greater_than] = params[:max_distance_greater_than].to_f if params.has_key?(:max_distance_greater_than)
       options[:find_conditions][:min_genes] = params[:find_conditions][:min_genes].to_i if params.has_key?(:find_conditions) && params[:find_conditions].has_key?(:min_genes)
       options[:plot_mode] = params[:plot_mode].to_sym if params.has_key?(:plot_mode)
-      options[:legend_pos] = params[:legend_pos].to_sym if params.has_key?(:legend_pos)
 
       if params.has_key?(:for_sources)
         if params[:for_sources].is_a?(Array)
@@ -63,8 +61,6 @@ module Statistics
       options[:find_conditions][:min_genes] = options[:min_genes] if options.has_key?(:min_genes)
       @plot_mode = options.has_key?(:plot_mode) ? options[:plot_mode] : :points
       options[:order_by] ||= x_method
-      @legend = {}
-      @legend[:position] = options.has_key?(:legend_pos) ? options[:legend_pos] : 'sw'
       raise(ArgumentError, "x method must be a symbol") unless x_method.is_a?(Symbol)
       raise(ArgumentError, "series_by must give a list of symbols") unless options[:series_by].is_a?(Array) && contains_only_symbols?(options[:series_by])
 
@@ -101,9 +97,9 @@ module Statistics
       raise(ArgumentError, "y method must be a symbol, and plot id must be a string") unless y_method.is_a?(Symbol) && plot_id.is_a?(String)
 
       Flot.new(plot_id) do |f|
-        f.send @plot_mode
+        f.send @plot_mode, :radius => 1
         f.grid :hoverable => true
-        f.legend :position => @legend[:position]
+        f.legend :container => "##{plot_id}_legend"
         @series.each_pair do |series_id, experiments|
           f.series_for(@series_long_names[series_id], experiments, :x => @x_method, :y => y_method, :tooltip => :tooltip, :options => {:points => {:show => true}})
         end
