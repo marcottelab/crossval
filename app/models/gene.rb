@@ -26,11 +26,11 @@ class Gene < ActiveRecord::Base
   end
 
   # Builds genes table just with IDs from the rows already in the matrix.
-  def self.populate_from_matrices
-    raise(Error, "Table already populated") if Gene.all.count != 0
+  def self.populate_from_matrices species
+    raise(Error, "Table already populated for species #{species}") if Gene.find(:all, :conditions => {:species => species}).count != 0
 
     count = 0
-    Entry.find(:all, :select => "DISTINCT i, matrices.row_species AS species", :joins => "INNER JOIN matrices ON (matrix_id = matrices.id)").each do |row|
+    Entry.find(:all, :select => "DISTINCT i, matrices.row_species AS species", :conditions => ["matrices.row_species = ?", species], :joins => "INNER JOIN matrices ON (matrix_id = matrices.id)").each do |row|
       count += 1
       ActiveRecord::Base.connection.execute "INSERT INTO #{self.table_name} ( id, species ) VALUES( #{row.i}, '#{row.species}' );"
     end
