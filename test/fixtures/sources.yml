@@ -1,11 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  experiment: 
-  matrix: 
-  source_species: MyString
+  experiment_id: 2
+  source_matrix_id: 1
 
 two:
-  experiment: 
-  matrix: 
-  source_species: MyString
+  experiment_id: 1
+  source_matrix_id: 1

@@ -1,11 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  parent_id: 1
-  matrix_info_id: 1
-  cardinality: 1
+  parent_id:
+  cardinality: 10
+  entry_info_id: 1
+  row_species: Hs
+  column_species: Hs
+  row_count: 2
+  column_count: 1
+  title: genes_phenes.Hs
+  entry_info_id: 1
+  cell_count: 2
+  type: Matrix
 
-two:
-  parent_id: 1
-  matrix_info_id: 1
-  cardinality: 1

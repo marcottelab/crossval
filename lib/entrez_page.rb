@@ -22,7 +22,7 @@ class EntrezPage
 
   # Extract the symbol from the page
   def symbol
-    clean_definition "Official Symbol"
+    clean_definition("Official Symbol") || clean_definition("Gene symbol")
   end
 
   # Extract the Ensembl ID from the page if possible
@@ -49,11 +49,19 @@ class EntrezPage
 
   # Return gene full name if available
   def full_name
-    clean_definition "Official Full Name"
+    clean_definition("Official Full Name") || clean_definition("Gene description")
   end
 
   def organism
-    clean_definition "Organism"
+    remove_ecotype(clean_definition("Organism"))
+  end
+
+  def remove_ecotype organism_full_name
+    if organism_full_name =~ /\(ecotype/
+      organism_full_name.split("(").first.rstrip
+    else
+      organism_full_name
+    end
   end
 
   # Same as definition, but also strips <span> and <a> tags

@@ -1,11 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  roc_group: 
-  experiment: 
+  roc_group_id: 1
+  experiment_id: 1
   legend: MyString
 
-two:
-  roc_group: 
-  experiment: 
-  legend: MyString

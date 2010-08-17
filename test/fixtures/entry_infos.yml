@@ -1,9 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  row_title: MyString
-  column_title: MyString
+  row_title: gene
+  column_title: phenotype
 
-two:
-  row_title: MyString
-  column_title: MyString

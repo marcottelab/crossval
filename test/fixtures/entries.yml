@@ -1,9 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  row: MyString
-  column: MyString
+  i: 1
+  j: 1
+  matrix_id: 1
+  type: Cell
 
 two:
-  row: MyString
-  column: MyString
+  i: 3
+  j: 1
+  matrix_id: 1
+  type: Cell

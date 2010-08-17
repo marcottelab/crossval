@@ -1,13 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  integrator: 
-  experiment: 
+  integrator_id: 1
+  experiment_id: 1
   weightn: 1
   weightd: 1
 
 two:
-  integrator: 
-  experiment: 
+  integrator_id: 1
+  experiment_id: 1
   weightn: 1
   weightd: 1
