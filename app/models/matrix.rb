@@ -109,6 +109,7 @@ class Matrix < ActiveRecord::Base
     "c.type = 'Cell' ORDER BY p.id"
 
   named_scope :by_row_species, lambda { |s| { :conditions => { :row_species => s } } }
+  named_scope :parentless, { :conditions => {:parent_id => nil}} # differs from .roots
 
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info
@@ -564,6 +565,27 @@ SQL
       STDERR.puts("ls: cannot access #{root_dir}: No such file or directory")
       nil     
     end
+  end
+
+  # Get the root matrices -- both those that are "predictable" and those that
+  # serve as sources.
+  def self.roots_by_row_species
+    matrices = Matrix.parentless.sort_by{ |m| m.id }
+
+    source_matrices_by_species = Hash.new { |h,k| h[k] = [] }
+    predict_matrices_by_species = Hash.new { |h,k| h[k] = [] }
+    matrices.each do |matrix|
+
+      rsp = matrix.row_species
+
+      if matrix.column_species == rsp # same and not random
+        predict_matrices_by_species[rsp] << matrix
+
+      elsif matrix.column_species !~ /^[A-Z][a-z]r$/ # not same, not random
+        source_matrices_by_species[rsp] << matrix
+      end
+    end
+    {:predict_matrices => predict_matrices_by_species, :source_matrices => source_matrices_by_species}
   end
 
 protected

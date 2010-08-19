@@ -3,7 +3,6 @@ class MatricesController < ApplicationController
   helper :all
 
   def run
-   
     @matrix = Matrix.find(params[:id])
     @matrix.experiments.not_started.each do |experiment|
       Workers::FrameWorker.async_run(:experiment_id => experiment.id)
@@ -23,6 +22,7 @@ class MatricesController < ApplicationController
   # GET /matrices/1.xml
   def show
     @matrix      = Matrix.find(params[:id])
+    load_custom_phenotypes unless @matrix.is_a?(TreeMatrix)
     #@row_distribution = row_distribution(@matrix)
 
     respond_to do |format|
@@ -110,10 +110,18 @@ class MatricesController < ApplicationController
   def graph
     @matrix = Matrix.find(params[:id])
     @canvas_id = "experiments_plot"
-    @flot = Statistics::ExperimentsPlot.new(@matrix, x_method, plot_options).flot(y_method, @canvas_id)
+    plot = Statistics::ExperimentsAreasPlot.new(plot_options)
+    @flot = plot.plot(:flot, @canvas_id)
   end
 
 protected
+
+  def load_custom_phenotypes
+    @custom_phenotypes = {}
+    Phenotype.find(:all, :joins => "inner join matrices on (phenotypes.species = matrices.column_species)", :conditions => ["phenotypes.id > 1000000 AND matrices.id = ?", @matrix.id], :order => :id).each do |phenotype|
+      @custom_phenotypes[phenotype.id] = phenotype
+    end
+  end
 
   def load_experiments
     @experiments = @matrix.experiments
@@ -142,20 +150,9 @@ protected
   end
 
   def load_matrices_by_row_species
-    @matrices = NodeMatrix.roots.sort_by{ |m| m.id }
-    @source_matrices_by_species = Hash.new { |h,k| h[k] = [] }
-    @predict_matrices_by_species = Hash.new { |h,k| h[k] = [] }
-    @matrices.each do |matrix|
-
-      rsp = matrix.row_species
-      # csp = matrix.column_species[0..1]
-
-      if matrix.column_species == rsp # same and not random
-        @predict_matrices_by_species[rsp] << matrix
-      elsif matrix.column_species !~ /^[A-Z][a-z]r$/ # not same, not random
-        @source_matrices_by_species[rsp] << matrix
-      end
-    end
+    matrices = Matrix.roots_by_row_species
+    @source_matrices_by_species = matrices[:source_matrices]
+    @predict_matrices_by_species = matrices[:predict_matrices]
   end
 
   def x_method
@@ -168,6 +165,8 @@ protected
 
   # Generate ExperimentsPlot options from params
   def plot_options
-    Statistics::ExperimentsPlot.plot_options params
+    po = Statistics::ExperimentsPlot.plot_options params
+    po[:predict_matrix_id] = @matrix.id
+    po
   end
 end

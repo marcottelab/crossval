@@ -123,6 +123,17 @@ class Experiment < ActiveRecord::Base
   named_scope :not_started, :conditions => {:started_at => nil}
   named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
 
+  # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
+  named_scope :by_k, lambda { |k| {:conditions => {:k => k}}}
+  named_scope :by_min_genes, lambda { |m| {:conditions => {:min_genes => m}}}
+  named_scope :by_distance_measure, lambda { |d| {:conditions => {:distance_measure => d.to_s}}}
+  named_scope :by_distance_exponent, lambda { |d| {:conditions => {:distance_exponent => d}}}
+  named_scope :by_method, lambda { |m| {:conditions => {:method => m.to_s}}}
+  named_scope :by_matrix_id, lambda { |m| {:conditions => {:predict_matrix_id => m}}}
+  named_scope :by_max_distance, lambda { |m| {:conditions => {:max_distance => m}}}
+  named_scope :by_min_idf, lambda { |m| {:conditions => {:min_idf => m}}}
+  named_scope :order_by, lambda { |o| {:order => o} }
+
   # Make sure sources are valid
   validates_associated :sources
 

@@ -3,7 +3,7 @@ module Statistics
   class ExperimentsPlot < Plot
     DEFAULT_OPTIONS = {
       :series_by => [:method, :distance_measure],
-      :for_sources => [1,3,5,7,9,11], # or :any
+      :for_sources => [247,249,251,253,255,257], #[1,3,5,7,9,11], # or :any
       #:order_by => :k,
       :find_conditions => {:min_genes => 2},
       :min_idf_less_than => 500.0,
@@ -16,17 +16,16 @@ module Statistics
       options = {}
       options[:series_by] = params[:series_by].collect{|s| s.to_sym} if params.has_key?(:series_by)
       options[:order_by] = params[:order_by].to_sym if params.has_key?(:order_by)
-      options[:min_idf_less_than] = params[:min_idf_less_than].to_f if params.has_key?(:min_idf_less_than)
-      options[:max_distance_greater_than] = params[:max_distance_greater_than].to_f if params.has_key?(:max_distance_greater_than)
-      options[:find_conditions][:min_genes] = params[:find_conditions][:min_genes].to_i if params.has_key?(:find_conditions) && params[:find_conditions].has_key?(:min_genes)
       options[:plot_mode] = params[:plot_mode].to_sym if params.has_key?(:plot_mode)
+      options[:x_method] = params[:x_method].to_sym if params.has_key?(:x_method)
+      options[:y_method] = params[:y_method].to_sym if params.has_key?(:y_method)
 
-      if params.has_key?(:for_sources)
-        if params[:for_sources].is_a?(Array)
-          options[:for_sources] = params[:for_sources].collect{ |s| s.to_i}
+      if params.has_key?(:source_matrix_ids)
+        if params[:source_matrix_ids].is_a?(Array)
+          options[:source_matrix_ids] = Set.new(params[:source_matrix_ids].collect{ |s| s.to_i}).to_a
         else
-          options[:for_sources] = params[:for_sources].to_sym
-          options[:plot_mode] ||= :points if options[:for_sources] == :any
+          options[:source_matrix_ids] = params[:source_matrix_ids].to_sym
+          options[:plot_mode] ||= :points if options[:source_matrix_ids] == :any
         end
       end
       
@@ -66,7 +65,7 @@ module Statistics
 
       @x_method = x_method
 
-      attribute_combinations = options_for_attributes(matrix, options[:series_by], options[:find_conditions])
+      attribute_combinations = ExperimentsPlot.options_for_attributes(matrix, options[:series_by], options[:find_conditions])
       @series = {}
       @series_long_names = {}
       attribute_combinations.each do |combo|
@@ -78,7 +77,7 @@ module Statistics
         @series[name].delete_if do |exp|
           exp.min_idf >= options[:min_idf_less_than] ||
           exp.max_distance <= options[:max_distance_greater_than] ||
-          #!same_sources?(exp, options[:for_sources]) ||
+          !same_sources?(exp, options[:for_sources]) ||
           exp.min_genes != options[:find_conditions][:min_genes]
         end
       end
@@ -97,7 +96,12 @@ module Statistics
       raise(ArgumentError, "y method must be a symbol, and plot id must be a string") unless y_method.is_a?(Symbol) && plot_id.is_a?(String)
 
       Flot.new(plot_id) do |f|
-        f.send @plot_mode, :radius => 1
+        if @plot_mode == :points
+          f.send(@plot_mode, :radius => 2)
+        else
+          f.send(@plot_mode)
+        end
+
         f.grid :hoverable => true
         f.legend :container => "##{plot_id}_legend"
         @series.each_pair do |series_id, experiments|
@@ -227,9 +231,8 @@ module Statistics
       true
     end
 
-    def options_for_attributes matrix, attr_array, find_conditions = {}
+    def self.options_for_attributes matrix, attr_array, find_conditions = {}
       select = "DISTINCT #{attr_array.collect{|a| a.to_s}.join(", ")}"
-      STDERR.puts "select is #{select}"
       combos = matrix.experiments.find(:all, :select => select, :conditions => find_conditions).collect do |exp|
         exp.attributes.delete_if{|attr,value| value.nil? }
       end

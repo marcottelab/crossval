@@ -15,7 +15,11 @@
             <li>rows: <%= predict_matrix.row_count %> / columns: <%= predict_matrix.column_count %></li>
             <li>cells: <%= predict_matrix.cells.count %></li>
             <li>density: <%= fractional_density(predict_matrix) %></li>
+          <%- if predict_matrix.is_a?(TreeMatrix) -%>
             <li>folds: <%= predict_matrix.children.count %> / <%= predict_matrix.has_grandchildren? ? 2 : 1 %></li>
+          <%- else -%>
+            <li>no folds</li>
+          <%- end -%>
             <li><%= experiments_progress_bar(predict_matrix) %></li>
           </ul>
 

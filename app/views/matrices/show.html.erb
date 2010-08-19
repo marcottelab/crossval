@@ -22,7 +22,13 @@
 
 <div class="container">
   <%- unless @matrix.is_a?(TreeMatrix) -%>
-    <%= link_to "Add Custom Phenotype", new_matrix_phenotype_path(@matrix) %>
+  <h3>Custom Phenotypes</h3>
+  <ul>
+  <%- @custom_phenotypes.each_pair do |id,phenotype| -%>
+    <li><%= id %>: <%= link_to phenotype.long_desc, matrix_phenotype_url(@matrix.id, id) %></li>
+  <%- end -%>
+  </ul>
+    <%= link_to "New Custom Phenotype", new_matrix_phenotype_path(@matrix) %>
   <%- end -%>
 </div>
 

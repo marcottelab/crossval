@@ -1,4 +1,11 @@
-<h1>Listing experiments</h1>
+<h1>Plots</h1>
+<ul>
+<li><%= link_to "ROC area versus PR area, series by k, for all source species", graph_matrix_url(@matrix.id) %></li>
+<li><%= link_to "ROC area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :roc_area) %></li>
+<li><%= link_to "PR area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :pr_area) %></li>
+</ul>
+
+<h1>Listing Experiments</h1>
 
 <table id="experiments" class="sortable">
   <tr>
@@ -39,5 +46,4 @@
 </table>
 
 <br />
-
-<%= link_to 'New experiment', '/experiments/new' %>
+<%= link_to 'New experiment', new_matrix_experiment_path(@matrix.id) %>
