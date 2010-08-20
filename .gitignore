@@ -1,5 +1,17 @@
 *.rb~
 *.erb~
+*.js~
+*.css~
+*.xcf
+*.jpg
+*.svg
+*.gnumeric
+*.sql
+log/
+README~
+nbproject/
+tmp/
+data/
 genes.At
 genes.Ce
 genes.Dm
