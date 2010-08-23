@@ -38,7 +38,7 @@
 #   min_genes, go ahead and set it higher than 2. Actually, it won't accept 2 or lower.
 # * The number of cross-validation steps to run is set by the number of children
 #   the predict_matrix has.
-class JohnExperiment < JohnPredictor
+class KnnExperiment < Experiment
 
   validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"  
 

@@ -2,16 +2,16 @@
 desc "make experiments for a given k"
 task :make_experiments, :needs => :environment do |t,arg|
   args = {
-    :predict_matrix_id => 1,
+    :predict_matrix_id => 247, # 1, # 247,
     :type => 'JohnExperiment',
-    :k => 100,
+    :k => 10,
     :methods => ["naivebayes", "average"],
     :distance_measures => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values,
     :min_idf => 0.0,
     :max_distance => 1.0,
     :min_genes => 2,
     :distance_exponent => 1.0,
-    :source_matrix_ids => [1,3,5,7,9,11]
+    :source_matrix_ids => [247,249,251,253,255,257], #[1,3,5,7,9,11], #[247,249,251,253,255,257]
   }
 
   puts "Setting up experiments..."

@@ -21,24 +21,6 @@
   <% end %>
   </table>
   
-  <h3>Predictors with John's methods</h3>
-  
-  <table class="matrix_experiments">
-  <%= render :partial => 'john_predictors/list_header' %>
-  <% john_predictors(experiments).each do |experiment| %>
-    <%= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
-  <% end %>
-  </table>
-
-  <%#*<h3>Distributions with John's methods</h3>%>
-
-  <%#*<table class="matrix_experiments">%>
-  <%#= render :partial => 'john_predictors/list_header' %>
-  <%# john_distributions(experiments).each do |experiment| %>
-    <%#= render :partial => 'john_predictors/item', :locals => {:experiment => experiment} %>
-  <%# end %>
-  <%#*</table>%>
-  <%#= render :partial => 'plot', :locals => {:canvas_id => 'experiment_roc_plot', :rocs => rocs} %>
 <%- else -%>
 <p><em>None found.</em></p>
 <%- end -%>

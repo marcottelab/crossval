@@ -1,3 +1,0 @@
-class MartinExperiment < Experiment
-
-end

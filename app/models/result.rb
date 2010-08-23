@@ -1,4 +1,4 @@
-class Roc < ActiveRecord::Base
+class Result < ActiveRecord::Base
   belongs_to :experiment
   belongs_to :phenotype, :foreign_key => :column
 

@@ -1,8 +1,8 @@
-class JohnExperimentsController < MatrixGenericController
+class KnnExperimentsController < MatrixGenericController
   # GET /experiments/new
   # GET /experiments/new.xml
   def new
-    @experiment = JohnExperiment.new(:predict_matrix_id => @matrix_id)
+    @experiment = KnnExperiment.new(:predict_matrix_id => @matrix_id)
     @experiment.sources.build
 
     respond_to do |format|
@@ -25,14 +25,14 @@ class JohnExperimentsController < MatrixGenericController
   end
 
   def update
-    @experiment = JohnExperiment.find(params[:id])
+    @experiment = KnnExperiment.find(params[:id])
 
     respond_to do |format|
       if !@experiment.run_result.nil? || !@experiment.started_at.nil?
         flash[:notice] = "You can't update an experiment that has been run or is running."
         format.html { redirect_to(@matrix) }
         format.xml  { render :xml => @experiment.errors, :status => :unprocessable_entity }
-      elsif @experiment.update_attributes(params[:john_experiment])
+      elsif @experiment.update_attributes(params[:knn_experiment])
         flash[:notice] = 'Experiment was successfully updated.'
         format.html { redirect_to(@matrix) }
         format.xml  { head :ok }
@@ -45,7 +45,7 @@ class JohnExperimentsController < MatrixGenericController
   end
 
   def create
-    @experiment = JohnExperiment.new(params[:john_experiment])
+    @experiment = KnnExperiment.new(params[:knn_experiment])
     # ensure_predict_matrix_set(@experiment, @matrix_id)
     
     if @experiment.save
@@ -57,7 +57,7 @@ class JohnExperimentsController < MatrixGenericController
   end
 
   def against
-    @experiment = JohnExperiment.find(params[:id])
+    @experiment = KnnExperiment.find(params[:id])
     @comparison = Experiment.find(params[:compare_id])
 
     @flot = plot_against(@experiment, @comparison)

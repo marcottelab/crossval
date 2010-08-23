@@ -106,6 +106,23 @@
 # Note that the Matrix (1) in the above path is the predict_matrix for Experiment 17.
 #
 class Experiment < ActiveRecord::Base
+  AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
+      "Manhattan" => "manhattan",
+      "Euclidean" => "euclidean",
+      "Jaccard" => "jaccard",
+      "Sorensen" => "sorensen",
+      "Cosine similarity" => "cosine",
+      "Tanimoto coefficient" => "tanimoto",
+      "Pearson correlation" => "pearson"}
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Average" => "average", "Simple" => "simple"}
+
+  validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
+  validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
+  validates_numericality_of :min_idf, :greater_than_or_equal_to => 0.0, :only_integer => false
+  validates_numericality_of :distance_exponent, :only_integer => false
+  validates_inclusion_of :method, :in => JohnPredictor::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
+  validates_inclusion_of :distance_measure, :in => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
+
   acts_as_commentable
 
   acts_as_tree :dependent => :destroy
@@ -147,7 +164,7 @@ class Experiment < ActiveRecord::Base
   AVAILABLE_DISTANCE_MEASURES = {}
 
   # Avoid overriding these functions:
-  
+
   alias_method :this_sources, :sources
   alias_method :this_source_matrices, :source_matrices
   # Override sources so they change along with those of the parent
@@ -155,6 +172,26 @@ class Experiment < ActiveRecord::Base
   def source_matrices; parent_id.nil? ? this_source_matrices : parent.source_matrices; end
   # Return the ancestor of this experiment or itself if there is no ancestor
   def ancestor_or_self; parent_id.nil? ? self : parent.ancestor_or_self ; end
+
+  def classifier_parameters
+    cp = {
+      :classifier => self.read_attribute(:method).to_sym,
+      :k => self.k,
+      :max_distance => self.max_distance || 1.0,
+      :distance_exponent => self.distance_exponent || 1.0
+    }
+  end
+
+  def setup_analysis
+    self.package_version = "Fastknn #{Fastknn::VERSION}"
+
+    dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
+    dm.distance_function = self.distance_measure.to_sym
+    dm.classifier = self.classifier_parameters
+    dm.min_idf = self.min_idf
+    dm
+  end
+
 
   def roc_plot phenotype_id
     require "gnuplot"
@@ -199,7 +236,7 @@ class Experiment < ActiveRecord::Base
       nil
     end
   end
-  
+
   def dir_exists? dir
     File.exists?(dir)
   end
@@ -219,6 +256,19 @@ class Experiment < ActiveRecord::Base
     self.predict_matrix.root_dir + directory_name
   end
 
+  # Differs from JohnExperiment in that it does not copy test sets.
+  # Also used by JohnDistribution.
+  def prepare_inputs
+    STDERR.puts("in prepare_inputs on #{self.class.to_s} (defined in JohnPredictor)")
+    prepare_inputs_internal do
+
+      prepare_standard_inputs
+
+      # No need for test sets.
+      # self.copy_testsets
+    end
+  end
+
   # Copy input files from each of the source matrices and the predict matrix.
   # Does nothing if the experiment directory already exists.
   def prepare_inputs_internal &block
@@ -236,11 +286,15 @@ class Experiment < ActiveRecord::Base
   # Override this for your specific experiment. This portion happens inside the
   # working directory where input and output should go.
   def run_analysis
-    STDERR.puts("Command: #{self.command_string}")
-      `#{self.command_string_with_pipes}`
-
-      # Get the exit status when the bin finishes.
-      self.run_result = $?.to_i
+    begin
+      analysis = setup_analysis
+      analysis.predict_and_write_all # no cross-validation
+    rescue ArgumentError
+      self.run_result = 1
+    rescue
+      self.run_result = 2
+    end
+    self.run_result = 0
   end
 
   # To be called by a Worker object, usually.
@@ -263,7 +317,7 @@ class Experiment < ActiveRecord::Base
       logger.error("Execution error for binary. Returned: #{self.run_result}")
     end
   end
-  
+
   def log_file
     "log.#{time_to_file_suffix(self.started_at || Time.now)}"
   end
@@ -271,7 +325,7 @@ class Experiment < ActiveRecord::Base
   def error_log_file
     "error_log.#{time_to_file_suffix(self.started_at || Time.now)}"
   end
-  
+
   #def argument_string
   #end
 
@@ -318,7 +372,7 @@ class Experiment < ActiveRecord::Base
   def aucs_bin_path
     Rails.root + "bin/calculate_aucs.py"
   end
-  
+
   def sort_results
     Dir.chdir(self.root) do
       `#{self.sort_bin_path} #{self.results_dir} predictions* 2>> #{self.error_log_file} 1>> #{self.log_file}`
@@ -329,17 +383,26 @@ class Experiment < ActiveRecord::Base
   # Be careful doing this -- particularly if this is being run in parallel, e.g.
   # jobs on different machines.
   def reset_for_new_run!
-    self.started_at   = nil
-    self.completed_at = nil
-    self.run_result   = nil
-    self.roc_area     = nil
-    self.pr_area      = nil
+    self.started_at       = nil
+    self.completed_at     = nil
+    self.run_result       = nil
+    self.roc_area         = nil
+    self.pr_area          = nil
+    self.package_version  = nil
     self.save!
 
-    self.clean_predictions_dirs
-    self.clean_temporary_files
-    
-    self # allow chaining
+    begin
+      self.clean_predictions_dirs
+    rescue Errno::ENOENT
+      Rails.logger.error("reset_for_new_run! was unable to remove non-existent directory")
+    end
+  end
+
+  # Remove intermediate predictions files
+  def clean_predictions_dirs
+    Dir.chdir(self.root) do
+      `rm -rf predictions*`
+    end
   end
 
   def command_string
@@ -369,7 +432,7 @@ class Experiment < ActiveRecord::Base
     children.each do |child|
       child.rocs.each { |roc| au[roc.column] << roc.auc }
       n += 1
-      
+
       # Add an empty if a certain index doesn't exist in this child:
       au.each_key { |col| if au[col].size < n; au[col] << nil; end }
     end
@@ -412,10 +475,10 @@ class Experiment < ActiveRecord::Base
     au.each_key do |k|
       au[k] << 0 if au[k].size < 2
     end
-    
+
     au.values
   end
-  
+
   def source_species
     sources.collect{ |m| m.source_species }.sort{ |a,b| Species.new(b) <=> Species.new(a) }
   end
@@ -436,7 +499,7 @@ class Experiment < ActiveRecord::Base
     results = []
     roc_area = 0.0
     pr_area  = 0.0
-    
+
     Dir.chdir(results_path) do
       rocker = Rocker.create predict_matrix_id, self.id
       results = rocker.process_results threshold
@@ -447,7 +510,14 @@ class Experiment < ActiveRecord::Base
     [results, roc_area, pr_area]
   end
 
+  def argument_string
+    "#{self.predict_matrix_id} <- [#{self.source_matrix_ids.join(", ")}] by #{self.distance_measure} using #{self.read_attribute(:method)} (k=#{self.k}, max_distance=#{self.max_distance || 1.0})"
+  end
+
 protected
+
+  def prepare_standard_inputs
+  end
 
   # Update the 'started_at' value and save. This needs to be fixed so it doesn't
   # call ActiveRecord::save! which will change other timestamps as well.
@@ -458,10 +528,8 @@ protected
     self.save!
   end
 
-  # Sort/calculate ROCs for an experiment. You can override this function for things
-  # like JohnDistribution so you calculate other things instead of ROCs.
+  # This'll be overridden again in JohnDistribution.
   def after_run
-    sort_results_and_calculate_rocs!
   end
 
   def sort_results_and_calculate_rocs!
@@ -497,7 +565,7 @@ protected
   def prepare_dir(dir = self.root)
     Dir.mkdir(dir) unless dir_exists?(dir)
   end
-  
+
   # BROKEN (I think)
   # Force a save without updating timestamps.
   # Used to update roc_area, which is not technically part of the model.
@@ -511,13 +579,13 @@ protected
       remove_method :record_timestamps
     end
   end
-  
+
   # Copy testsets from the predict_matrix to the experiment directory.
   def copy_testsets(options = {})
     raise(ArgumentError,"Requires a hash") if options.is_a?(String)
-    
+
     opts = {:prefix => "testset"}.merge options
-    
+
     # Copy testsets if applicable
     self.predict_matrix.children_file_paths(opts[:prefix]).each do |child_path|
       FileUtils.cp(child_path, self.root)
