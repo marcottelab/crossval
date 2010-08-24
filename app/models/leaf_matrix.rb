@@ -27,27 +27,8 @@ class LeafMatrix < TreeMatrix
   end
 
 protected
-
-  # write_contents writes the whole matrix, not a mask of it.
-  #
-  # This function writes just the mask.
-#  def write_cells_inverted(open_file)
-#    cells.each do |entry|
-#      entry.write(open_file)
-#    end
-#
-#    open_file
-#  end
-
   # We want to invert the stuff we write as if this weren't a mask.
   swap_methods :write_cells, :write_cells_inverted, :write_cells_temporary
   swap_methods :write_rows, :write_rows_inverted, :write_rows_temporary
-
-
-#  def write_rows_inverted(open_file)
-#    rows.each do |row|
-#      open_file.puts row
-#    end
-#  end
 
 end
