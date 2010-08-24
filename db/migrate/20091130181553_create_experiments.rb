@@ -16,6 +16,7 @@ class CreateExperiments < ActiveRecord::Migration
       t.datetime :completed_at
       t.float :mean_auroc
       t.float :mean_auprc
+      t.integer :run_result, :default => nil
 
       t.integer :parent_id # tree
       t.string :type #polymorphism

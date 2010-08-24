@@ -9,7 +9,6 @@ class CreatePhenotypes < ActiveRecord::Migration
     end
 
     add_index :phenotypes, :species
-    add_index :entries, :j # Needed for indexing phenotypes
   end
 
   def self.down

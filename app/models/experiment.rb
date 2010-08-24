@@ -120,8 +120,8 @@ class Experiment < ActiveRecord::Base
   validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
   validates_numericality_of :min_idf, :greater_than_or_equal_to => 0.0, :only_integer => false
   validates_numericality_of :distance_exponent, :only_integer => false
-  validates_inclusion_of :method, :in => JohnPredictor::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
-  validates_inclusion_of :distance_measure, :in => JohnPredictor::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
+  validates_inclusion_of :method, :in => Experiment::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
+  validates_inclusion_of :distance_measure, :in => Experiment::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
 
   acts_as_commentable
 
@@ -259,7 +259,7 @@ class Experiment < ActiveRecord::Base
   # Differs from JohnExperiment in that it does not copy test sets.
   # Also used by JohnDistribution.
   def prepare_inputs
-    STDERR.puts("in prepare_inputs on #{self.class.to_s} (defined in JohnPredictor)")
+    # STDERR.puts("in prepare_inputs on #{self.class.to_s} (defined in experiment.rb)")
     prepare_inputs_internal do
 
       prepare_standard_inputs

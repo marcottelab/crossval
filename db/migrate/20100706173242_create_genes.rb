@@ -17,9 +17,9 @@ class CreateGenes < ActiveRecord::Migration
     add_index :genes, :species
 
     # Let's populate the table with known Entrez gene IDs
-    say_with_time "Populating genes table from current matrices..." do
-      entries = Gene.populate_from_matrices
-    end
+    #say_with_time "Populating genes table from current matrices..." do
+    #  entries = Gene.populate_from_matrices
+    #end
   end
 
   def self.down

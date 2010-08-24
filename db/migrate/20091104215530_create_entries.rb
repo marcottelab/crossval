@@ -7,6 +7,7 @@ class CreateEntries < ActiveRecord::Migration
       t.string :type, :limit => 9, :null => false
     end
     add_index :entries, [:i, :j, :matrix_id], :unique => true
+    add_index :entries, :j # Needed for indexing phenotypes
   end
 
   def self.down

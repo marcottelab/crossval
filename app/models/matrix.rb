@@ -115,9 +115,7 @@ class Matrix < ActiveRecord::Base
   delegate :column_title, :to => :entry_info
 
   def integrators; self.experiments.by_type('Integrator'); end
-  def john_experiments; self.experiments.by_type('JohnExperiment'); end
-  def john_predictors; self.experiments.by_type('JohnPredictor'); end
-  def john_distributions; self.experiments.by_type('JohnDistribution'); end
+  def knn_experiments; self.experiments.by_type('KnnExperiment'); end
 
   FULL_SPECIES_NAME = {'Hs' => "Homo sapiens", 'At' => "Arabidopsis thaliana" }
 
@@ -208,6 +206,7 @@ class Matrix < ActiveRecord::Base
     matrix_copy = self.make_empty_copy uqr
     matrix_copy.title = self.title + "r"
     matrix_copy.column_species = self.column_species + "r"
+    matrix_copy.conjugate_id = self.id
 
     # Now we have to save the copy in order to do the randomization.
     matrix_copy.save!

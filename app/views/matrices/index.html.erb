@@ -10,7 +10,7 @@
         <li class="predict_matrix" id="pm%<= predict_matrix.id %>">
           <%= matrix_avatar_link(predict_matrix, true) %>
           <ul class="predict_matrix_info">
-            <li><%- if predict_matrix.conjugate_matrix_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(predict_matrix.conjugate_matrix_id), :title => "Show Random" %><%- end -%>
+            <li><%- if predict_matrix.conjugate_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(predict_matrix.conjugate_id), :title => "Show Random" %><%- end -%>
           <%= link_to 'Show', matrix_path(predict_matrix) %> <%= link_to 'Inspect', view_matrix_path(predict_matrix) %></li>
             <li>rows: <%= predict_matrix.row_count %> / columns: <%= predict_matrix.column_count %></li>
             <li>cells: <%= predict_matrix.cells.count %></li>
@@ -38,7 +38,7 @@
       <li>
       <% @source_matrices_by_species[species].each do |matrix| %>
         <ul class="info" id="info<%= matrix.id %>" style="display:none">
-          <li><%- if matrix.conjugate_matrix_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(matrix.conjugate_matrix_id), :title => "Show Random" %><%- end -%>
+          <li><%- if matrix.conjugate_id? -%><%= link_to image_tag('shuffle.png'), matrix_path(matrix.conjugate_id), :title => "Show Random" %><%- end -%>
           <%= link_to 'Show', matrix_path(matrix) %> <%= link_to 'Inspect', view_matrix_path(matrix) %></li>
           <li>rows: <%= matrix.row_count %> / columns: <%= matrix.column_count %></li>
           <li>cells: <%= matrix.cell_count %></li>
