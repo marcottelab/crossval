@@ -26,7 +26,7 @@ module ExperimentsHelper
 
   def link_to_experiment_if_appropriate(matrix, experiment, caption = nil)
     return nil if experiment.run_result != 0
-    if experiment.is_a?(JohnExperiment) || experiment.is_a?(MartinExperiment)
+    if experiment.is_a?(KnnExperiment) #|| experiment.is_a?(MartinExperiment)
       return nil if experiment.roc_area.nil?
       caption ||= experiment.roc_area.to_s
     else
@@ -36,11 +36,11 @@ module ExperimentsHelper
   end
 
   def select_method form, field, selected = "naivebayes"
-    form.select field, form.object.class::AVAILABLE_METHODS, :selected => selected
+    form.select field, Experiment::AVAILABLE_METHODS, :selected => selected
   end
 
   def select_distance_measure form, field, selected = "hypergeometric"
-    form.select field, form.object.class::AVAILABLE_DISTANCE_MEASURES, :selected => selected
+    form.select field, Experiment::AVAILABLE_DISTANCE_MEASURES, :selected => selected
   end
 
   def select_validation_type form, field, selected = "row"
@@ -59,28 +59,8 @@ module ExperimentsHelper
     collect_by_type experiments, "Integrator"
   end
 
-  def john_experiments(experiments)
-    collect_by_type experiments, "JohnExperiment"
-  end
-
-  def john_predictors(experiments)
-    collect_by_type experiments, "JohnPredictor"
-  end
-
-  def john_distributions(experiments)
-    collect_by_type experiments, "JohnDistribution"
-  end
-
-  def martin_experiments(experiments)
-    collect_by_type experiments, "MartinExperiment"
-  end
-
-  def martin_predictors(experiments)
-    collect_by_type experiments, "MartinPredictor"
-  end
-
-  def martin_distributions(experiments)
-    collect_by_type experiments, "MartinDistribution"
+  def knn_experiments(experiments)
+    collect_by_type experiments, "KnnExperiment"
   end
 
   def link_to_experiment_with_when_completed(matrix, experiment)

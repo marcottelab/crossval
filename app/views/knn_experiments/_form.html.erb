@@ -3,11 +3,8 @@
 <%= f.hidden_field :predict_matrix_id %>
 
 <dl>
-  <dt><%= f.label :note %></dt>
-  <dd class="noline"><%= f.text_area :note, :size => "40x3" %></dd>
-
   <dt><%= f.label :method, "Classifier" %></dt>
-  <dd><%= select_method f, :method %></dd>
+  <dd class="noline"><%= select_method f, :method %></dd>
 
   <dt><%= f.label :distance_measure, "Distance Function" %></dt>
   <dd><%= select_distance_measure f, :distance_measure %></dd>

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-default_port = 80
+default_port = 3002
 
 if RAILS_ENV='development'
   ARGV << "-p#{default_port}" unless ARGV.to_s.include?("-p")

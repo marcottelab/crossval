@@ -687,7 +687,6 @@ SQL
 
   # Write the cells of the matrix.
   def write_cells(open_file)
-    STDERR.puts("write_cells in matrix.rb")
     cells.each do |entry|
       entry.write(open_file)
     end

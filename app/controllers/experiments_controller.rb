@@ -11,7 +11,7 @@ class ExperimentsController < MatrixGenericController
   # GET /experiments/1
   # GET /experiments/1.xml
   def show
-    find_experiment :include => :rocs
+    find_experiment :include => :results
     if @experiment.child_ids.size > 0
       @flot        = plot_experiment_with_children(@experiment)
     elsif @experiment.has_run_successfully?

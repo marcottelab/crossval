@@ -22,13 +22,13 @@
     <th>AUPRC</th>
     <th>Genes</th>
   </tr>
-<%- @experiment.rocs.each do |roc| -%>
+<%- @experiment.results.each do |result| -%>
   <tr>
-    <td><%= link_to_phenotype(roc) %></td>
+    <td><%= link_to_phenotype(result) %></td>
     <td><%= roc.phenotype.long_desc %></td>
-    <td><%= sprintf("%#1.6f", roc.auc) %></td>
-    <td><%= roc.pr_area %></td>
-    <td><%= roc.false_negatives + roc.true_positives %></td>
+    <td><%= sprintf("%#1.6f", result.auc) %></td>
+    <td><%= result.pr_area %></td>
+    <td><%= result.false_negatives + result.true_positives %></td>
   </tr>
 <%- end -%>
 </table>

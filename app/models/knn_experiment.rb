@@ -57,11 +57,17 @@ class KnnExperiment < Experiment
   end
 
   def after_run
-    sort_results_and_calculate_rocs!
+    sort_results_and_calculate_results!
   end
 
   def before_run
     prepare_inputs
+  end
+
+protected
+  # Don't need to do anything for prepare_standard_inputs -- Fastknn gets stuff
+  # from database on its own, without intermediate files.
+  def prepare_standard_inputs
   end
 
 end

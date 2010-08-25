@@ -97,7 +97,7 @@
 #
 # Upon completion of sort, the statistical module will read in the results and
 # compute AUCs for each phenotype. These AUCs are stored in Roc objects. Again,
-# each Experiment has_many :rocs, so you can access them as x.rocs (where x is
+# each Experiment has_many :results, so you can access them as x.results (where x is
 # an Experiment). You can also view them by going to the show action for an
 # Experiment in your web browser, e.g.:
 #
@@ -132,7 +132,7 @@ class Experiment < ActiveRecord::Base
   alias :predict_species :column_species
   has_many :sources, :dependent => :destroy
   has_many :source_matrices, :through => :sources, :foreign_key => :source_matrix_id, :class_name => "Matrix", :readonly => true
-  has_many :rocs, :dependent => :destroy
+  has_many :results, :dependent => :destroy
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
   named_scope :not_run, :conditions => {:roc_area => nil}
@@ -159,9 +159,6 @@ class Experiment < ActiveRecord::Base
 
   # These things should be fetched from the parent if a parent is set.
   delegate_to_parent :k, :distance_measure, :method, :min_genes, :min_idf, :max_distance, :distance_exponent
-
-  AVAILABLE_METHODS = {}
-  AVAILABLE_DISTANCE_MEASURES = {}
 
   # Avoid overriding these functions:
 
@@ -415,22 +412,22 @@ class Experiment < ActiveRecord::Base
 
   # Get the points that make up the ROC plot for this experiment
   def roc_line
-    roc_y_values = self.rocs.collect { |r| r.auc }
+    roc_y_values = self.results.collect { |r| r.auc }
     roc_x_values = Array.new(roc_y_values.size) { |r| r / roc_y_values.size.to_f }
     roc_x_values.zip roc_y_values.sort
   end
 
   def aucs_by_column
-    self.rocs.collect { |ro| [ro.column, ro.auc] }
+    self.results.collect { |ro| [ro.column, ro.auc] }
   end
 
   def aucs_by_column_with_children
     au = {}
-    rocs.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    results.each { |roc|  au[roc.column] = [ roc.auc ]  }
     n = 1
 
     children.each do |child|
-      child.rocs.each { |roc| au[roc.column] << roc.auc }
+      child.results.each { |roc| au[roc.column] << roc.auc }
       n += 1
 
       # Add an empty if a certain index doesn't exist in this child:
@@ -446,10 +443,10 @@ class Experiment < ActiveRecord::Base
 
   def aucs_by_column_with_mean
     au = {}
-    rocs.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    results.each { |roc|  au[roc.column] = [ roc.auc ]  }
 
     children.each do |child|
-      child.rocs.each { |roc| au[roc.column] << roc.auc }
+      child.results.each { |roc| au[roc.column] << roc.auc }
     end
     yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
     yvalues = yvaluest.collect { |yt| shifted_mean(yt) }
@@ -463,9 +460,9 @@ class Experiment < ActiveRecord::Base
 
   def aucs_against experiment
     au = Hash.new { |h,k| h[k] = [] }
-    rocs.each { |roc|            au[roc.column] << roc.auc  }
+    results.each { |roc|            au[roc.column] << roc.auc  }
 
-    experiment.rocs.each do |roc|
+    experiment.results.each do |roc|
       if au.has_key?(roc.column)
         au[roc.column] << roc.auc
       else
@@ -492,8 +489,8 @@ class Experiment < ActiveRecord::Base
     Dir.entries(root).reject { |e| e == "." || e == ".." }
   end
 
-  # Calculate more rocs but this time don't save and use a threshold.
-  def calculate_extra_rocs threshold = 0.0
+  # Calculate more results but this time don't save and use a threshold.
+  def calculate_extra_results threshold = 0.0
     Rails.logger.info("Calling Rocker C++ extension (Rocker gem)")
 
     results = []
@@ -532,19 +529,19 @@ protected
   def after_run
   end
 
-  def sort_results_and_calculate_rocs!
+  def sort_results_and_calculate_results!
     # Call the script which sorts results into a separate directory.
     self.sort_results
 
     # Calculating the AUCs also marks the task as completed and saves the record.
-    # STDERR.puts("Calling calculate_rocs!")
-    self.calculate_rocs!
-    # STDERR.puts("Done calling calculate_rocs!")
+    # STDERR.puts("Calling calculate_results!")
+    self.calculate_results!
+    # STDERR.puts("Done calling calculate_results!")
     self.completed_at = Time.now
     self.save!
   end
 
-  def calculate_rocs! threshold = 0.0
+  def calculate_results! threshold = 0.0
     Rails.logger.info("Calling Rocker C++ extension (Rocker gem)")
     Dir.chdir(results_path) do
       # This automatically inserts into the database:
