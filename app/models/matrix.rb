@@ -117,7 +117,14 @@ class Matrix < ActiveRecord::Base
   def integrators; self.experiments.by_type('Integrator'); end
   def knn_experiments; self.experiments.by_type('KnnExperiment'); end
 
-  FULL_SPECIES_NAME = {'Hs' => "Homo sapiens", 'At' => "Arabidopsis thaliana" }
+  FULL_SPECIES_NAME = {
+    'Hs' => "Homo sapiens",
+    'At' => "Arabidopsis thaliana",
+    'Mm' => "Mus musculus",
+    'Ce' => "Caenorhabditis elegans",
+    'Sc' => "Saccharomyces cerevisiae",
+    'Dm' => "Drosophila melanogaster"
+    }
 
   # Get a hash of statistics on this matrix.
   def statistics

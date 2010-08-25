@@ -27,8 +27,9 @@ task :load_matrices, :row_species, :randomize, :needs => :environment do |t,args
     puts("Loading the following matrices: #{species_list.join(", ")}")
     
     species_list.each do |species|
-      say_with_time "Generating matrix for #{species}" do
-        m = NodeMatrix.create_from_file_pair!("genes.#{species}", "genes_phenes.#{species}",
+      
+      m = say_with_time "Generating matrix for #{species}" do
+        NodeMatrix.create_from_file_pair!("genes.#{species}", "genes_phenes.#{species}",
           :title          => "genes_phenes.#{species}", # This can probably change.
           :column_species => species,
           :row_species    => row_species)
@@ -36,7 +37,8 @@ task :load_matrices, :row_species, :randomize, :needs => :environment do |t,args
       
       if args.randomize
         say_with_time "Generating random matrix for #{species}" do
-          mr = m.copy_and_randomize.save!
+          mr = m.copy_and_randomize
+          mr.save!
           m.update_attribute(:conjugate_id, mr.id)
         end
       end
