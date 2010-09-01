@@ -1,3 +1,9 @@
+# First column should be TAIR loci.
+# Second column should be EntrezGene ID.
+# Can be obtained from biomart (google it).
+# Automatically ignores lines that have no mapping (empty second column).
+# Put the file in numeric.mart in data/Sp/ where Sp is At or whatever other
+# species you want.
 def load_mart filename
   f = File.new(filename, "r")
   t = {} # transform by
@@ -57,8 +63,9 @@ end
 
 
 #numeric_loci.rake
-desc "Attempt to convert non-numeric loci in matrix files to numeric loci via numeric.mart"
+desc "Attempt to convert non-numeric loci in matrix files to numeric loci via numeric.mart (TAIR locus, EntrezGene ID)"
 task :numeric_loci, :row_species, :needs => :environment do |t,args|
+  args.with_defaults({:row_species => "At"})
 
   row_species = args.row_species.speciesize
 
