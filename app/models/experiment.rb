@@ -333,7 +333,7 @@ class Experiment < ActiveRecord::Base
 
   # Returns whether this has finished running and has done so successfully
   def has_run_successfully?
-    self.run_result == 0 && !self.roc_area.nil?
+    self.run_result == 0 && !self.mean_auroc.nil?
   end
 
   def children_have_been_run_successfully?
@@ -417,11 +417,11 @@ class Experiment < ActiveRecord::Base
     roc_x_values.zip roc_y_values.sort
   end
 
-  def aucs_by_column
-    self.results.collect { |ro| [ro.column, ro.auc] }
+  def roc_areas_by_column
+    results.collect { |ro| [ro.column, ro.roc_area] }
   end
 
-  def aucs_by_column_with_children
+  def roc_areas_by_column_with_children
     au = {}
     results.each { |roc|  au[roc.column] = [ roc.auc ]  }
     n = 1
@@ -441,12 +441,12 @@ class Experiment < ActiveRecord::Base
     yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
   end
 
-  def aucs_by_column_with_mean
+  def roc_areas_by_column_with_mean
     au = {}
-    results.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    results.each { |r|  au[r.column] = [ r.roc_area ]  }
 
     children.each do |child|
-      child.results.each { |roc| au[roc.column] << roc.auc }
+      child.results.each { |r| au[r.column] << r.roc_area }
     end
     yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
     yvalues = yvaluest.collect { |yt| shifted_mean(yt) }
@@ -458,7 +458,7 @@ class Experiment < ActiveRecord::Base
     #yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
   end
 
-  def aucs_against experiment
+  def roc_areas_against experiment
     au = Hash.new { |h,k| h[k] = [] }
     results.each { |roc|            au[roc.column] << roc.auc  }
 

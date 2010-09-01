@@ -93,8 +93,8 @@ module Statistics
         :plot_mode => :lines,
         :series_by => [:method, :distance_measure],
         :predict_matrix_id => 1,
-        :x_method => :roc_area,
-        :y_method => :pr_area,
+        :x_method => :mean_auroc,
+        :y_method => :mean_auprc,
         :order_by => :k
       })
 

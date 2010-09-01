@@ -41,9 +41,9 @@ protected
   end
 
   def plot_experiment_with_children experiment
-    exp_aucs = experiment.aucs_by_column
+    exp_aucs = experiment.roc_areas_by_column
     experiment.children.each do |child|
-      child.aucs_by_column.each do |column_auc|
+      child.roc_areas_by_column.each do |column_auc|
         exp_aucs
       end
     end
@@ -57,7 +57,7 @@ protected
       f.selection :mode => "xy"
 
 
-      roc_lines = experiment.aucs_by_column_with_mean
+      roc_lines = experiment.roc_areas_by_column_with_mean
 
       f.series "#{experiment.id}: #{experiment.title}", roc_lines.first, :lines => {:show => true}, :points => {:show => false, :radius => 1.1} #sorted_exp_aucs
 

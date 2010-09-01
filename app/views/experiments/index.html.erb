@@ -1,8 +1,8 @@
 <h1>Plots</h1>
 <ul>
 <li><%= link_to "ROC area versus PR area, series by k, for all source species", graph_matrix_url(@matrix.id) %></li>
-<li><%= link_to "ROC area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :roc_area) %></li>
-<li><%= link_to "PR area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :pr_area) %></li>
+<li><%= link_to "ROC area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :mean_auroc) %></li>
+<li><%= link_to "PR area by k, for all source species", graph_matrix_url(@matrix.id, :x_method => :k, :y_method => :mean_auprc) %></li>
 </ul>
 
 <h1>Listing Experiments</h1>
@@ -37,8 +37,8 @@
     <td><%=h experiment.method == "average" ? "NA" : experiment.distance_exponent %></td>
     <td><%=h experiment.min_idf %></td>
     <td><%=h experiment.run_result %></td>
-    <td><%=h experiment.roc_area %></td>
-    <td><%=h experiment.pr_area %></td>
+    <td><%=h experiment.mean_auroc %></td>
+    <td><%=h experiment.mean_auprc %></td>
     <td><%=h experiment.package_version %></td>
     <td><%= link_to_experiment_if_appropriate(@matrix, experiment, "Show") %></td>
   </tr>

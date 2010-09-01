@@ -145,7 +145,7 @@ protected
     @aurocs = {}
     @auprcs = {}
     @experiments.each do |experiment|
-      @aurocs[experiment.id],@auprcs[experiment.id] = experiment.rocs.spark_areas(mult)
+      @aurocs[experiment.id],@auprcs[experiment.id] = experiment.results.spark_areas(mult)
     end
   end
 

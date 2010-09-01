@@ -18,17 +18,17 @@
   <tr>
     <th class="startsort">ID</th>
     <th><%= @experiment.predict_matrix.column_title %></th>
-    <th>AUROC</th>
-    <th>AUPRC</th>
+    <th>ROC area</th>
+    <th>PR area</th>
     <th>Genes</th>
   </tr>
 <%- @experiment.results.each do |result| -%>
   <tr>
     <td><%= link_to_phenotype(result) %></td>
-    <td><%= roc.phenotype.long_desc %></td>
-    <td><%= sprintf("%#1.6f", result.auc) %></td>
-    <td><%= result.pr_area %></td>
-    <td><%= result.false_negatives + result.true_positives %></td>
+    <td><%= result.phenotype.long_desc %></td>
+    <td><%= sprintf("%#1.6f", result.roc_area) %></td>
+    <td><%= sprintf("%#1.6f", result.pr_area) %></td>
+    <td><%= result.gene_count %></td>
   </tr>
 <%- end -%>
 </table>
