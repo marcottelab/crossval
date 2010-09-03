@@ -106,22 +106,7 @@
 # Note that the Matrix (1) in the above path is the predict_matrix for Experiment 17.
 #
 class Experiment < ActiveRecord::Base
-  AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
-      "Manhattan" => "manhattan",
-      "Euclidean" => "euclidean",
-      "Jaccard" => "jaccard",
-      "Sorensen" => "sorensen",
-      "Cosine similarity" => "cosine",
-      "Tanimoto coefficient" => "tanimoto",
-      "Pearson correlation" => "pearson"}
-  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Average" => "average", "Simple" => "simple"}
-
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
-  validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
-  validates_numericality_of :min_idf, :greater_than_or_equal_to => 0.0, :only_integer => false
-  validates_numericality_of :distance_exponent, :only_integer => false
-  validates_inclusion_of :method, :in => Experiment::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
-  validates_inclusion_of :distance_measure, :in => Experiment::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
 
   acts_as_commentable
 
@@ -141,53 +126,25 @@ class Experiment < ActiveRecord::Base
   named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
 
   # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
-  named_scope :by_k, lambda { |k| {:conditions => {:k => k}}}
-  named_scope :by_min_genes, lambda { |m| {:conditions => {:min_genes => m}}}
-  named_scope :by_distance_measure, lambda { |d| {:conditions => {:distance_measure => d.to_s}}}
-  named_scope :by_distance_exponent, lambda { |d| {:conditions => {:distance_exponent => d}}}
-  named_scope :by_method, lambda { |m| {:conditions => {:method => m.to_s}}}
   named_scope :by_matrix_id, lambda { |m| {:conditions => {:predict_matrix_id => m}}}
-  named_scope :by_max_distance, lambda { |m| {:conditions => {:max_distance => m}}}
-  named_scope :by_min_idf, lambda { |m| {:conditions => {:min_idf => m}}}
   named_scope :order_by, lambda { |o| {:order => o} }
 
-  # Make sure sources are valid
-  validates_associated :sources
+  validates_associated :sources  # Make sure sources are valid
 
-  # Make sure child experiments are updated
-  after_create :prepare_children
+  after_create :prepare_children # Make sure child experiments are updated
 
   # These things should be fetched from the parent if a parent is set.
   delegate_to_parent :k, :distance_measure, :method, :min_genes, :min_idf, :max_distance, :distance_exponent
 
   # Avoid overriding these functions:
-
   alias_method :this_sources, :sources
   alias_method :this_source_matrices, :source_matrices
+  
   # Override sources so they change along with those of the parent
   def sources; parent_id.nil? ? this_sources : parent.sources; end
   def source_matrices; parent_id.nil? ? this_source_matrices : parent.source_matrices; end
   # Return the ancestor of this experiment or itself if there is no ancestor
   def ancestor_or_self; parent_id.nil? ? self : parent.ancestor_or_self ; end
-
-  def classifier_parameters
-    cp = {
-      :classifier => self.read_attribute(:method).to_sym,
-      :k => self.k,
-      :max_distance => self.max_distance || 1.0,
-      :distance_exponent => self.distance_exponent || 1.0
-    }
-  end
-
-  def setup_analysis
-    self.package_version = "Fastknn #{Fastknn::VERSION}"
-
-    dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
-    dm.distance_function = self.distance_measure.to_sym
-    dm.classifier = self.classifier_parameters
-    dm.min_idf = self.min_idf
-    dm
-  end
 
 
   def roc_plot phenotype_id
@@ -333,7 +290,7 @@ class Experiment < ActiveRecord::Base
 
   # Returns whether this has finished running and has done so successfully
   def has_run_successfully?
-    self.run_result == 0 && !self.roc_area.nil?
+    self.run_result == 0 && !self.mean_auroc.nil?
   end
 
   def children_have_been_run_successfully?
@@ -417,11 +374,11 @@ class Experiment < ActiveRecord::Base
     roc_x_values.zip roc_y_values.sort
   end
 
-  def aucs_by_column
-    self.results.collect { |ro| [ro.column, ro.auc] }
+  def roc_areas_by_column
+    results.collect { |ro| [ro.column, ro.roc_area] }
   end
 
-  def aucs_by_column_with_children
+  def roc_areas_by_column_with_children
     au = {}
     results.each { |roc|  au[roc.column] = [ roc.auc ]  }
     n = 1
@@ -441,12 +398,12 @@ class Experiment < ActiveRecord::Base
     yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
   end
 
-  def aucs_by_column_with_mean
+  def roc_areas_by_column_with_mean
     au = {}
-    results.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    results.each { |r|  au[r.column] = [ r.roc_area ]  }
 
     children.each do |child|
-      child.results.each { |roc| au[roc.column] << roc.auc }
+      child.results.each { |r| au[r.column] << r.roc_area }
     end
     yvaluest = au.values.sort { |x,y| x[0] <=> y[0] } # sort by first col
     yvalues = yvaluest.collect { |yt| shifted_mean(yt) }
@@ -458,7 +415,7 @@ class Experiment < ActiveRecord::Base
     #yvaluest.transpose.collect { |yvector| xvalues.zip(yvector) }
   end
 
-  def aucs_against experiment
+  def roc_areas_against experiment
     au = Hash.new { |h,k| h[k] = [] }
     results.each { |roc|            au[roc.column] << roc.auc  }
 

@@ -27,8 +27,8 @@ module ExperimentsHelper
   def link_to_experiment_if_appropriate(matrix, experiment, caption = nil)
     return nil if experiment.run_result != 0
     if experiment.is_a?(KnnExperiment) #|| experiment.is_a?(MartinExperiment)
-      return nil if experiment.roc_area.nil?
-      caption ||= experiment.roc_area.to_s
+      return nil if experiment.mean_auroc.nil?
+      caption ||= experiment.mean_auroc.to_s
     else
       caption ||= "Distribution"
     end
@@ -82,14 +82,14 @@ module ExperimentsHelper
     end
   end
 
-  def link_to_phenotype roc_or_phenotype_id
+  def link_to_phenotype result_or_phenotype_id
     p = nil
-    if roc_or_phenotype_id.is_a?(Roc)
-      p = Phenotype.find(roc_or_phenotype_id.column)
-    elsif roc_or_phenotype_id.is_a?(Phenotype)
-      p = roc_or_phenotype_id
+    if result_or_phenotype_id.is_a?(Result)
+      p = Phenotype.find(result_or_phenotype_id.column)
+    elsif result_or_phenotype_id.is_a?(Phenotype)
+      p = result_or_phenotype_id
     else
-      p = Phenotype.find(roc_or_phenotype_id)
+      p = Phenotype.find(result_or_phenotype_id)
     end
     
 

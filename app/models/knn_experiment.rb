@@ -39,8 +39,50 @@
 # * The number of cross-validation steps to run is set by the number of children
 #   the predict_matrix has.
 class KnnExperiment < Experiment
+  AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
+      "Manhattan" => "manhattan",
+      "Euclidean" => "euclidean",
+      "Jaccard" => "jaccard",
+      "Sorensen" => "sorensen",
+      "Cosine similarity" => "cosine",
+      "Tanimoto coefficient" => "tanimoto",
+      "Pearson correlation" => "pearson"}
+  AVAILABLE_METHODS = {"Naive Bayes" => "naivebayes", "Average" => "average", "Simple" => "simple"}
 
-  validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"  
+  validates_numericality_of :max_distance, :greater_than => 0.0, :less_than_or_equal_to => 1.0, :only_integer => false, :allow_nil => true, :message => "should be positive and less than 1.0"
+  validates_numericality_of :min_idf, :greater_than_or_equal_to => 0.0, :only_integer => false
+  validates_numericality_of :distance_exponent, :only_integer => false
+  validates_inclusion_of :method, :in => Experiment::AVAILABLE_METHODS.values, :message => "method '{{value}}' is not specified"
+  validates_inclusion_of :distance_measure, :in => Experiment::AVAILABLE_DISTANCE_MEASURES.values, :message => "distance function '{{value}}' is not specified"
+  validates_numericality_of :k, :greater_than => 0, :only_integer => true, :message => "should be greater than 0"
+
+  # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
+  named_scope :by_k, lambda { |k| {:conditions => {:k => k}}}
+  named_scope :by_min_genes, lambda { |m| {:conditions => {:min_genes => m}}}
+  named_scope :by_distance_measure, lambda { |d| {:conditions => {:distance_measure => d.to_s}}}
+  named_scope :by_distance_exponent, lambda { |d| {:conditions => {:distance_exponent => d}}}
+  named_scope :by_method, lambda { |m| {:conditions => {:method => m.to_s}}}
+  named_scope :by_max_distance, lambda { |m| {:conditions => {:max_distance => m}}}
+  named_scope :by_min_idf, lambda { |m| {:conditions => {:min_idf => m}}}
+
+  def classifier_parameters
+    cp = {
+      :classifier => self.read_attribute(:method).to_sym,
+      :k => self.k,
+      :max_distance => self.max_distance || 1.0,
+      :distance_exponent => self.distance_exponent || 1.0
+    }
+  end
+
+  def setup_analysis
+    self.package_version = "Fastknn #{Fastknn::VERSION}"
+
+    dm = Fastknn.fetch_distance_matrix self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2)
+    dm.distance_function = self.distance_measure.to_sym
+    dm.classifier = self.classifier_parameters
+    dm.min_idf = self.min_idf
+    dm
+  end
 
   def run_analysis
     begin

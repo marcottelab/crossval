@@ -13,20 +13,16 @@
 <table id="experiment_rocs">
   <tr>
     <th><%= @experiment.predict_matrix.column_title %></th>
-    <th>AUC</th>
-    <th>TP</th>
-    <th>FP</th>
-    <th>TN</th>
-    <th>FN</th>
+    <th>ROC area</th>
+    <th>PR area</th>
+    <th>Genes</th>
   </tr>
-<%- @experiment.rocs.each do |roc| -%>
+<%- @experiment.results.each do |result| -%>
   <tr>
-    <td><%= roc.column %></td>
-    <td><%= roc.auc %></td>
-    <td><%= roc.true_positives %></td>
-    <td><%= roc.false_positives %></td>
-    <td><%= roc.true_negatives %></td>
-    <td><%= roc.false_negatives %></td>
+    <td><%= result.column %></td>
+    <td><%= result.roc_area %></td>
+    <td><%= result.pr_area %></td>
+    <td><%= result.gene_count %></td>
   </tr>
 <%- end -%>
 </table>
