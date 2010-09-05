@@ -39,7 +39,6 @@
 # * The number of cross-validation steps to run is set by the number of children
 #   the predict_matrix has.
 class KnnExperiment < Experiment
-
   AVAILABLE_DISTANCE_MEASURES = {"Hypergeometric" => "hypergeometric",
       "Manhattan" => "manhattan",
       "Euclidean" => "euclidean",

@@ -23,12 +23,8 @@ class Integrator < Experiment
     s.to_a
   end
 
-  def argument_string
-    "-m #{method} -s #{self.source_species_to_s}"
-  end
-
   def title
-    "Need a title! (#{id})"
+    "Basic integrator (#{id})"
   end
 
 protected
@@ -47,32 +43,8 @@ protected
     check_integrands_before_run
   end
 
-  # Generates row and column files, makes sure they're in the right directory.
-  # Only call from within prepare_inputs_internal, as this guarantees we're in
-  # the correct directory and such.
+
+  # Don't do anything; let
   def prepare_standard_inputs
-    # Don't need this for integrator -- inputs have to come from experiment outputs.
-    # cell_files = self.copy_source_matrix_inputs
-
-    # Do we need these? Probably need row file, not sure about column file.
-    #self.generate_row_file(cell_files)
-    #self.generate_column_file
-
-    # Almost certainly need these, for cross-validation:
-    # Only copy the predict matrix cells file if it didn't come from one of the
-    # source matrices.
-    #unless cell_files.include?(self.predict_matrix.cell_file_path)
-    FileUtils.cp(self.predict_matrix.cell_file_path, self.root)
-    #end
-  end
-
-  def prepare_inputs
-    prepare_inputs_internal do
-
-      prepare_standard_inputs
-
-      # No need for test sets.
-      # self.copy_testsets
-    end
   end
 end
