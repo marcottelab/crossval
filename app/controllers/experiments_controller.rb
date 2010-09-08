@@ -14,6 +14,8 @@ class ExperimentsController < MatrixGenericController
     find_experiment :include => :results
     if @experiment.is_a?(Integrator)
       find_best_classifiers(@experiment)
+      p = Statistics::ExperimentPlot.new(@experiment)
+      @flot = p.flot(:area_under_roc)
     else
       if @experiment.child_ids.size > 0
         @flot        = plot_experiment_with_children(@experiment)

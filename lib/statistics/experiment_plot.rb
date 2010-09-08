@@ -3,19 +3,19 @@ module Statistics
     # Load an experiment and its ROCs. If it doesn't have any at the requested threshold, do a temporary read.
     def initialize experiment_or_id
       @experiment = experiment_or_id.is_a?(Fixnum) ? Experiment.find(experiment_or_id) : experiment_or_id
-      @rocs       = @experiment.rocs
+      @results       = @experiment.results
     end
 
     # Get the points for drawing a ROC plot.
     def area_under_roc
-      ys = @rocs.collect { |r| r.auc }
+      ys = @results.collect { |r| r.roc_area }
       xs = Array.new(ys.size) { |r| r / ys.size.to_f }
       xs.zip(ys.sort)
     end
 
     def precision_recall
       # x: recall, y: precision
-      @rocs.collect{ |r| [recall(r), precision(r)] }.sort_by{|r| r[1] }
+      @results.collect{ |r| [recall(r), precision(r)] }.sort_by{|r| r[1] }
     end
 
     def precision roc
