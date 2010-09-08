@@ -30,12 +30,22 @@
     <td><%=h experiment.id %></td>
     <td><%=h experiment.method %></td>
     <td><%=h experiment.distance_measure %></td>
-    <td><%=h experiment.source_matrix_ids.sort{|a,b| a.to_i <=> b.to_i}.join(", ") %></td>
-    <td><%=h experiment.k %></td>
-    <td><%=h experiment.min_genes %></td>
-    <td><%=h experiment.max_distance %></td>
-    <td><%=h experiment.method == "average" ? "NA" : experiment.distance_exponent %></td>
-    <td><%=h experiment.min_idf %></td>
+    <%- if experiment.is_a?(Integrator) %>
+      <td><%=h experiment.experiment_ids.sort{|a,b| a.to_i <=> b.to_i}.join(", ") %> (experiments)</td>
+    <%- else -%>
+      <td><%=h experiment.source_matrix_ids.sort{|a,b| a.to_i <=> b.to_i}.join(", ") %></td>
+    <%- end -%>
+
+    <%- if experiment.is_a?(Integrator) -%>
+      <td colspan="5">not applicable</td>
+    <%- else -%>
+      <td><%=h experiment.k %></td>
+      <td><%=h experiment.min_genes %></td>
+      <td><%=h experiment.max_distance %></td>
+      <td><%=h experiment.method == "average" ? "NA" : experiment.distance_exponent %></td>
+      <td><%=h experiment.min_idf %></td>
+    <%- end -%>
+      
     <td><%=h experiment.run_result %></td>
     <td><%=h experiment.mean_auroc %></td>
     <td><%=h experiment.mean_auprc %></td>

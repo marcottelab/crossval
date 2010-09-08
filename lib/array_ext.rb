@@ -1,9 +1,25 @@
 class Array
-#  def sum
-#    inject(0) { |sum,x| sum + x}
-#  end
-  def mean
-    (size > 0) ? sum.to_f / size : 0
+
+  # Gives the array mean as a float. Can specify a different converter instead,
+  # e.g., median(:to_i) for truncation.
+  def mean(sym = :to_f)
+    (size > 0) ? sum.to_f / size.send(sym) : 0.send(sym)
+  end
+
+  # Gives the array median as a float. Can specify a different converter instead,
+  # e.g., median(:to_i) for truncation.
+  def median(sym = :to_f)
+    return nil if size == 0
+
+    tmp = self.dup.sort
+    middle  = (tmp.size - 1) / 2
+    middle2 = tmp.size / 2
+
+    if tmp.size % 2 == 0
+      (tmp[middle] + tmp[middle2]) / 2.send(sym)
+    else
+      tmp[middle].send(sym)
+    end
   end
 
   # Don't consider certain ActiveRecord information when calculating uniq using

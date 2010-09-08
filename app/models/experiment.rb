@@ -120,10 +120,21 @@ class Experiment < ActiveRecord::Base
   has_many :results, :dependent => :destroy
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
-  named_scope :not_run, :conditions => {:roc_area => nil}
+  named_scope :not_run, :conditions => {:mean_auroc => nil, :mean_auprc => nil}
   named_scope :not_completed, :conditions => {:completed_at => nil}
   named_scope :not_started, :conditions => {:started_at => nil}
   named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
+
+  # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
+  # They really belong to KnnExperiment, but we have them here so that stuff like
+  # matrix.experiments.by_k(200) will work.
+  named_scope :by_k, lambda { |k| {:conditions => {:k => k}}}
+  named_scope :by_min_genes, lambda { |m| {:conditions => {:min_genes => m}}}
+  named_scope :by_distance_measure, lambda { |d| {:conditions => {:distance_measure => d.to_s}}}
+  named_scope :by_distance_exponent, lambda { |d| {:conditions => {:distance_exponent => d}}}
+  named_scope :by_method, lambda { |m| {:conditions => {:method => m.to_s}}}
+  named_scope :by_max_distance, lambda { |m| {:conditions => {:max_distance => m}}}
+  named_scope :by_min_idf, lambda { |m| {:conditions => {:min_idf => m}}}
 
   # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
   named_scope :by_matrix_id, lambda { |m| {:conditions => {:predict_matrix_id => m}}}
@@ -139,6 +150,7 @@ class Experiment < ActiveRecord::Base
   # Avoid overriding these functions:
   alias_method :this_sources, :sources
   alias_method :this_source_matrices, :source_matrices
+  alias_method :this_source_matrix_ids, :source_matrix_ids
   
   # Override sources so they change along with those of the parent
   def sources; parent_id.nil? ? this_sources : parent.sources; end
@@ -171,21 +183,13 @@ class Experiment < ActiveRecord::Base
     "#{self.id}#{parent_descriptor_component}: #{self.title}"
   end
 
-
   # Ensure child experiments have been created with the same set of parameters.
   # Instructs those children to prepare_inputs
-  def prepare_children
+  def prepare_children    
     if predict_matrix.is_a?(NodeMatrix) && predict_matrix.has_grandchildren?
 
       # Create one child experiment for each child (not grandchild) matrix
-      predict_matrix.children.each do |child_matrix|
-        # Make sure the destination directory exists!
-        child_matrix.prepare_inputs
-
-        # Don't create an Experiment -- create a JohnExperiment or a MartinExperiment.
-        child_experiment = self.class.send :create!, {:predict_matrix_id => child_matrix.id, :parent_id => self.id}
-        child_experiment.prepare_inputs
-      end
+      create_children
     else
       nil
     end
@@ -210,23 +214,15 @@ class Experiment < ActiveRecord::Base
     self.predict_matrix.root_dir + directory_name
   end
 
-  # Differs from JohnExperiment in that it does not copy test sets.
-  # Also used by JohnDistribution.
   def prepare_inputs
-    # STDERR.puts("in prepare_inputs on #{self.class.to_s} (defined in experiment.rb)")
     prepare_inputs_internal do
-
       prepare_standard_inputs
-
-      # No need for test sets.
-      # self.copy_testsets
     end
   end
 
   # Copy input files from each of the source matrices and the predict matrix.
   # Does nothing if the experiment directory already exists.
   def prepare_inputs_internal &block
-    STDERR.puts("prepare_inputs_internal in #{self.class.to_s} (defined in Experiment)")
     unless self.root_exists?
       logger.info("Preparing new inputs for matrix #{predict_matrix_id}, experiment #{self.id}")
 
@@ -244,17 +240,18 @@ class Experiment < ActiveRecord::Base
       analysis = setup_analysis
       analysis.predict_and_write_all # no cross-validation
     rescue ArgumentError
-      self.run_result = 1
+      update_run_result! 1
     rescue
-      self.run_result = 2
+      update_run_result! 2
+    else
+      update_run_result! 0
     end
-    self.run_result = 0
   end
 
   # To be called by a Worker object, usually.
   def run
-    before_run_internal
-    before_run # sets and saves started_at
+    before_run
+    before_run_internal # sets and saves started_at
 
     Dir.chdir(self.root) do
       run_analysis
@@ -303,11 +300,11 @@ class Experiment < ActiveRecord::Base
   end
 
   def aucs_file
-    "aucs.#{time_to_file_suffix(self.started_at || Time.now)}"
+    "aucs.#{time_to_file_suffix(self.started_at)}"
   end
 
   def results_dir
-    "results.#{time_to_file_suffix(self.started_at || Time.now)}"
+    "results.#{time_to_file_suffix(self.started_at)}"
   end
 
   def results_path
@@ -340,8 +337,8 @@ class Experiment < ActiveRecord::Base
     self.started_at       = nil
     self.completed_at     = nil
     self.run_result       = nil
-    self.roc_area         = nil
-    self.pr_area          = nil
+    self.mean_auroc       = nil
+    self.mean_auprc       = nil
     self.package_version  = nil
     self.save!
 
@@ -369,7 +366,7 @@ class Experiment < ActiveRecord::Base
 
   # Get the points that make up the ROC plot for this experiment
   def roc_line
-    roc_y_values = self.results.collect { |r| r.auc }
+    roc_y_values = self.results.collect { |r| r.roc_area }
     roc_x_values = Array.new(roc_y_values.size) { |r| r / roc_y_values.size.to_f }
     roc_x_values.zip roc_y_values.sort
   end
@@ -380,11 +377,11 @@ class Experiment < ActiveRecord::Base
 
   def roc_areas_by_column_with_children
     au = {}
-    results.each { |roc|  au[roc.column] = [ roc.auc ]  }
+    results.each { |roc|  au[roc.column] = [ roc.roc_area ]  }
     n = 1
 
     children.each do |child|
-      child.results.each { |roc| au[roc.column] << roc.auc }
+      child.results.each { |roc| au[roc.column] << roc.roc_area }
       n += 1
 
       # Add an empty if a certain index doesn't exist in this child:
@@ -421,9 +418,9 @@ class Experiment < ActiveRecord::Base
 
     experiment.results.each do |roc|
       if au.has_key?(roc.column)
-        au[roc.column] << roc.auc
+        au[roc.column] << roc.roc_area
       else
-        au[roc.column] = [0, roc.auc]
+        au[roc.column] = [0, roc.roc_area]
       end
     end
     au.each_key do |k|
@@ -465,10 +462,57 @@ class Experiment < ActiveRecord::Base
   end
 
   def argument_string
-    "#{self.predict_matrix_id} <- [#{self.source_matrix_ids.join(", ")}] by #{self.distance_measure} using #{self.read_attribute(:method)} (k=#{self.k}, max_distance=#{self.max_distance || 1.0})"
+    "#{self.predict_matrix_id} <- [#{self.source_matrix_ids.join(", ")}] by #{self.distance_measure} using #{self.method} (k=#{self.k}, max_distance=#{self.max_distance || 1.0})"
+  end
+
+  
+  # Gets the results from an experiment's children. Takes a block so we can get
+  # different kinds of results.
+  #
+  # Example usage:
+  #  Experiment.find(102).numeric_results(283){ |r| r.roc_area * r.pr_area }.median
+  def numeric_results phenotype_id
+    raise(StandardError, "Experiment has no children, cannot get results") if children.size == 0
+    
+    results = children.collect do |child|
+      result = Result.find(:first, :conditions => {:experiment_id => child.id, :column => phenotype_id})
+      next if result.nil?
+
+      if block_given?
+        yield result
+      else
+        result.roc_area * result.pr_area # Default behavior
+      end
+    end
+    results.compact
   end
 
 protected
+
+  # Update a time without modifying updated_at
+  def touch_time!(column)
+    raise(ArgumentError, "This column does not appear to be a time column") unless column.to_s =~ /_at$/
+    Experiment.update_all(["#{column} = ?", Time.now], "id = #{self.id}")
+    self.reload
+  end
+
+  def update_run_result! n
+    Experiment.update_all(["run_result = ?", n], "id = #{self.id}")
+    self.reload
+    n
+  end
+
+  # Called by prepare_children
+  def create_children
+    predict_matrix.children.each do |child_matrix|
+      # Make sure the destination directory exists!
+      child_matrix.prepare_inputs
+
+      # Don't create an Experiment -- create a KnnExperiment or whatever other child class
+      child_experiment = self.class.send :create!, {:predict_matrix_id => child_matrix.id, :parent_id => self.id}
+      child_experiment.prepare_inputs
+    end
+  end
 
   def prepare_standard_inputs
   end
@@ -478,8 +522,7 @@ protected
   def before_run;; end
 
   def before_run_internal
-    self.started_at = Time.now
-    self.save!
+    touch_time! :started_at
   end
 
   # This'll be overridden again in JohnDistribution.
@@ -494,8 +537,7 @@ protected
     # STDERR.puts("Calling calculate_results!")
     self.calculate_results!
     # STDERR.puts("Done calling calculate_results!")
-    self.completed_at = Time.now
-    self.save!
+    touch_time! :completed_at
   end
 
   def calculate_results! threshold = 0.0
@@ -520,20 +562,6 @@ protected
     Dir.mkdir(dir) unless dir_exists?(dir)
   end
 
-  # BROKEN (I think)
-  # Force a save without updating timestamps.
-  # Used to update roc_area, which is not technically part of the model.
-  # Also -- for completed_at and started_at
-  def save_without_timestamping!
-    class << self
-      def record_timestamps; false; end
-    end
-    save!
-    class << self
-      remove_method :record_timestamps
-    end
-  end
-
   # Copy testsets from the predict_matrix to the experiment directory.
   def copy_testsets(options = {})
     raise(ArgumentError,"Requires a hash") if options.is_a?(String)
@@ -546,23 +574,23 @@ protected
     end
   end
 
-  # Generates row and column files, makes sure they're in the right directory.
-  # Only call from within prepare_inputs_internal, as this guarantees we're in
-  # the correct directory and such.
-  def prepare_standard_inputs
-    STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
-    cell_files = copy_source_matrix_inputs
-
-    # Generate predict_rows file
-    generate_row_file(cell_files)
-    generate_column_file
-
-    # Only copy the predict matrix cells file if it didn't come from one of the
-    # source matrices.
-    unless cell_files.include?(predict_matrix.cell_file_path)
-      FileUtils.cp(predict_matrix.cell_file_path, self.root)
-    end
-  end
+#  # Generates row and column files, makes sure they're in the right directory.
+#  # Only call from within prepare_inputs_internal, as this guarantees we're in
+#  # the correct directory and such.
+#  def prepare_standard_inputs
+#    STDERR.puts("prepare_standard_inputs called on #{self.class.to_s}")
+#    cell_files = copy_source_matrix_inputs
+#
+#    # Generate predict_rows file
+#    generate_row_file(cell_files)
+#    generate_column_file
+#
+#    # Only copy the predict matrix cells file if it didn't come from one of the
+#    # source matrices.
+#    unless cell_files.include?(predict_matrix.cell_file_path)
+#      FileUtils.cp(predict_matrix.cell_file_path, self.root)
+#    end
+#  end
 
   # Called by unique_descriptor (only)
   def parent_descriptor_component

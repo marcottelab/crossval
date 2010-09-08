@@ -18,6 +18,11 @@ class NodeMatrix < TreeMatrix
     true
   end
 
+  # See method has_grandchildren? for an explanation.
+  def has_great_grandchildren?
+    has_grandchildren? ? children.first.has_grandchildren? : false
+  end
+
   # This should maybe become a helper function. Simply provides a list of the
   # child matrix ids joined by commas (as a String).
   def list_children

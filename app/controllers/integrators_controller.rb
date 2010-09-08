@@ -11,11 +11,12 @@ class IntegratorsController < MatrixGenericController
   # GET /experiments/1
   # GET /experiments/1.xml
   def show
-    find_experiment params[:id]
+    find_experiment
+    find_best_classifiers @experiment
     @flot        = plot_experiment(@experiment)
 
     respond_to do |format|
-      format.html { render_polymorphic_template('show')}# show.html.erb
+      format.html { render_polymorphic_template('show', :layout => 'experiments')}# show.html.erb
     end
   end
 
@@ -85,4 +86,14 @@ class IntegratorsController < MatrixGenericController
       format.xml  { render :xml => @experiments }
     end
   end
+
+protected
+#  def find_experiment *find_options
+#    @experiment_id = params[:id]
+#    @experiment = Integrator.find(@experiment_id)
+#    raise(ArgumentError, "Integrator does not have predict matrix with this ID") unless @experiment.predict_matrix_id = @matrix_id
+#    @klass = @experiment.class
+#    @view = "integrators"
+#    @experiment
+#  end
 end

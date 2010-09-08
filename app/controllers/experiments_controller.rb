@@ -12,13 +12,17 @@ class ExperimentsController < MatrixGenericController
   # GET /experiments/1.xml
   def show
     find_experiment :include => :results
-    if @experiment.child_ids.size > 0
-      @flot        = plot_experiment_with_children(@experiment)
-    elsif @experiment.has_run_successfully?
-      p = Statistics::ExperimentPlot.new(@experiment)
-      @flot        = p.flot(:area_under_roc)
+    if @experiment.is_a?(Integrator)
+      find_best_classifiers(@experiment)
     else
-      @flot        = plot_experiment_with_children(@experiment)
+      if @experiment.child_ids.size > 0
+        @flot        = plot_experiment_with_children(@experiment)
+      elsif @experiment.has_run_successfully?
+        p = Statistics::ExperimentPlot.new(@experiment)
+        @flot        = p.flot(:area_under_roc)
+      else
+        @flot        = plot_experiment_with_children(@experiment)
+      end
     end
 
     respond_to do |format|

@@ -24,8 +24,9 @@ protected
     @matrix = Matrix.find(@matrix_id)
   end
 
-  def render_polymorphic_template action
-    render :template => polymorphic_template(action)
+  def render_polymorphic_template action, options = {}
+    options.reverse_merge! :template => polymorphic_template(action)
+    render options
   end
 
   def polymorphic_template action
@@ -47,5 +48,13 @@ protected
   def correct_child_url action
     fn = correct_child_url_function(action)
     send fn, @matrix, @experiment.ancestor_or_self
+  end
+
+  def find_best_classifiers experiment
+    @best_classifier = {}
+    experiment.results.each do |result|
+      @best_classifier[result.column] = experiment.best_classifier(result.column){|r|r.roc_area * r.pr_area}
+    end
+    @best_classifier
   end
 end

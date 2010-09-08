@@ -167,6 +167,8 @@ protected
     else
       @distance_matrix = nil
     end
+    STDERR.puts "column_ids = #{@distance_matrix.predictable_columns.join(', ')}"
+
     @distance_matrix
   end
 

@@ -1,0 +1,37 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'flotomatic' %>
+  <%= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag 'flotomatic/jquery.flot.min.js' %>
+  <%= javascript_include_tag 'jquery-ui.js' %>
+  <%= javascript_include_tag 'jrails.js' %>
+  <%= javascript_include_tag 'prototype.js' %>
+  <%= javascript_include_tag 'flotomatic/flotomatic.js' %>
+<% end %>
+
+<h1>Results for Overfit Integrator (Crossvalidated) <%= @experiment.id %></h1>
+<div class="experiment_data">
+<table id="experiment_rocs" class="sortable">
+  <tr>
+    <th class="startsort">ID</th>
+    <th><%= @experiment.predict_matrix.column_title %></th>
+    <th>Best classifier</th>
+    <th>ROC area</th>
+    <th>PR area</th>
+    <th>Genes</th>
+  </tr>
+<%- @experiment.results.each do |result| -%>
+  <tr>
+    <td><%= link_to_phenotype(result) %></td>
+    <td><%= result.phenotype.long_desc %></td>
+    <td><%= defined?(@best_classifier) ? @best_classifier[result.column].title : "" %></td>
+    <td><%= sprintf("%#1.6f", result.roc_area) %></td>
+    <td><%= sprintf("%#1.6f", result.pr_area) %></td>
+    <td><%= result.gene_count %></td>
+  </tr>
+<%- end -%>
+</table>
+</div>
+<div class="experiment_plot">
+  <h2>AUCs</h2>
+  <%= render :partial => 'matrices/plot', :locals => {:canvas_id => 'experiment_roc_plot', :data => @flot} %>
+</div>
