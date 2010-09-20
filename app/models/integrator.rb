@@ -39,7 +39,7 @@ class Integrator < Experiment
   end
 
   def package_version
-    versions = experiments.collect { |s| s.package_version }.sort.uniq
+    versions = experiments.collect{ |x| x.package_version }.sort.uniq
     if versions.size == 1
       versions
     else

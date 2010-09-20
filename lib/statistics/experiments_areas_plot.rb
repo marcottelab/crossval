@@ -29,8 +29,8 @@ module Statistics
     def flot plot_id = 'experiments_plot'
       plot_mode = @options[:plot_mode]
       plot_mode_opts = {}
-      plot_mode_opts[:radius] = 2 if plot_mode == :points
-      raise(ArgumentError, "points requested") if plot_mode == :points
+      #plot_mode_opts[:radius] = 2 if plot_mode == :points
+      #raise(ArgumentError, "points requested") if plot_mode == :points
 
       Flot.new(plot_id) do |f|
         f.lines
@@ -60,7 +60,9 @@ module Statistics
     def experiments *addl_find_options
       exps = @matrix.experiments.by_min_genes(@options[:min_genes]).by_min_idf(@options[:min_idf]).by_max_distance(@options[:max_distance]).by_distance_exponent(@options[:distance_exponent]).by_matrix_id(@options[:predict_matrix_id]).order_by(@options[:order_by]).find(*addl_find_options)
       exps.delete_if { |x| Set.new(x.source_matrix_ids) != Set.new(@options[:source_matrix_ids])} unless @options[:source_matrix_ids] == :any
-      exps.sort_by {|x| x.attributes[@options[:order_by].to_s] }
+
+      # Sort either by the number of source_matrix_ids (integrator) or k
+      exps.sort_by {|x| x.respond_to?(:experiment_ids) ? x.experiment_ids.count : x.attributes[@options[:order_by].to_s]}
     end
 
     # Parse experiments into series of data.
@@ -85,6 +87,7 @@ module Statistics
     end
 
     def self.default_options options
+      raise(ArgumentError, "min_genes should be symbol") unless options.has_key?(:min_genes) && options[:min_genes] == 4
       options.reverse_merge!({
         :min_genes => 2,
         :min_idf => 0.0,
@@ -97,6 +100,8 @@ module Statistics
         :y_method => :mean_auprc,
         :order_by => :k
       })
+
+      STDERR.puts options.inspect
 
       # Ensure that the source matrices are set properly.
       unless options.has_key?(:source_matrix_ids)

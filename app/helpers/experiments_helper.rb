@@ -82,27 +82,32 @@ module ExperimentsHelper
     end
   end
 
-  def link_to_phenotype result_or_phenotype_id
+  def link_to_phenotype result_or_phenotype_id, classifier = nil
     p = nil
     if result_or_phenotype_id.is_a?(Result)
       p = Phenotype.find(result_or_phenotype_id.column)
+      classifier ||= result_or_phenotype_id.experiment
+
     elsif result_or_phenotype_id.is_a?(Phenotype)
       p = result_or_phenotype_id
+      classifier ||= @experiment
+
     else
       p = Phenotype.find(result_or_phenotype_id)
+      classifier ||= @experiment
+      
     end
-    
 
     link_to(p.id,
       matrix_phenotype_path(@matrix, p,
-        :source_matrix_ids => @experiment.source_matrix_ids,
-        :classifier => @experiment.send(:method),
-        :k => @experiment.k,
-        :dfn => @experiment.distance_measure,
-        :min_idf => @experiment.min_idf || 0,
-        :max_distance => @experiment.max_distance || 1.0,
-        :distance_exponent => @experiment.distance_exponent || 1,
-        :min_genes => @experiment.min_genes || 2
+        :source_matrix_ids => classifier.source_matrix_ids,
+        :classifier => classifier.send(:method),
+        :k => classifier.k,
+        :dfn => classifier.distance_measure,
+        :min_idf => classifier.min_idf || 0,
+        :max_distance => classifier.max_distance || 1.0,
+        :distance_exponent => classifier.distance_exponent || 1,
+        :min_genes => classifier.min_genes || 2
       ), :title => p.long_desc)
   end
 

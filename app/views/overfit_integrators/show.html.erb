@@ -21,7 +21,7 @@
   </tr>
 <%- @experiment.results.each do |result| -%>
   <tr>
-    <td><%= link_to_phenotype(result) %></td>
+    <td><%= link_to_phenotype(result, @best_classifier[result.column]) %></td>
     <td><%= result.phenotype.long_desc %></td>
     <td><%= defined?(@best_classifier) ? @best_classifier[result.column].title : "" %></td>
     <td><%= sprintf("%#1.6f", result.roc_area) %></td>

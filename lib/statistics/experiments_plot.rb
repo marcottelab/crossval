@@ -19,6 +19,7 @@ module Statistics
       options[:plot_mode] = params[:plot_mode].to_sym if params.has_key?(:plot_mode)
       options[:x_method] = params[:x_method].to_sym if params.has_key?(:x_method)
       options[:y_method] = params[:y_method].to_sym if params.has_key?(:y_method)
+      options[:min_genes] = params[:min_genes].to_i if params.has_key?(:min_genes)
 
       if params.has_key?(:source_matrix_ids)
         if params[:source_matrix_ids].is_a?(Array)

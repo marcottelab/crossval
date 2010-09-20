@@ -259,7 +259,7 @@ class Experiment < ActiveRecord::Base
     # Expect a great deal of time between the beginning of this function and the
     # end. That's why we're saving again -- because the binary will have returned
     # 0 or aborted or who knows what.
-    self.save!
+    self.reload
 
     if self.run_result == 0
       # Calculate results and save again.
@@ -498,8 +498,12 @@ protected
 
   def update_run_result! n
     Experiment.update_all(["run_result = ?", n], "id = #{self.id}")
-    self.reload
     n
+  end
+
+  def update_package_version! str
+    Experiment.update_all(["package_version = ?", str], "id = #{self.id}")
+    str
   end
 
   # Called by prepare_children
