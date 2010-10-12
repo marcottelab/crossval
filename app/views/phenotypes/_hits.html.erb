@@ -6,6 +6,6 @@
   </tr>
 
   <% (0 ... hits.size).each do |n| %>
-    <%= render :partial => 'hit', :object => hits[n], :locals => {:phenotype => phenotypes[n]} %>
+    <%= render :partial => 'hit', :object => hits[n], :locals => {:phenotype => phenotypes[n], :source_matrix_id => hits[n][2]} %>
   <% end %>
 </table>

@@ -1,5 +1,5 @@
 <tr>
-  <td title="<%= phenotype.long_desc %>"><%= hit[0] %></td>
+  <td title="<%= phenotype.long_desc %>"><%= link_to hit[0], "/matrices/#{@matrix_id}/phenotypes/#{hit[0]}/list?source_matrix_id=#{source_matrix_id}" %></td>
   <td><%= hit[1] %></td>
   <td><%= hit[2] %></td>
 </tr>

@@ -83,12 +83,13 @@ class KnnExperiment < Experiment
       Fastknn.crossvalidate self.predict_matrix_id, self.source_matrix_ids, (self.min_genes || 2), self.distance_measure.to_sym, (self.min_idf || 0.0), self.classifier_parameters, Dir.pwd
     rescue ArgumentError
       update_run_result! 1
-    rescue => e
-      logger.error(e.backtrace.join("\n"))
-      update_run_result! 2
+    #rescue => e
+    #  logger.error(e.backtrace.join("\n"))
+    #  update_run_result! 2
     else
       update_run_result! 0
     end
+    run_result
   end
 
   def after_run

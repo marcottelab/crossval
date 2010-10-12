@@ -6,10 +6,12 @@ class PhenotypesController < MatrixGenericController
   def show
     find_phenotype
     find_genes_by_phenotype
+
     initialize_globals
     prepare_distance_matrix
     quick_analysis
     quick_predict
+
 
     respond_to do |format|
       format.html # show.html.erb
@@ -34,6 +36,15 @@ class PhenotypesController < MatrixGenericController
       format.xml  { render :xml => @phenotypes }
     end
   end
+
+  def list
+    find_phenotype
+    load_source_matrix
+    respond_to do |format|
+      format.html
+    end
+  end
+
 
   def new
     @phenotype = Phenotype.new(:species => @matrix.column_species)
@@ -164,10 +175,10 @@ protected
       @distance_matrix.distance_function = params_distance_function
       @distance_matrix.classifier = params_for_classifier
       @distance_matrix.min_idf = params_min_idf
+      STDERR.puts "column_ids = #{@distance_matrix.predictable_columns.join(', ')}"
     else
       @distance_matrix = nil
     end
-    STDERR.puts "column_ids = #{@distance_matrix.predictable_columns.join(', ')}"
 
     @distance_matrix
   end
@@ -255,6 +266,12 @@ protected
     else
       return nil
     end
+  end
+
+
+  def load_source_matrix
+    @source_matrix_id = params[:source_matrix_id].to_i
+    @source_matrix = Fastknn.fetch_source_matrix @source_matrix_id, params[:min_genes].to_i
   end
 
 end
