@@ -1,0 +1,6 @@
+<h1>Listing genes for phenotype <%= @phenotype.id %></h1>
+<ul>
+<%- @source_matrix.observations(@phenotype.id).each do |gene_id| -%>
+  <li><%= gene_id %></li>
+<%- end -%>
+</ul>

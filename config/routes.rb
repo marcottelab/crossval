@@ -11,7 +11,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # The priority is based upon order of creation: first created -> highest priority.
 
-  map.resources :matrices, :has_many => [:phenotypes, :experiments], :member => {:expand_experiments => :get, :collapse_experiments => :get, :reload => :put, :graph => :get} do |matrices|
+  map.resources :matrices, :has_many => [:phenotypes, :experiments], :member => {:expand_experiments => :get, :collapse_experiments => :get, :reload => :put, :graph => :get, :view => :get} do |matrices|
     matrices.resources :experiments, :member => {:against => :get}
     matrices.resources :phenotypes, :member => {:edit_observations => :get, :update_observations => :put, :list => :get}
     matrices.resources :knn_experiments

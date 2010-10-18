@@ -158,6 +158,10 @@ class Matrix < ActiveRecord::Base
   end
 
 
+  def density
+    (self.cells.count / self.column_count.to_f).round
+  end
+
 
   # Order the columns by the number of rows and build as a list of lists, for
   # plotting with flotomatic.
@@ -188,7 +192,7 @@ class Matrix < ActiveRecord::Base
   # Prepare working directory for the matrix.
   # If force is set to true, the contents will be overwritten.
   def prepare_inputs(force = false)
-    make_inputs(row_filename, cell_filename) unless root_exists? && !force
+    make_inputs unless root_exists? && !force
   end
 
   def row_filename
@@ -426,15 +430,11 @@ protected
 
   # Generate two files in the current directory, one containing the row indeces,
   # the other containing the cells in the matrix.
-  def make_inputs rows_filename, cells_filename, options = {}
+  def make_inputs options = {}
     opts = {:dest_dir => root_dir }.merge(options)
     dest_dir = opts[:dest_dir]
 
     Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
-    Dir.chdir(dest_dir) do
-      make_inputs_internal rows_filename, cells_filename
-    end
-    [rows_filename,cells_filename]
   end
 
   # Used for returning either row or column of every entry corresponding to this matrix.
@@ -461,18 +461,6 @@ SQL
     sql
   end
 
-
-  def make_inputs_internal rows_filename, cells_filename
-    rows_file = File.new(rows_filename,  "w")
-    write_rows  rows_file
-    rows_file.close
-
-    cells_file = File.new(cells_filename, "w")
-    write_cells cells_file
-    cells_file.close
-
-    [rows_filename, cells_filename]
-  end
   
   def unique_row_sql(count = false)
     unique_entry_value_sql("i", count)

@@ -33,14 +33,14 @@ class NodeMatrix < TreeMatrix
   # the size -- in terms of the number of cells per column.
   def density
     target = self
-    cc = target.column_count
+    col_count   = target.column_count
 
-    while cc == 0
-      target = target.parent
-      cc = target.column_count
+    while col_count == 0
+      target    = target.parent
+      col_count = target.column_count
     end
 
-    (self.cells.count / cc.to_f).round
+    (self.cells.count / col_count.to_f).round
   end
 
   # Generate num nodes (training sets that may also act as test sets) for row-based
@@ -119,22 +119,13 @@ protected
 
   # Generate two files in the current directory, one containing the row indeces,
   # the other containing the cells in the matrix.
-  def make_inputs rows_filename, cells_filename, options = {}
+  def make_inputs options = {}
     opts = { :file_prefix => "testset", :dest_dir => root_dir }.merge(options)
     dest_dir = opts[:dest_dir]
 
     written = []
 
     Dir.mkdir(dest_dir) unless File.exists?(dest_dir)
-    Dir.chdir(dest_dir) do
-      make_inputs_internal rows_filename, cells_filename
-
-      written = write_children_using :write_rows_inverted, opts[:file_prefix]
-    end
-    
-    written << rows_filename
-    written << cells_filename
-    written
   end
 
   # Write children to files using a specific method. That method shall be
