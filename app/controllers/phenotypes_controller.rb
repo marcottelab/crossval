@@ -102,6 +102,8 @@ class PhenotypesController < MatrixGenericController
         flash[:notice] = "Sorry, phenotype is not editable for this matrix."
         redirect_to matrix_phenotype_path(@matrix, @phenotype)
       elsif @phenotype.update_observations(@matrix, params[:phenotype][:entries])
+        @matrix.uncache
+        
         flash[:notice] = 'Phenotype updated successfully.'
         format.html { redirect_to matrix_phenotype_path(@matrix, @phenotype) }
         format.xml  { head :ok }
@@ -139,7 +141,7 @@ class PhenotypesController < MatrixGenericController
 protected
 
   def find_genes_by_phenotype
-    @genes = Gene.find(:all, :joins => "INNER JOIN entries e ON (genes.id = e.i)", :conditions => "e.matrix_id = #{@matrix_id.to_i} AND e.j = #{@phenotype_id.to_i}")
+    @genes = Gene.find(:all, :joins => "INNER JOIN entries e ON (genes.id = e.i)", :conditions => ["e.matrix_id = ? AND e.j = ?", @matrix_id.to_i, @phenotype_id.to_i])
     @known_genes = {}
     @genes.each do |gene|
       @known_genes[gene.id] = true
