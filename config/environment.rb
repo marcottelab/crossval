@@ -24,6 +24,7 @@ Rails::Initializer.run do |config|
   config.gem "rocker", :version => ">= 0.2.0"
   config.gem "fastknn", :version => ">= 0.0.18"
   config.gem "sparklines"
+  config.gem "ruport"
   #config.gem "rsruby"
   #config.gem "memcache"
 

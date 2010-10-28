@@ -201,7 +201,8 @@ protected
 
   def quick_analysis
     if params.size > 4
-      @nearest  = @distance_matrix.nearest params[:id].to_i
+      #@nearest  = @distance_matrix.nearest params[:id].to_i
+      @nearest = []
       @nearest1 = @distance_matrix.knearest(params[:id].to_i, 1, 1.0) unless params_k == 1
       @nearestk = @distance_matrix.knearest(params[:id].to_i, params_k, params_max_distance || 1.0)
       find_nearest_k_phenotypes

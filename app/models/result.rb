@@ -1,4 +1,6 @@
 class Result < ActiveRecord::Base
+  acts_as_reportable
+  
   belongs_to :experiment
   belongs_to :phenotype, :foreign_key => :column
 

@@ -87,7 +87,7 @@ module Statistics
     end
 
     def self.default_options options
-      raise(ArgumentError, "min_genes should be symbol") unless options.has_key?(:min_genes) && options[:min_genes] == 4
+      #raise(ArgumentError, "min_genes should be symbol") unless options.has_key?(:min_genes) && options[:min_genes] == 4
       options.reverse_merge!({
         :min_genes => 2,
         :min_idf => 0.0,

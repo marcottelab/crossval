@@ -108,6 +108,8 @@
 class Experiment < ActiveRecord::Base
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
 
+  acts_as_reportable
+
   acts_as_commentable
 
   acts_as_tree :dependent => :destroy

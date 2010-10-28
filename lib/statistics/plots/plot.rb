@@ -59,7 +59,10 @@ module Statistics
         define_key(:axis_label_orientation, 'las', {:perpendicular => 0, :horizontal => 1, :parallel => 2}).
         define_key(:axis_label_size, 'cex.axis').
         define_key(:title, 'main').
-        define_key(:log, 'log', {false => "", :x => "'x'", :y => "'y'", :xy => "'xy'", :true => "'xy'"})
+        define_key(:log, 'log', {:false => "", :x => "'x'", :y => "'y'", :xy => "'xy'", :true => "'xy'"}).
+        define_key(:x_label, 'xlab').
+        define_key(:y_label, 'ylab')
+
 
       OPTIONS_D = RParamDictionary.new.
         define_key(:scientific_notation_penalty, 'scipen').
@@ -68,21 +71,24 @@ module Statistics
 
       # Check that this isn't duplicating or truncating data based on size of first column.
       def plot_sort results_metric, options = {}, &block
+        options = prepare_plot_sort(results_metric, options, &block)
+        self.send(plot_function, @data[results_metric], :axis_label_orientation => options[:axis_label_orientation], :axis_label_size => 0.5, :title => options[:title], :log => options[:log])
+      end
+
+    protected
+
+      def prepare_plot_sort options
         options.reverse_merge!({
-            :inner_margins => [0.5,1,2,1],
-            :outer_margins => [10,2,0.5,1],
-            :title => "Classifier Comparison",
-            :width => 12,
+            :inner_margins => [5.1, 4.1, 4.1, 2.1],
+            :outer_margins => [0, 0, 0, 0],
+            :title => "Untitled",
+            :width => 6,
             :height => 7,
             :output => :x11,
-            :log    => false,
             :scientific_notation_penalty => 10, # positive biases toward fixed, negative toward scientific
-            :display_digits => 3 # can be 1...22, R default = 7
+            :display_digits => 3, # can be 1...22, R default = 7
+            :axis_label_orientation => :parallel
           })
-
-        # Get first data frame column
-        @data                 ||= {}
-        @data[results_metric] ||= results(results_metric).to_data_frame(results_metric.to_s, :ignore_empty, &block) # just store variable name
 
         r_set_output options[:output], options[:width], options[:height]
         r_set_margins options[:inner_margins], options[:outer_margins]
@@ -92,11 +98,9 @@ module Statistics
           r_options(:scientific_notation_penalty => options[:scientific_notation_penalty],
             :display_digits => options[:display_digits])
         end
-        
-        self.send(plot_function, @data[results_metric], :axis_label_orientation => :parallel, :axis_label_size => 0.5, :title => options[:title], :log => options[:log])
-      end
 
-    protected
+        options
+      end
 
       def r_eval_function fn, data=nil, fn_options = {}
         datastr = data.nil? ? '' : data
@@ -119,6 +123,14 @@ module Statistics
           })
 
         r_eval_function "boxplot", data, PLOT_D.translate(options)
+      end
+
+      def r_plot data, options = {}
+        options.reverse_merge!({
+            :axis_label_orientation => :parallel, # :horizontal :perpendicular (R:las)
+            :axis_label_size => 1
+          })
+        r_eval_function "plot", data, PLOT_D.translate(options)
       end
 
       def r_set_output mode, width, height

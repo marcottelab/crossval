@@ -2,16 +2,17 @@
 desc "make experiments for a given k"
 task :make_experiments, :needs => :environment do |t,arg|
   args = {
-    :predict_matrix_id => 178, # 1, # 247,
+    :predict_matrix_id => 189, #200, # 1, # 247,
     :type => 'KnnExperiment',
-    :k => 300,
+    :k => 200,
     :methods => ["naivebayes", "average"],
     :distance_measures => KnnExperiment::AVAILABLE_DISTANCE_MEASURES.values,
     :min_idf => 0.0,
     :max_distance => 1.0,
     :min_genes => 4,
     :distance_exponent => 1.0,
-    :source_matrix_ids => [1,3,5,7,9,11], #[247,249,251,253,255,257]
+    :source_matrix_ids => [2,4,6,8,10,12]
+    #:source_matrix_ids => [49, 51, 53, 55, 57, 59] #[93, 95, 97, 99, 101, 103] #[1,3,5,7,9,11], #[247,249,251,253,255,257]
   }
 
   puts "Setting up experiments..."
