@@ -164,7 +164,7 @@ protected
   end
 
   def array_analysis phenotype_id
-    if @distance_matrix.predict_matrix_has_column?(phenotype_id)
+    if !@distance_matrix.nil? && @distance_matrix.predict_matrix_has_column?(phenotype_id)
       @nearestk[phenotype_id] = @distance_matrix.knearest(phenotype_id, params_k, params_max_distance || 1.0)
     else
       @nearestk[phenotype_id] = []
