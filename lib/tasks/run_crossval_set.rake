@@ -60,7 +60,7 @@ def gene_ranks score_genes
   score_genes.keys.sort{ |b,a| a <=> b }.each do |score|
     genes = score_genes[score]
     genes.each do |gene|
-      rank_by_gene[gene] = rank
+      rank_by_gene[gene] = [rank,score]
     end
 
     rank += 1 unless score_genes[score].size == 0
@@ -100,8 +100,8 @@ task :run_crossval_set, :matrix_id, :experiment_id, :filename, :needs => :enviro
           next
         end
 
-        rank = phenotype_ranks[pid][gene]
-        f.puts [pid,gene,rank].join("\t")
+        rank,score = phenotype_ranks[pid][gene]
+        f.puts [pid,gene,rank,score].join("\t")
       end
 
     else
