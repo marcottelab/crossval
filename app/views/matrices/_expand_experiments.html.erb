@@ -1,1 +1,1 @@
-<%= link_to_remote("Show Experiments", :url => {:controller => 'matrices', :action => 'expand_experiments', :id => id }, :method => :get) %>
+<%= link_to("Show Experiments", expand_experiments_matrix_path(id), :remote => true) %>

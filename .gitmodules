@@ -1,6 +1,6 @@
-[submodule "vendor/plugins/acts_as_commentable"]
-	path = vendor/plugins/acts_as_commentable
-	url = git://github.com/jackdempsey/acts_as_commentable
+#[submodule "vendor/plugins/acts_as_commentable"]
+#	path = vendor/plugins/acts_as_commentable
+#	url = git://github.com/jackdempsey/acts_as_commentable
 [submodule "vendor/plugins/flotomatic"]
 	path = vendor/plugins/flotomatic
 	url = git://github.com/xdotcommer/flotomatic

@@ -107,8 +107,8 @@ class Matrix < ActiveRecord::Base
     'WHERE c.matrix_id = #{id} AND ' +
     "c.type = 'Cell' ORDER BY p.id"
 
-  named_scope :by_row_species, lambda { |s| { :conditions => { :row_species => s } } }
-  named_scope :parentless, { :conditions => {:parent_id => nil}} # differs from .roots
+  scope :by_row_species, lambda { |s| where(:row_species => s) }
+  scope :parentless, where(:parent_id => nil)
 
   delegate :row_title, :to => :entry_info
   delegate :column_title, :to => :entry_info

@@ -23,14 +23,14 @@
         <%- if experiment.distance_exponent? && experiment.distance_exponent != 1.0 -%>distance exp: <%= experiment.distance_exponent %><br/><%- end -%>
         min IDF: <%= experiment.min_idf || 0 %><br/>
       </tt></td>
-      <td title="<%= experiment.roc_area %>">
+      <td title="<%= experiment.mean_auroc %>">
         <%= link_to_experiment_if_appropriate(@matrix, experiment, mini_auc_plot(@aurocs[experiment.id], false)) %>
       </td>
-      <td title="<%= experiment.pr_area %>">
+      <td title="<%= experiment.mean_auprc %>">
         <%= mini_auc_plot(@auprcs[experiment.id], true) %>
       </td>
       <%# li><h4>Comments</h4><%= render :partial => 'comments', :object => experiment.comments ></li-- %>
     </tr>
     <tr>
-      <td colspan="3"><%= experiment.note %></td>
+      <td colspan="3"><%#= experiment.note %></td>
     </tr>

@@ -108,7 +108,7 @@
 class Experiment < ActiveRecord::Base
   validates_numericality_of :min_genes, :greater_than_or_equal_to => 2, :only_integer => true, :allow_nil => true, :message => "should be at least 2"
 
-  acts_as_reportable
+  #acts_as_reportable
 
   acts_as_commentable
 
@@ -122,25 +122,25 @@ class Experiment < ActiveRecord::Base
   has_many :results, :dependent => :destroy
   accepts_nested_attributes_for :sources, :allow_destroy => true
 
-  named_scope :not_run, :conditions => {:mean_auroc => nil, :mean_auprc => nil}
-  named_scope :not_completed, :conditions => {:completed_at => nil}
-  named_scope :not_started, :conditions => {:started_at => nil}
-  named_scope :by_type, lambda { |t| {:conditions => {:type => t} } }
+  scope :not_run, where(:mean_auroc => nil, :mean_auprc => nil)
+  scope :not_completed, where(:completed_at => nil)
+  scope :not_started, where(:started_at => nil)
+  scope :by_type, lambda { |t| where(:type => t) }
 
   # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
   # They really belong to KnnExperiment, but we have them here so that stuff like
   # matrix.experiments.by_k(200) will work.
-  named_scope :by_k, lambda { |k| {:conditions => {:k => k}}}
-  named_scope :by_min_genes, lambda { |m| {:conditions => {:min_genes => m}}}
-  named_scope :by_distance_measure, lambda { |d| {:conditions => {:distance_measure => d.to_s}}}
-  named_scope :by_distance_exponent, lambda { |d| {:conditions => {:distance_exponent => d}}}
-  named_scope :by_method, lambda { |m| {:conditions => {:method => m.to_s}}}
-  named_scope :by_max_distance, lambda { |m| {:conditions => {:max_distance => m}}}
-  named_scope :by_min_idf, lambda { |m| {:conditions => {:min_idf => m}}}
+  scope :by_k, lambda { |k| where(:k => k) }
+  scope :by_min_genes, lambda { |m| where(:min_genes => m) }
+  scope :by_distance_measure, lambda { |d| where(:distance_measure => d.to_s) }
+  scope :by_distance_exponent, lambda { |d| where(:distance_exponent => d) }
+  scope :by_method, lambda { |m| where(:method => m.to_s) }
+  scope :by_max_distance, lambda { |m| where(:max_distance => m) }
+  scope :by_min_idf, lambda { |m| where(:min_idf => m) }
 
   # These named scopes are mostly used by Statistics::ExperimentsPlot and children.
-  named_scope :by_matrix_id, lambda { |m| {:conditions => {:predict_matrix_id => m}}}
-  named_scope :order_by, lambda { |o| {:order => o} }
+  scope :by_matrix_id, lambda { |m| where(:predict_matrix_id => m) }
+  scope :order_by, lambda { |o| where(:order => o) }
 
   validates_associated :sources  # Make sure sources are valid
 

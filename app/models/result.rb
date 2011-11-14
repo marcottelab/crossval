@@ -1,16 +1,16 @@
 class Result < ActiveRecord::Base
-  acts_as_reportable
+  # acts_as_reportable
   
   belongs_to :experiment
   belongs_to :phenotype, :foreign_key => :column
 
   delegate :predict_matrix, :predict_matrix_id, :to => :experiment
 
-  named_scope :auc_only, {:select => 'auc', :order => 'auc'}
-  named_scope :pr_area_only, {:select => 'pr_area', :order => '-pr_area'}
+  scope :auc_only, order('roc_area').select('roc_area') # {:select => 'auc', :order => 'auc'}
+  scope :pr_area_only, order('-pr_area').select('pr_area') # {:select => 'pr_area', :order => '-pr_area'}
 
   def self.spark_areas mult = 1000
-    [self.auc_only.collect { |a| (a.auc * mult).to_i }, self.pr_area_only.collect { |a| (a.pr_area * mult).to_i }]
+    [self.auc_only.collect { |a| (a.roc_area * mult).to_i }, self.pr_area_only.collect { |a| (a.pr_area * mult).to_i }]
   end
 
   # Calculates the ROC statistics for each column of the results for a given experiment.

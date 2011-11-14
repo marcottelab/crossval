@@ -23,6 +23,8 @@ class MatricesController < ApplicationController
   def show
     @matrix      = Matrix.find(params[:id])
     load_custom_phenotypes unless @matrix.is_a?(TreeMatrix)
+    load_experiments
+    load_rocs 1000
     #@row_distribution = row_distribution(@matrix)
 
     respond_to do |format|
@@ -45,15 +47,18 @@ class MatricesController < ApplicationController
 
 
   def expand_experiments
-    @matrix      = Matrix.find(params[:id], :include => {:experiments => :rocs})
+    @matrix      = Matrix.find(params[:id], :include => :experiments)# => :rocs})
     load_experiments
 
     load_rocs 1000
 
-    render :update do |page|
-      page['experiment_list'].show
-      page['experiment_list'].replace_html :partial => 'experiments/list', :locals => { :experiments => @experiments, :rocs => @rocs }, :layout => false
-      page['experiment_list_toggle'].replace_html :partial => 'collapse_experiments', :locals => {:id => @matrix.id}
+    #render :update do |page|
+    #  page['experiment_list'].show
+    #  page['experiment_list'].replace_html :partial => 'experiments/list', :locals => { :experiments => @experiments, :rocs => @rocs }, :layout => false
+    #  page['experiment_list_toggle'].replace_html :partial => 'collapse_experiments', :locals => {:id => @matrix.id}
+    #end
+    respond_to do |format|
+      format.js { render :partial => 'experiments/list' }
     end
   end
 
@@ -126,10 +131,10 @@ protected
   def load_experiments
     @experiments = @matrix.experiments
 
-    @integrators = @matrix.integrators
-    @john_experiments = @matrix.john_experiments
-    @john_predictors = @matrix.john_predictors
-    @john_distributions = @matrix.john_distributions
+    @integrators = [] # @matrix.integrators
+    @john_experiments = [] #@matrix.knn_experiments
+    @john_predictors = []#@matrix.john_predictors
+    @john_distributions = [] #@matrix.john_distributions
   end
 
   def row_distribution matrix

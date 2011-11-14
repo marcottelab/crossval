@@ -119,10 +119,10 @@ module ExperimentsHelper
       target = Math::log(target + 0.00001)*100
     end
 
-    sparkline_tag(aucs,
-      :type => 'smooth', :target => target, :height => 100, :step => 0.5,
-      :has_last => true, :background_color => "#DDD", :line_color => 'black',
-      :target_color => 'blue') unless aucs.nil? || aucs.size == 0
+    #sparkline_tag(aucs,
+    #  :type => 'smooth', :target => target, :height => 100, :step => 0.5,
+    #  :has_last => true, :background_color => "#DDD", :line_color => 'black',
+    #  :target_color => 'blue') unless aucs.nil? || aucs.size == 0
   end
 
   def method_avatar method_title

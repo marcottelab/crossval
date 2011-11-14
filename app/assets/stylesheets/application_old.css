@@ -262,62 +262,62 @@ div.single_avatar {
 
 .avatar a.mm {
     background-color: #8dfde8;
-    background-image: url("/images/mm.png");
+    background-image: url("/assets/mm.png");
 }
 
 .avatar a.mmr {
     background-color: #8dfde8;
-    background-image: url("/images/mmr.png");
+    background-image: url("/assets/mmr.png");
 }
 
 .avatar a.hs {
     background-color: #ffcecd;
-    background-image: url("/images/hs.png");
+    background-image: url("/assets/hs.png");
 }
 
 .avatar a.hsr {
     background-color: #ffcecd;
-    background-image: url("/images/hsr.png");
+    background-image: url("/assets/hsr.png");
 }
 
 .avatar a.ce {
     background-color: #ff7fc5;
-    background-image: url("/images/ce.png");
+    background-image: url("/assets/ce.png");
 }
 
 .avatar a.cer {
     background-color: #ff7fc5;
-    background-image: url("/images/cer.png");
+    background-image: url("/assets/cer.png");
 }
 
 .avatar a.sc {
     background-color: #feea7f;
-    background-image: url("/images/sc.png");
+    background-image: url("/assets/sc.png");
 }
 
 .avatar a.scr {
     background-color: #feea7f;
-    background-image: url("/images/scr.png");
+    background-image: url("/assets/scr.png");
 }
 
 .avatar a.dm {
     background-color: #FF5333;
-    background-image: url("/images/dm.png");
+    background-image: url("/assets/dm.png");
 }
 
 .avatar a.dmr {
     background-color: #FF5333;
-    background-image: url("/images/dmr.png");
+    background-image: url("/assets/dmr.png");
 }
 
 .avatar a.at {
     background-color: #01bc05;
-    background-image: url("/images/at.png");
+    background-image: url("/assets/at.png");
 }
 
 .avatar a.atr {
     background-color: #01bc05;
-    background-image: url("/images/atr.png");
+    background-image: url("/assets/atr.png");
 }
 
 ul.matrix_groups {
@@ -409,7 +409,7 @@ ul.known li, ul.gene_list li.known { background-color: #A3FCD9; }
 
 .tooltip {
     display: none;
-    background:url("/images/black_arrow_big.png");
+    background:url("/assets/black_arrow_big.png");
     height:163px;
     padding:30px 30px 10px 30px;
     width:310px;

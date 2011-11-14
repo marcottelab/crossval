@@ -1,7 +1,7 @@
 <%- if experiments.size > 0 -%>
   <%- if @matrix.is_a?(NodeMatrix) && @matrix.has_grandchildren? -%>
     <h3>Integrators</h3>
-    <%- if @integrators.size == 0 -%>
+    <%- if @integrators.nil? || @integrators.size == 0 -%>
       <p>None found.</p>
     <%- else -%>
       <table class="matrix_experiments">
@@ -15,9 +15,9 @@
 
   <h3>Crossvalidations with John's methods</h3>
   <table class="matrix_experiments">
-  <%= render :partial => 'john_experiments/list_header' %>
-  <% john_experiments(experiments).each do |experiment| %>
-    <%= render :partial => 'john_experiments/item', :locals => {:experiment => experiment} %>
+  <%= render :partial => 'knn_experiments/list_header' %>
+  <% knn_experiments(experiments).each do |experiment| %>
+    <%= render :partial => 'knn_experiments/item', :locals => {:experiment => experiment} %>
   <% end %>
   </table>
   

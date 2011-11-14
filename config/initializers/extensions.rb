@@ -1,4 +1,3 @@
-require 'string_ext'
-require 'array_ext'
-require 'delegate_to_parent'
-require 'swap_methods'
+require './lib/string_ext'
+require './lib/array_ext'
+require './lib/delegate_to_parent'

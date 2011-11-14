@@ -1,62 +1,58 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :genes
+Crossval::Application.routes.draw do
+  resources :genes
 
   # map.resources :experiments
 
-  map.resources :aucs
+  resources :aucs
 
-  map.resources :matrix_pairs
+  resources :matrix_pairs
 
-  map.resource :meta, :member => {:status => :get}, :controller => "meta"
+  resource :meta do
+# => {:status => :get}, :controller => "meta"
+    member do
+      get 'status'
+    end
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
 
-  map.resources :matrices, :has_many => [:phenotypes, :experiments], :member => {:expand_experiments => :get, :collapse_experiments => :get, :reload => :put, :graph => :get, :view => :get} do |matrices|
-    matrices.resources :experiments, :member => {:against => :get}
-    matrices.resources :phenotypes, :member => {:edit_observations => :get, :update_observations => :put, :list => :get}
-    matrices.resources :knn_experiments
-    matrices.resources :integrators
+  resources :matrices do
+    member do
+      get 'expand_experiments'
+      get 'collapse_experiments'
+      put 'reload'
+      get 'graph'
+      get 'view'
+    end
+
+    collection do
+      get 'phenotypes'
+      get 'experiments'
+    end
+
+    resources :experiments do
+      member do
+        get 'against'
+      end
+    end
+
+    resources :phenotypes do
+      member do
+        get 'edit_observations'
+        put 'update_observations'
+        get 'list'
+      end
+    end
+
+    resources :knn_experiments
+    resources :integrators
   end
 
-  # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
+  # You can have the root of your site routed with "root"
+  # map.root :controller => "matrices"
+  root :to => "matrices#index"
 
-  # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
-  #   map.resources :matrices
-
-  # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
-
-  # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
-  # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
-  #   end
-
-  # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
-  #   end
-
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  map.root :controller => "matrices"
-  # map.root :controller => "welcome"
-
-  # See how all your routes lay out with "rake routes"
-
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  # match ':controller(/:action(/:id(.:format)))'
 end

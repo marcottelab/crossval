@@ -1,10 +1,10 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery.js' %>
-  <%= javascript_include_tag 'jquery.flot.min.js' %>
-  <%= javascript_include_tag 'jquery-ui.js' %>
-  <%= javascript_include_tag 'jrails.js' %>
-  <%= javascript_include_tag 'prototype.js' %>
-  <%= javascript_include_tag 'flotomatic.js' %>
+  <%#= javascript_include_tag 'jquery.js' %>
+  <%= javascript_include_tag '/assets/flotomatic/jquery.flot.min.js' %>
+  <%#= javascript_include_tag 'jquery-ui.js' %>
+  <%#= javascript_include_tag 'jrails.js' %>
+  <%#= javascript_include_tag 'prototype.js' %>
+  <%= javascript_include_tag '/assets/flotomatic/flotomatic.js' %>
 <% end %>
 
 <%= matrix_avatar @matrix %><h1 style="float:left;">Information for Matrix "<%= @matrix.title %>" (<%= @matrix.id %>)</h1>
@@ -34,10 +34,10 @@
 
 <div class="container">
   <h2>Experiments</h2>
-  <div id="experiment_list_toggle">
-    <%= render :partial => 'expand_experiments', :locals => {:id => @matrix.id} %>
-  </div>
+  <!--div id="experiment_list_toggle">
+    <%#= render :partial => 'expand_experiments', :locals => {:id => @matrix.id} %>
+  </div-->
   <div id="experiment_list">
-    <%#= render :partial => 'experiments/list', :locals => {:experiments => @matrix.experiments, :rocs => @rocs} %>
+    <%= render :partial => 'experiments/list', :locals => {:experiments => @matrix.experiments, :rocs => @rocs} %>
   </div>
 </div>
